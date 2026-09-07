@@ -6,7 +6,6 @@ namespace AI
         {
             // load templates 
             const compiler = new Durian.Template.Compiler();
-
             async function getTemplate(name: string): Promise<AsyncFunction>
             {
                 let text: string;
@@ -63,22 +62,12 @@ namespace AI
             world: Data.World): Promise<{ plot: string, hidden: string, image: string; }>
         {
             let prompt: string = await this.getPlotTemplate(input, previous_plot, world);
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                ...previous_plot.map(x => ({ role: "assistant", content: x } as Message)),
+                { role: "user", content: input }];
 
-            const result = await API.generateText(prompt, this.getPlotSchema);
-
-            //TEST
-            //const system =
-
-            let user_input = "";
-            prompt = prompt.replace(/\<user_input\>(.*?)\<\/user_input\>/ms, (substring, group) => { user_input = group; return ""; });
-
-            prompt = prompt.replace(/\<previous_plot\>(.*?)\<\/previous_plot\>/ms, "");
-
-            const messages: Message[] = [{ role: "system", content: prompt }, ...previous_plot.map(x => ({ role: "assistant", content: x } as Message)), { role: "user", content: user_input }];
-            console.log("m", messages);
-            const r = await API.generateInteractions(messages, this.getPlotSchema);
-            console.log("r", r);
-            //await API.generateInteractions();
+            const result = await API.generateInteractions(messages, this.getPlotSchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return { plot: obj.plot, hidden: obj.unseen, image: obj.imagery };

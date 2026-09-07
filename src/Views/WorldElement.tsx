@@ -22,31 +22,33 @@ namespace Views
         {
             return <>
                 <div>
-                    <label>Title:</label>
-                    { this.titleInput = <textarea class="title-input single-line"
-                        onkeyup={ (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault; (e.currentTarget as HTMLElement).blur(); } } }
-                        onblur={ (e: Event) => this.onTitleChanged(e) }
-                        value="" /> as HTMLTextAreaElement }
-                </div>
-                <div>
-                    <label>Author style:</label>
-                    { this.authorStyleInput = <textarea class="author-style-input single-line" value="" /> as HTMLTextAreaElement }
-                </div>
-                <div>
-                    <label>Scenario:</label>
-                    { this.scenarioInput = <textarea class="scenario-input" value="" /> as HTMLTextAreaElement }
-                </div>
-                <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 1) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
-                    <label>Player:</label>
-                    { this.playerCharacterCard = new CharacterCardElement() }
-                </div>
-                <div>
-                    <label>NPCs:</label>
-                    <div class="functions">
-                        <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
-                        <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                    <div>
+                        <label>Title:</label>
+                        { this.titleInput = <textarea class="title-input single-line"
+                            onkeyup={ (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault; (e.currentTarget as HTMLElement).blur(); } } }
+                            onblur={ (e: Event) => this.onTitleChanged(e) }
+                            value="" /> as HTMLTextAreaElement }
                     </div>
-                    { this.npcCardList = <div class="npc-list list" /> as HTMLElement }
+                    <div>
+                        <label>Author style:</label>
+                        { this.authorStyleInput = <textarea class="author-style-input single-line" value="" /> as HTMLTextAreaElement }
+                    </div>
+                    <div>
+                        <label>Scenario:</label>
+                        { this.scenarioInput = <textarea class="scenario-input" value="" /> as HTMLTextAreaElement }
+                    </div>
+                    <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 1) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
+                        <label>Player:</label>
+                        { this.playerCharacterCard = new CharacterCardElement() }
+                    </div>
+                    <div>
+                        <label>NPCs:</label>
+                        <div class="functions">
+                            <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
+                            <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                        </div>
+                        { this.npcCardList = <div class="npc-list list" /> as HTMLElement }
+                    </div>
                 </div>
 
                 <div>

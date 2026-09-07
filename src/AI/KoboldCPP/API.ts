@@ -6,7 +6,6 @@ namespace AI.KoboldCPP
         {
             const url = App.config.endpoint + "/api/extra/json_to_grammar";
 
-            console.log("generateGrammar (schema)", schema);
             const authorization = App.config.username && App.config.password ? btoa(App.config.username + ":" + App.config.password) : null;
             const body = schema;
             const headers: HeadersInit = {};
@@ -19,7 +18,6 @@ namespace AI.KoboldCPP
                     headers
                 });
             const output: { result: string, success: boolean; } = await response.json();
-            console.log("generateGrammar (output)", output);
 
             if (!output.success) throw new Error("Could not convert JSON Schema to BNF Grammar!");
 

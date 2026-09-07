@@ -1,0 +1,117 @@
+my-plot
+{
+    display: grid;
+    grid-template-rows: max-content 1fr max-content;
+    grid-template-columns: 1fr;
+    grid-template-areas: "title" "plot-list" "input";
+    overflow-y: auto;
+
+    > .title
+    {
+        z-index: 1000;
+        position: sticky;
+        top: 0;
+        grid-area: title;
+        padding: 0.25em;
+        background-color: var(--page-background-color);
+        font-style: italic;
+        font-size: 1.375em;
+        text-align: center;
+    }
+
+    > .plot-list
+    {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: max-content;
+        grid-area: plot-list;
+        height: max-content;
+        padding: 0.25em;
+        overflow-y: auto;
+        gap: 0.75em;
+    }
+
+    > .input
+    {
+        display: grid;
+        z-index: 1100;
+        position: sticky;
+        bottom: 0;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr auto;
+        grid-area: input;
+        padding: 0.25em;
+        overflow: visible;
+        gap: 0.25em;
+        background-color: var(--page-background-color);
+
+        > .prompt-text
+        {
+            min-height: 4em;
+        }
+    }
+
+    .thinking-indicator
+    {
+        display: grid;
+        position: absolute;
+        grid-auto-flow: column;
+        align-content: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        gap: 0.5em;
+        border-radius: var(--corner-radius);
+        background: hsla(0, 0%, 70%, 80%);
+        color: black;
+        font-weight: bold;
+        font-size: 1.5em;
+        text-align: center;
+        opacity: 0%;
+        pointer-events: none;
+        transition: opacity .25s ease-in-out;
+
+        &.show
+        {
+            opacity: 100%;
+            pointer-events: all;
+        }
+    }
+
+    .thinking-indicator > span:last-child
+    {
+        display: inline-block;
+        width: 0px;
+        overflow: hidden;
+        vertical-align: bottom;
+        animation: ellipsis 1200ms infinite;
+    }
+}
+
+@keyframes ellipsis
+{
+    0%, 19.999%
+    {
+        width: 0%
+    }
+
+    20%, 39.999%
+    {
+        width: 30%
+    }
+
+    40%, 59.999%
+    {
+        width: 60%
+    }
+
+    60%, 99.999%
+    {
+        width: 100%
+    }
+
+    100%
+    {
+        width: 100%
+    }
+}

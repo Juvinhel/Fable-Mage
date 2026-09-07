@@ -19,13 +19,15 @@ namespace Views
         {
             return <>
                 <div>
-                    <label>Include plot:</label>
-                    { this.includePlotCheckbox = <input type="checkbox" class="include-plot-checkbox" checked={ true } /> as HTMLInputElement }
-                </div>
+                    <div>
+                        <label>Include plot:</label>
+                        { this.includePlotCheckbox = <input type="checkbox" class="include-plot-checkbox" checked={ true } /> as HTMLInputElement }
+                    </div>
 
-                <div>
-                    <label>Include images in plot:</label>
-                    { this.includeImagesInPlotCheckbox = <input type="checkbox" class="include-images-in-plot-checkbox" checked={ true } /> as HTMLInputElement }
+                    <div>
+                        <label>Include images in plot:</label>
+                        { this.includeImagesInPlotCheckbox = <input type="checkbox" class="include-images-in-plot-checkbox" checked={ true } /> as HTMLInputElement }
+                    </div>
                 </div>
 
                 <div>

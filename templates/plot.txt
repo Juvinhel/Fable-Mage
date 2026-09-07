@@ -13,7 +13,7 @@
 
 <task>
 Act as a text adventure game master and roleplay partner. Your writing style should be: {{= world["author-style"] }}.
-Expand on the previous plot if any using the user input as the player characters next actions.
+Use the user input to determine the player characters next actions.
 Output a valid json object with exactly these properties:
     - plot: Expanded storyline
     - unseen: Thoughts and reasoning of non player characters and happenings unknown to the player
@@ -38,13 +38,3 @@ The 'plot' and 'unseen' properties should contain around 200 words. The 'imagery
 {{~}}
 </npc>
 {{~}}
-  
-<previous_plot>
-{{~ plotPoint of previous_plot }}
-{{= plotPoint + "\n" }}
-{{~}}
-</previous_plot>
-
-<user_input>
-{{= input }}
-</user_input>
