@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false,
+        "sourceMap": true,
+        "jsx": "react",
+        "jsxFactory": "UI.Generator.Hyperscript",
+        "jsxFragmentFactory": "UI.Generator.Fragment",
+        "target": "esnext",
+        "outFile": "dist/app.js",
+        "allowJs": true,
+        "strict": false,
+        "alwaysStrict": false,
+        "ignoreDeprecations": "6.0"
+    },
+    "include": [
+        "node_modules/@peach/helper/src/**/*",
+        "node_modules/@peach/ui/src/**/*",
+        "node_modules/@peach/ui.components/src/**/*",
+        "node_modules/@durian/template/src/**/*",
+        "modules/**/*.d.ts",
+        "src/**/*",
+    ]
+}

@@ -1,0 +1,47 @@
+my-character-card
+{
+    display: grid;
+    grid-template-rows: min-content;
+    grid-template-columns: 1fr max-content;
+    gap: 0.25em;
+
+    > .property-list
+    {
+        display: grid;
+        grid-template-rows: min-content;
+        grid-template-columns: max-content 1fr;
+        grid-column: 1;
+        gap: 0.25em;
+
+        > div
+        {
+            display: grid;
+            grid-template-rows: min-content;
+            grid-template-columns: subgrid;
+            grid-column: 1 / -1;
+            gap: 0.25em;
+
+            > label
+            {
+                grid-column: 1;
+                align-self: baseline;
+                padding: 0.25em 0;
+            }
+
+            > *:not(label)
+            {
+                grid-column: 2;
+            }
+        }
+    }
+
+    > .functions
+    {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: max-content;
+        grid-auto-flow: column;
+        grid-column: -1;
+        align-items: start;
+    }
+}

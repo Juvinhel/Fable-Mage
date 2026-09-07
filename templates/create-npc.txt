@@ -1,0 +1,28 @@
+{{(input, world)}}
+You are an expert character designer. Generate a fictional character profile of exactly one character in valid JSON format. 
+Remember the character lives in world provided in the 'scenario' block.
+Use the information provided in the 'user_input' block.
+
+Strictly adhere to the following length constraints for each property:
+- "name": Only the first and last name (maximum 3 words).
+- "appearance": A brief description of physical traits, include hair color and gender. (max 30 words).
+- "personality": A list of key traits (3 to 5 comma-separated adjectives).
+- "background": A summarized origin story (between 50 and 100 words total).
+
+Do not include any markdown formatting (like ```json), intro text, or explanation outside the JSON object.
+
+### Expected JSON Structure:
+{
+  "name": "string",
+  "appearance": "string",
+  "personality": "string",
+  "background": "string"
+}
+
+<scenario>
+{{= world.scenario }}.
+</scenario>
+
+<user_input>
+{{= input }}
+</user_input>

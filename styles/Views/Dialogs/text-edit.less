@@ -1,0 +1,53 @@
+.text-edit
+{
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "text text"
+        "cancel ok";
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 1em;
+    border-radius: var(--corner-radius);
+
+    > .text-input
+    {
+        display: block;
+        grid-area: text;
+        min-width: 24em;
+        height: max-content;
+        min-height: 24em;
+        padding: 0.25em;
+        border: none;
+        border-radius: var(--corner-radius);
+        background-color: white;
+        color: black;
+        font-size: 1.125em;
+        font-family: monospace;
+    }
+
+    > .ok-button
+    {
+        grid-area: ok;
+        background: var(--ok-color);
+        color: var(--foreground-color);
+
+        &:hover
+        {
+            background: var(--highlight-ok-color);
+        }
+    }
+
+    > .cancel-button
+    {
+        grid-area: cancel;
+        background: var(--cancel-color);
+        color: var(--foreground-color);
+
+        &:hover
+        {
+            background: var(--highlight-cancel-color);
+        }
+    }
+}

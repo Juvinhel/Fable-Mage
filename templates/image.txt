@@ -1,0 +1,3 @@
+{{(description)}}
+Unreal Engine 5 rendered hyper-realistic medium close-up upper-body image of {{= description }}
+The character has a dynamic pose and is shown with exquisite beauty. The image is beautiful with rich shading, silky texture, and a smooth highly polished finish. The color palette is vibrant, luminous and iridescent, with extremes of light and shade, high saturation, and an ethereal glow.
