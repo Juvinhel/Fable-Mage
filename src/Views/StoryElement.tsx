@@ -65,10 +65,7 @@ namespace Views
                 this.userInput.disabled = false;
                 this.thinkingIndicator.classList.toggle("show", false);
 
-                try
-                {
-                    await this.createAmbientImage(result.image.trim().trimRight(".") + ".", plotPointElement);
-                } catch { }
+                await this.createAmbientImage(result.image.trim().trimRight(".") + ".", plotPointElement);
             }
             catch (error)
             {
@@ -86,11 +83,10 @@ namespace Views
             {
                 const base64 = await API.AI.getImage(prompt);
                 plotPointElement.image = base64;
-                const dataURI = "data:image/png;base64," + base64;
             }
             catch (error)
             {
-                console.log("error", error);
+                UI.Dialog.error(error);
             }
         }
 
@@ -111,15 +107,11 @@ namespace Views
             }
             if (plot.length > 0) story.plot = plot;
 
-            console.log("export", story);
-
             return story;
         }
 
         public importStory(data: Data.Story)
         {
-            console.log("data", data);
-
             this.worldElement.importWorld(data);
             this.heading.textContent = data.title;
 

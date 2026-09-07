@@ -20,8 +20,8 @@ namespace Views
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div>
-                    <button class="icon-button edit-button" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
-                    <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
+                    <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
+                    <button class="icon-button delete-button" title="Delete plot point" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
             </>;
         }
@@ -30,7 +30,7 @@ namespace Views
         public set text(value: string) { this.textElement.textContent = value; }
 
         public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
-        public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : null; }
+        public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
 
         private async onDelete()
         {

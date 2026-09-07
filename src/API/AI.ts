@@ -26,7 +26,8 @@ namespace API
 
             this.getPlotTemplate = await getTemplate("plot");
             this.getImageTemplate = await getTemplate("image");
-            this.createNPCTemplate = await getTemplate("create-npc");
+            this.createCharacterTemplate = await getTemplate("create-character");
+            this.createStoryTemplate = await getTemplate("create-story");
         }
 
         private getPlotTemplate: AsyncFunction;
@@ -106,16 +107,16 @@ namespace API
             return base64;
         }
 
-        private createNPCTemplate: AsyncFunction;
-        public async createNPC(
+        private createCharacterTemplate: AsyncFunction;
+        public async createCharacter(
             input: string,
             world: Data.World): Promise<Data.CharacterCard>
         {
             const url = App.config.endpoint + "/api/v1/generate";
             const grammar = "appearance-kv ::= \"\\\"appearance\\\"\" space \":\" space string\nbackstory-kv ::= \"\\\"backstory\\\"\" space \":\" space string\nchar ::= [^\"\\\\\\x7F\\x00-\\x1F] | [\\\\] ([\"\\\\bfnrt] | \"u\" [0-9a-fA-F]{4})\nname-kv ::= \"\\\"name\\\"\" space \":\" space string\npersonality-kv ::= \"\\\"personality\\\"\" space \":\" space string\nroot ::= \"{\" space name-kv \",\" space appearance-kv \",\" space personality-kv \",\" space backstory-kv space \"}\"\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\nstring ::= \"\\\"\" char* \"\\\"\"";
 
-            let prompt = await this.createNPCTemplate(input, world);
-            console.log("createNPC (prompt)", prompt);
+            let prompt = await this.createCharacterTemplate(input, world);
+            console.log("createCharacter (prompt)", prompt);
 
             const authorization = App.config.username && App.config.password ? btoa(App.config.username + ":" + App.config.password) : null;
             const body: API.KoboldCPP.GenerationInput = {
@@ -135,7 +136,49 @@ namespace API
                 });
 
             const output: API.KoboldCPP.GenerationOutput = await response.json();
-            console.log("createNPC (output)", output);
+            console.log("createCharacter (output)", output);
+
+            let result = output.results[0];
+            if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
+
+            const obj = JSON.parse(result.text.replaceAll("```json", "").replaceAll("```", ""));
+
+            return obj;
+        }
+
+        private createStoryTemplate: AsyncFunction;
+        public async createStory(input: string): Promise<{
+            "title": "string",
+            "scenario": "string",
+            "author-style": "string",
+            "introduction": "string",
+            "protagonist": "string";
+        }>
+        {
+            const url = App.config.endpoint + "/api/v1/generate";
+            const grammar = "author-style-kv ::= \"\\\"author-style\\\"\" space \":\" space string\nchar ::= [^\"\\\\\\x7F\\x00-\\x1F] | [\\\\] ([\"\\\\bfnrt] | \"u\" [0-9a-fA-F]{4})\nintroduction-kv ::= \"\\\"introduction\\\"\" space \":\" space string\nprotagonist-kv ::= \"\\\"protagonist\\\"\" space \":\" space string\nroot ::= \"{\" space title-kv \",\" space author-style-kv \",\" space scenario-kv \",\" space introduction-kv \",\" space protagonist-kv space \"}\"\nscenario-kv ::= \"\\\"scenario\\\"\" space \":\" space string\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\nstring ::= \"\\\"\" char* \"\\\"\"\ntitle-kv ::= \"\\\"title\\\"\" space \":\" space string";
+            let prompt = await this.createStoryTemplate(input);
+            console.log("createStory (prompt)", prompt);
+
+            const authorization = App.config.username && App.config.password ? btoa(App.config.username + ":" + App.config.password) : null;
+            const body: API.KoboldCPP.GenerationInput = {
+                prompt,
+                grammar,
+                smoothing_factor: 0,
+                max_length: App.config.textGenerationMaxLength,
+            };
+
+            const response = await fetch(url,
+                {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                    headers: {
+                        "Authorization": "Basic " + authorization
+                    }
+                });
+
+            const output: API.KoboldCPP.GenerationOutput = await response.json();
+            console.log("createStory (output)", output);
 
             let result = output.results[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");

@@ -3,26 +3,44 @@ my-world
     display: grid;
     grid-template-columns: auto 1fr;
     grid-auto-rows: max-content;
+    min-height: 12em;
+    overflow-y: auto;
     gap: 0.5em;
 
     > *
     {
-        display: grid;
-        grid-template-rows: min-content;
-        grid-template-columns: subgrid;
         grid-column: 1 / -1;
-        gap: 0.25em;
 
-        > label
+        &:not(:last-child)
         {
-            grid-column: 1;
-            align-self: baseline;
-            padding: 0.25em 0;
+            display: grid;
+            grid-template-rows: min-content;
+            grid-template-columns: subgrid;
+            gap: 0.25em;
+
+            > label
+            {
+                grid-column: 1;
+                align-self: baseline;
+                padding: 0.25em 0;
+            }
+
+            > *:not(label)
+            {
+                grid-column: 2;
+            }
         }
 
-        > *:not(label)
+        &:last-child
         {
-            grid-column: 2;
+            display: grid;
+            position: absolute;
+            bottom: 0.5em;
+            grid-template-rows: 1fr;
+            grid-auto-columns: 1fr;
+            grid-auto-flow: column;
+            width: calc(100% - 1em);
+            gap: 0.25em;
         }
     }
 
@@ -30,7 +48,7 @@ my-world
     {
         display: grid;
         grid-template-rows: 1fr;
-        grid-auto-rows: max-content;
+        grid-auto-columns: max-content;
         grid-auto-flow: column;
         justify-content: start;
         gap: 0.25em;

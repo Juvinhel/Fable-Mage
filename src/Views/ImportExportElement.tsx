@@ -28,7 +28,7 @@ namespace Views
                     { this.includeImagesInPlotCheckbox = <input type="checkbox" class="include-images-in-plot-checkbox" checked={ true } /> as HTMLInputElement }
                 </div>
 
-                <div class="functions">
+                <div>
                     <button onclick={ () => this.onImportJSON() }>Import JSON</button>
                     <button onclick={ () => this.onExportJSON() }>Export JSON</button>
                 </div>

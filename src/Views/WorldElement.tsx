@@ -43,10 +43,15 @@ namespace Views
                 <div>
                     <label>NPCs:</label>
                     <div class="functions">
-                        <button class="icon-button add-npc-button" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
-                        <button class="icon-button add-npc-using-ai-button" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                        <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
+                        <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
                     </div>
                     { this.npcCardList = <div class="npc-list list" /> as HTMLElement }
+                </div>
+
+                <div>
+                    <button class="create-new-world" title="Create new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world using AI</span></button>
+                    <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                 </div>
             </>;
         }
@@ -78,7 +83,7 @@ namespace Views
 
                 const world = this.exportWorld();
 
-                const character = await API.AI.createNPC(result, world);
+                const character = await API.AI.createCharacter(result, world);
 
                 this.npcCardList.appendChild(new CharacterCardElement(character));
             }
@@ -86,6 +91,31 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+        }
+
+        private async onCreateWorldUsingAI()
+        {
+            try
+            {
+                const result = await Dialogs.TextEdit("World Description", "");
+                if (!result) return;
+
+                await this.onDeleteWorld();
+
+                const story = await API.AI.createStory(result);
+                const player = await API.AI.createCharacter(story.protagonist, { title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player: null });
+
+                this.storyElement.importStory({ title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player, plot: [{ text: story.introduction }] });
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private async onDeleteWorld()
+        {
+            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", player: { name: "", appearance: "", personality: "", background: "" }, npcs: [], plot: [] });
         }
 
         public exportWorld(): Data.World
