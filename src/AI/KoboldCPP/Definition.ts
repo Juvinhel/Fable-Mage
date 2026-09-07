@@ -1,4 +1,4 @@
-namespace API.KoboldCPP
+namespace AI.KoboldCPP
 {
     export type BasicResultInner = {
         result: string;

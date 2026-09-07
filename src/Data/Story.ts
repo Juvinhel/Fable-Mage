@@ -6,5 +6,6 @@ namespace Data
     export type PlotPoint = {
         text: string;
         image?: string;
+        input?: string;
     };
 }

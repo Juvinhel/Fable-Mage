@@ -32,6 +32,8 @@ namespace Views
         public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
         public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
 
+        public input: string;
+
         private async onDelete()
         {
             if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this plot-point?", title: "Delete plot-point?" }))

@@ -3,7 +3,7 @@ class App
     public static async Start()
     {
         this.config = await Data.loadConfig();
-        await API.AI.initialize();
+        await AI.Client.initialize();
 
         document.addEventListener("visibilitychange", App.visibilityChange);
 

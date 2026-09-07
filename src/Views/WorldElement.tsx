@@ -83,7 +83,7 @@ namespace Views
 
                 const world = this.exportWorld();
 
-                const character = await API.AI.createCharacter(result, world);
+                const character = await AI.Client.createCharacter(result, world);
 
                 this.npcCardList.appendChild(new CharacterCardElement(character));
             }
@@ -102,8 +102,8 @@ namespace Views
 
                 await this.onDeleteWorld();
 
-                const story = await API.AI.createStory(result);
-                const player = await API.AI.createCharacter(story.protagonist, { title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player: null });
+                const story = await AI.Client.createStory(result);
+                const player = await AI.Client.createCharacter(story.protagonist, { title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player: null });
 
                 this.storyElement.importStory({ title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player, plot: [{ text: story.introduction }] });
             }

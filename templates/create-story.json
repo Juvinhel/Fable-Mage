@@ -1,0 +1,33 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": [
+        "title",
+        "scenario",
+        "author-style",
+        "introduction",
+        "protagonist"
+    ],
+    "properties": {
+        "title": {
+            "type": "string",
+            "description": ""
+        },
+        "scenario": {
+            "type": "string",
+            "description": ""
+        },
+        "author-style": {
+            "type": "string",
+            "description": ""
+        },
+        "introduction": {
+            "type": "string",
+            "description": ""
+        },
+        "protagonist": {
+            "type": "string",
+            "description": ""
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": [
+        "plot",
+        "unseen",
+        "imagery"
+    ],
+    "properties": {
+        "plot": {
+            "type": "string",
+            "description": ""
+        },
+        "unseen": {
+            "type": "string",
+            "description": ""
+        },
+        "imagery": {
+            "type": "string",
+            "description": ""
+        }
+    }
+}

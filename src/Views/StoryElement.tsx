@@ -54,10 +54,11 @@ namespace Views
                     previous_plot.push(plotPoint.text);
 
                 const world = this.exportStory();
-                const result = await API.AI.getPlot(input, previous_plot, world);
+                const result = await AI.Client.getPlot(input, previous_plot, world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.text = result.plot;
+                plotPointElement.input = input;
                 this.plotList.appendChild(plotPointElement);
 
                 this.userInput.value = "";
@@ -81,7 +82,7 @@ namespace Views
         {
             try
             {
-                const base64 = await API.AI.getImage(prompt);
+                const base64 = await AI.Client.getImage(prompt);
                 plotPointElement.image = base64;
             }
             catch (error)
@@ -100,6 +101,7 @@ namespace Views
                 for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
                 {
                     const plotPoint: Data.PlotPoint = { text: plotPointElement.text };
+                    if (plotPointElement.input) plotPoint.input = plotPointElement.input;
                     if (includeImagesInPlot)
                         plotPoint.image = plotPointElement.image;
                     plot.push(plotPoint);
