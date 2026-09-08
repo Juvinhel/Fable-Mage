@@ -26,16 +26,17 @@ namespace Views
                         <label>Title:</label>
                         { this.titleInput = <textarea class="title-input single-line"
                             onkeyup={ (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault; (e.currentTarget as HTMLElement).blur(); } } }
-                            onblur={ (e: Event) => this.onTitleChanged(e) }
+                            onblur={ (e: Event) => this.onTitleChanged() }
+                            ontouchend={ async (e: TouchEvent) => { await TextEditTouch(e); this.onTitleChanged(); } }
                             value="" /> as HTMLTextAreaElement }
                     </div>
                     <div>
                         <label>Author style:</label>
-                        { this.authorStyleInput = <textarea class="author-style-input single-line" value="" /> as HTMLTextAreaElement }
+                        { this.authorStyleInput = <textarea class="author-style-input single-line" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                     </div>
                     <div>
                         <label>Scenario:</label>
-                        { this.scenarioInput = <textarea class="scenario-input" value="" /> as HTMLTextAreaElement }
+                        { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                     </div>
                     <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 1) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
                         <label>Player:</label>
@@ -52,7 +53,8 @@ namespace Views
                 </div>
 
                 <div>
-                    <button class="create-new-world" title="Create new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world using AI</span></button>
+                    <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create a new world using AI</span></button>
+                    <button class="write-introduction" title="Write an introduction to your world using AI" onclick={ () => this.onWriteIntroductionUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write an introduction to your world using AI</span></button>
                     <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                 </div>
             </>;
@@ -63,7 +65,7 @@ namespace Views
             this.storyElement = this.closest("my-story");
         }
 
-        private onTitleChanged(e: Event)
+        private onTitleChanged()
         {
             if (!this.storyElement) return;
 
@@ -104,10 +106,41 @@ namespace Views
 
                 await this.onDeleteWorld();
 
-                const story = await AI.Client.createStory(result);
-                const player = await AI.Client.createCharacter(story.protagonist, { title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player: null });
+                const world = {} as Data.World;
+                const output = await AI.Client.createWorld(result);
+                world.title = output.title;
+                world["author-style"] = output["author-style"];
+                world.scenario = output.scenario;
 
-                this.storyElement.importStory({ title: story.title, "author-style": story["author-style"], scenario: story.scenario, npcs: [], player, plot: [{ text: story.introduction }] });
+                const player = await AI.Client.createCharacter(output.protagonist, { title: world.title, "author-style": world["author-style"], scenario: world.scenario, npcs: [], player: null });
+                world.player = player;
+
+                this.storyElement.importWorld(world);
+
+                const tabControl = this.closest("tab-control") as HTMLTabControl;
+                tabControl.selectedIndex = 1;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private async onWriteIntroductionUsingAI()
+        {
+            try
+            {
+                const world = this.exportWorld();
+
+                const story = world as Data.Story;
+                const introduction = await AI.Client.writeIntroduction(story);
+                const introductionImage = await AI.Client.getImage(introduction.scenery);
+                const plot: Data.Plot = [{ input: "Write an introduction.", text: introduction.plot, unrevealed: introduction.unrevealed, scenery: introduction.scenery, image: introductionImage }];
+
+                this.storyElement.importPlot(plot);
+
+                const tabControl = this.closest("tab-control") as HTMLTabControl;
+                tabControl.selectedIndex = 0;
             }
             catch (error)
             {
@@ -127,7 +160,6 @@ namespace Views
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.character,
-                "npcs": [],
             };
 
             const npcs = [];
@@ -149,7 +181,7 @@ namespace Views
             this.playerCharacterCard = playerCard;
 
             this.npcCardList.clearChildren();
-            for (const npc of data.npcs)
+            if (data.npcs) for (const npc of data.npcs)
                 this.npcCardList.append(new CharacterCardElement(npc));
         }
     }

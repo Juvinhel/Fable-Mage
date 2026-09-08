@@ -21,19 +21,20 @@ my-world
             display: grid;
             grid-template-rows: min-content;
             grid-template-columns: subgrid;
+            grid-template-areas: "label content";
             grid-column: 1 / -1;
             gap: 0.25em;
 
             > label
             {
-                grid-column: 1;
+                grid-area: label;
                 align-self: baseline;
                 padding: 0.25em 0;
             }
 
             > *:not(label)
             {
-                grid-column: 2;
+                grid-area: content;
             }
         }
     }

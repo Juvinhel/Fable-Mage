@@ -6,7 +6,7 @@ namespace Data
             "author-style": string;
             scenario: string;
             player: CharacterCard;
-            npcs: CharacterCard[];
+            npcs?: CharacterCard[];
         };
 
     export type CharacterCard = {

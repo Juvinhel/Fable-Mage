@@ -37,13 +37,33 @@ namespace Views
             return story;
         }
 
-        public importStory(data: Data.Story)
+        public importStory(story: Data.Story)
         {
-            this.worldElement.importWorld(data);
-            this.plotElement.importPlot(data.plot ?? []);
+            this.importWorld(story);
+            this.importPlot(story.plot ?? []);
+        }
+
+        public exportPlot(includeImagesInPlot = false): Data.Plot
+        {
+            return this.plotElement.exportPlot(includeImagesInPlot);
+        }
+
+        public importPlot(plot: Data.Plot)
+        {
+            this.plotElement.importPlot(plot);
+        }
+
+        public exportWorld(): Data.World
+        {
+            return this.worldElement.exportWorld();
+        }
+
+        public importWorld(world: Data.World)
+        {
+            this.worldElement.importWorld(world);
 
             const titleHeading = this.querySelector(".title") as HTMLHeadingElement;
-            titleHeading.textContent = data.title;
+            titleHeading.textContent = world.title;
         }
     }
 

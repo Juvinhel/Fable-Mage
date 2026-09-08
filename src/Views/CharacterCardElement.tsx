@@ -47,7 +47,7 @@ namespace Views
             {
                 this.propertyList.append(<div>
                     <label>{ Helper.convertKebabCaseToPascalCase(key) + ":" }</label>
-                    <textarea class="single-line" value={ value } />
+                    <textarea class="single-line" value={ value } ontouchend={ TextEditTouch } />
                 </div>);
             }
         }

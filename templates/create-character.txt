@@ -3,7 +3,7 @@ You are an expert character designer. Generate a fictional character profile of 
 Remember the character lives in world provided in the 'scenario' block.
 Use the information provided in the 'user_input' block.
 
-Strictly adhere to the following length constraints for each property:
+Strictly adhere to the following length constraints and use exactly these properties:
 - "name": Only the first and last name (maximum 3 words).
 - "appearance": A brief description of physical traits, include hair color and gender. (max 30 words).
 - "personality": A list of key traits (3 to 5 comma-separated adjectives).

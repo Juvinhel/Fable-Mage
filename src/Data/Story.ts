@@ -4,8 +4,10 @@ namespace Data
 
     export type Plot = PlotPoint[];
     export type PlotPoint = {
-        text: string;
-        image?: string;
         input?: string;
+        text: string;
+        unrevealed?: string;
+        scenery?: string;
+        image?: string;
     };
 }

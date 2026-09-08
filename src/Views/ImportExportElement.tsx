@@ -49,7 +49,7 @@ namespace Views
 
             const data = this.storyElement.exportStory(includePlot, includeImagesInPlot);
 
-            DownloadHelper.downloadData(data.title + ".json", data);
+            DownloadHelper.downloadData(data.title + (data.plot && data.plot.length > 1 ? " turn " + data.plot.length : "") + ".json", data);
         }
 
         private async onImportJSON()
