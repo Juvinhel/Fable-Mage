@@ -9,7 +9,7 @@ namespace AI.KoboldCPP
             const authorization = App.config.username && App.config.password ? btoa(App.config.username + ":" + App.config.password) : null;
             const body = schema;
             const headers: HeadersInit = {};
-            if (authorization) headers.authorization = authorization;
+            if (authorization) headers.authorization = "Basic " + authorization;
 
             const response = await fetch(url,
                 {
@@ -38,7 +38,7 @@ namespace AI.KoboldCPP
                 max_length: App.config.textGenerationMaxLength,
             };
             const headers: HeadersInit = {};
-            if (authorization) headers.authorization = authorization;
+            if (authorization) headers.authorization = "Basic " + authorization;
 
             const response = await fetch(url,
                 {
@@ -70,7 +70,7 @@ namespace AI.KoboldCPP
                 max_length: App.config.textGenerationMaxLength,
             };
             const headers: HeadersInit = {};
-            if (authorization) headers.authorization = authorization;
+            if (authorization) headers.authorization = "Basic " + authorization;
 
             const response = await fetch(url,
                 {
@@ -107,7 +107,7 @@ namespace AI.KoboldCPP
                 sampler_name: "default",
             };
             const headers: HeadersInit = {};
-            if (authorization) headers.authorization = authorization;
+            if (authorization) headers.authorization = "Basic " + authorization;
 
             const response = await fetch(url,
                 {

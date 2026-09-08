@@ -21,20 +21,20 @@ my-import-export
             display: grid;
             grid-template-rows: min-content;
             grid-template-columns: subgrid;
-            grid-template-areas: "label content";
+            grid-auto-rows: min-content;
             grid-column: 1 / -1;
             gap: 0.25em;
 
             > label
             {
-                grid-area: label;
+                grid-column: 1;
                 align-self: baseline;
                 padding: 0.25em 0;
             }
 
             > *:not(label)
             {
-                grid-area: content;
+                grid-column: 2;
             }
         }
     }
