@@ -99,11 +99,12 @@ namespace AI
         }
 
         public async createWorld(input: string): Promise<{
-            "title": "string",
-            "scenario": "string",
-            "author-style": "string",
-            "introduction": "string",
-            "protagonist": "string";
+            "title": string,
+            "scenario": string,
+            "author-style": string,
+            "introduction": string,
+            "focus": string,
+            "protagonist": string;
         }>
         {
             const prompt = await this.createWorldTemplate(input);

@@ -15,6 +15,7 @@ namespace Views
         private titleInput: HTMLTextAreaElement;
         private authorStyleInput: HTMLTextAreaElement;
         private scenarioInput: HTMLTextAreaElement;
+        private focusInput: HTMLTextAreaElement;
         private playerCharacterCard: CharacterCardElement;
         private npcCardList: HTMLElement;
 
@@ -37,6 +38,10 @@ namespace Views
                     <div>
                         <label>Scenario:</label>
                         { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                    </div>
+                    <div>
+                        <label>Focus:</label>
+                        { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                     </div>
                     <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 1) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
                         <label>Player:</label>
@@ -111,8 +116,9 @@ namespace Views
                 world.title = output.title;
                 world["author-style"] = output["author-style"];
                 world.scenario = output.scenario;
+                world.focus = output.focus;
 
-                const player = await AI.Client.createCharacter(output.protagonist, { title: world.title, "author-style": world["author-style"], scenario: world.scenario, npcs: [], player: null });
+                const player = await AI.Client.createCharacter(output.protagonist, world);
                 world.player = player;
 
                 this.storyElement.importWorld(world);
@@ -150,7 +156,7 @@ namespace Views
 
         private async onDeleteWorld()
         {
-            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", player: { name: "", appearance: "", personality: "", background: "" }, npcs: [], plot: [] });
+            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", background: "" }, npcs: [], plot: [] });
         }
 
         public exportWorld(): Data.World
@@ -159,6 +165,7 @@ namespace Views
                 "title": this.titleInput.value.trim(),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
+                "focus": this.focusInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.character,
             };
 
@@ -175,6 +182,7 @@ namespace Views
             this.titleInput.value = data.title;
             this.authorStyleInput.value = data["author-style"];
             this.scenarioInput.value = data.scenario;
+            this.focusInput.value = data.focus;
 
             const playerCard = new CharacterCardElement(data.player);
             this.playerCharacterCard.replaceWith(playerCard);

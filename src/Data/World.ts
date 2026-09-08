@@ -5,6 +5,7 @@ namespace Data
             title: string;
             "author-style": string;
             scenario: string;
+            focus: string;
             player: CharacterCard;
             npcs?: CharacterCard[];
         };

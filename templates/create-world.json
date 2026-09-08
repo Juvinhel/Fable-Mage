@@ -5,6 +5,7 @@
         "title",
         "scenario",
         "author-style",
+        "focus",
         "protagonist"
     ],
     "properties": {
@@ -17,6 +18,10 @@
             "description": ""
         },
         "author-style": {
+            "type": "string",
+            "description": ""
+        },
+        "focus": {
             "type": "string",
             "description": ""
         },

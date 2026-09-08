@@ -15,6 +15,7 @@ Act as a master fantasy and sci-fi world-builder and narrative designer.
 Write an introduction in valid JSON format.
 Use the scenario described in the 'scenario' block and the player character described in the 'player' block. 
 You may include npcs described in the 'npc' blocks.
+Focus on core aspects described in the 'focus' block.
 
 Strictly adhere to the following length constraints and use exactly these properties:
     - plot: Introduction to the story (200 to 400 words).
@@ -24,6 +25,10 @@ Strictly adhere to the following length constraints and use exactly these proper
 <scenario>
 {{= world.scenario }}.
 </scenario>
+
+<focus>
+{{= world.focus }}.
+</focus>
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}

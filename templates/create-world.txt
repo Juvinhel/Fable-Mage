@@ -7,8 +7,9 @@ Do not write a narrative, this is only world building and no story.
 
 Strictly adhere to the following length constraints and use exactly these properties:
 - "title": Title of the narrative.
-- "scenario": A prosaic descriptive of the narrative world including lore, core concepts, how the world works and what core aspects to focus on like "erotic", "character development" or "action scenes" (300 to 1000 words based on complexity).
+- "scenario": A prosaic descriptive of the narrative world including lore, core concepts, how the world works (300 to 1000 words based on complexity).
 - "author-style": A list of key traits the author should have to write such a story (3 to 5 comma-separated adjectives).
+- "focus": Aspects a narrator should focus on when using the scenario like "erotic descriptions", "romantic interests", "character development" or "action scenes" (100 words at most).
 - "protagonist": Short description of the main character of the narrative including visuals, personality and background (1 paragraph not more than 200 words).
 
 <user_input>
