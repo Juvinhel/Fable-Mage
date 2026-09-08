@@ -16,7 +16,6 @@ namespace Views
         private plotList: HTMLDivElement;
         private userInput: HTMLTextAreaElement;
         private submitButton: HTMLButtonElement;
-        private thinkingIndicator: HTMLSpanElement;
 
         private build()
         {
@@ -26,7 +25,7 @@ namespace Views
                 <div class="input">
                     { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch }></textarea> as HTMLTextAreaElement }
                     { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() }>Submit</button> as HTMLButtonElement }
-                    { this.thinkingIndicator = <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span> as HTMLSpanElement }
+                    <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>
             </>;
         }
@@ -40,9 +39,7 @@ namespace Views
         {
             if (this.submitButton.disabled) return;
 
-            this.submitButton.disabled = true;
-            this.userInput.disabled = true;
-            this.thinkingIndicator.classList.toggle("show", true);
+            this.storyElement.beginThinking();
 
             try
             {
@@ -62,29 +59,25 @@ namespace Views
                 plotPointElement.scenery = result.scenery;
                 this.plotList.appendChild(plotPointElement);
 
-                this.userInput.value = "";
-                this.submitButton.disabled = false;
-                this.userInput.disabled = false;
-                this.thinkingIndicator.classList.toggle("show", false);
-
                 await this.createAmbientImage(result.scenery.trim().trimRight(".") + ".", plotPointElement);
             }
             catch (error)
             {
-                this.submitButton.disabled = false;
-                this.userInput.disabled = false;
-                this.thinkingIndicator.classList.toggle("show", false);
-
                 UI.Dialog.error(error);
             }
+
+            this.storyElement.stopThinking();
         }
 
         private async createAmbientImage(prompt: string, plotPointElement: PlotPointElement)
         {
             try
             {
-                const base64 = await AI.Client.getImage(prompt);
-                plotPointElement.image = base64;
+                const world = this.storyElement.exportStory();
+                const scenery = await AI.Client.describeScenery(prompt, world);
+                const image = await AI.Client.getImage(scenery.prompt);
+                plotPointElement.image = image;
+                plotPointElement.imageTitle = scenery.title;
             }
             catch (error)
             {
@@ -103,6 +96,7 @@ namespace Views
                 if (plotPointElement.unrevealed) plotPoint.unrevealed = plotPointElement.unrevealed;
                 if (plotPointElement.scenery) plotPoint.scenery = plotPointElement.scenery;
                 if (includeImagesInPlot && plotPointElement.image) plotPoint.image = plotPointElement.image;
+                if (includeImagesInPlot && plotPointElement.imageTitle) plotPoint["image-title"] = plotPointElement.imageTitle;
                 plot.push(plotPoint);
             }
 
@@ -120,6 +114,7 @@ namespace Views
                 plotPointElement.unrevealed = plotPoint.unrevealed;
                 plotPointElement.scenery = plotPoint.scenery;
                 plotPointElement.image = plotPoint.image;
+                plotPointElement.imageTitle = plotPoint["image-title"];
                 this.plotList.appendChild(plotPointElement);
             }
         }

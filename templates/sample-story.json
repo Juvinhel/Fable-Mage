@@ -2,6 +2,7 @@
     "title": "A halflings quest - not half witted",
     "author-style": "grim witted fantasy",
     "scenario": "A medieval fantasy world featuring humans, elves, dwarfes, halflings and dragonborn. The dragonborn are human like but have horns, wings and tails like dragons",
+    "focus": "Focus on the dangers and how the player can overcome them. Make enemies and traps dangerous.",
     "player": {
         "name": "Carl Freefoot.",
         "appearance": "A short brown haired halfling in his early thirties.",

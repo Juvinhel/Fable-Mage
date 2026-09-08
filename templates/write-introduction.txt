@@ -1,4 +1,4 @@
-{{(world)}}
+{{(input, world)}}
 {{ 
     function convertCase(input)
     {
@@ -12,15 +12,16 @@
 }}
 
 Act as a master fantasy and sci-fi world-builder and narrative designer.
-Write an introduction in valid JSON format.
+Write a opening paragraph for a fictional roleplay in valid JSON format.
 Use the scenario described in the 'scenario' block and the player character described in the 'player' block. 
-You may include npcs described in the 'npc' blocks.
+Use the user input in the 'user_input' for the general direction where the story should start off.
 Focus on core aspects described in the 'focus' block.
+You may include npcs described in the 'npc' blocks.
 
 Strictly adhere to the following length constraints and use exactly these properties:
-    - plot: Introduction to the story (200 to 400 words).
+    - plot: Opening paragraph of the story (200 to 400 words).
     - unseen: Thoughts and reasoning of non player characters and events happening unknown to the player (100 to 200 words). Avoid elaborate or verbose language.
-    - imagery: Detailed visual description of the location and the main character of the plot meant to be used by an image generation ai (50 words). Avoid elaborate or verbose language.
+    - imagery: Detailed visual description of the location and the main character or item of opening paragraph (50 words). Avoid elaborate or verbose language.
 
 <scenario>
 {{= world.scenario }}.
@@ -45,3 +46,7 @@ Strictly adhere to the following length constraints and use exactly these proper
 </npc>
 {{~}}
 {{?}}
+
+<user_input>
+{{= input }}
+</user_input>

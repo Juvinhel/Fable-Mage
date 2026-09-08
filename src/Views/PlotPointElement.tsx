@@ -20,12 +20,15 @@ namespace Views
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div>
+                    <button class="icon-button edit-image-button" title="Edit image" onclick={ () => this.onEditImage() }><color-icon src="img/icons/image.svg" /></button>
                     <button class="icon-button show-unrevealed-button" title="Show unrevealed content" onclick={ () => this.onShowUnrevealed() }><color-icon src="img/icons/show.svg" /></button>
                     <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
                     <button class="icon-button delete-button" title="Delete plot point" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
             </>;
         }
+
+        public input: string;
 
         public get text(): string { return this.textElement.textContent; }
         public set text(value: string) { this.textElement.textContent = value; }
@@ -37,7 +40,8 @@ namespace Views
         public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
         public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
 
-        public input: string;
+        public get imageTitle(): string { return this.imageElement.title; }
+        public set imageTitle(value: string) { this.imageElement.title = value; }
 
         private async onEdit()
         {
@@ -49,6 +53,25 @@ namespace Views
         {
             const result = await Views.Dialogs.TextEdit("Edit Unrevealed", this.unrevealed);
             if (result) this.unrevealed = result;
+        }
+
+        private async onEditImage()
+        {
+            const result = await Views.Dialogs.TextEdit("Edit Image", this.scenery);
+            if (result) 
+            {
+                this.scenery = result;
+
+                try
+                {
+                    const base64 = await AI.Client.getImage(this.scenery);
+                    this.image = base64;
+                }
+                catch (error)
+                {
+                    UI.Dialog.error(error);
+                }
+            }
         }
 
         private async onDelete()

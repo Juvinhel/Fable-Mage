@@ -9,5 +9,6 @@ namespace Data
         unrevealed?: string;
         scenery?: string;
         image?: string;
+        "image-title"?: string;
     };
 }

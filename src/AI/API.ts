@@ -5,8 +5,8 @@ namespace AI
     export const API: API = new AI.KoboldCPP.API();
     export interface API
     {
-        generateText(prompt: string, schema: any): Promise<string>;
-        generateInteractions(messages: Message[], schema: any): Promise<string>;
+        generateText(prompt: string, schema?: any): Promise<string>;
+        generateInteractions(messages: Message[], schema?: any): Promise<string>;
         generateImage(prompt: string): Promise<string>;
     }
 

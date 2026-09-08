@@ -25,6 +25,7 @@ namespace AI
             }
 
             this.getPlotTemplate = await getTemplate("plot");
+            this.describeSceneryTemplate = await getTemplate("describe-scenery");
             this.writeIntroductionTemplate = await getTemplate("write-introduction");
             this.getImageTemplate = await getTemplate("image");
             this.createCharacterTemplate = await getTemplate("create-character");
@@ -43,12 +44,16 @@ namespace AI
             }
 
             this.getPlotSchema = await getSchema("plot");
+            this.describeScenerySchema = await getSchema("describe-scenery");
             this.createCharacterSchema = await getSchema("create-character");
             this.createWorldSchema = await getSchema("create-world");
         }
 
         private getPlotTemplate: (...params: any[]) => Promise<string>;
         private getPlotSchema: any;
+
+        private describeSceneryTemplate: (...params: any[]) => Promise<string>;
+        private describeScenerySchema: any;
 
         private writeIntroductionTemplate: (...params: any[]) => Promise<string>;
 
@@ -63,7 +68,7 @@ namespace AI
         public async getPlot(
             input: string,
             previous_plot: string[],
-            world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
+            world: Data.World): Promise<{ plot: string; unrevealed: string; scenery: string; }>
         {
             let prompt: string = await this.getPlotTemplate(input, previous_plot, world);
             const messages: Message[] = [
@@ -75,6 +80,16 @@ namespace AI
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
+        }
+
+        public async describeScenery(scenery: string, world: Data.World): Promise<{ prompt: string, title: string; }>
+        {
+            const prompt = await this.describeSceneryTemplate(scenery, world);
+            console.log("cc", this.describeScenerySchema);
+            const result = await API.generateText(prompt, this.describeScenerySchema);
+
+            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
+            return obj;
         }
 
         public async getImage(description: string): Promise<string>
@@ -114,9 +129,9 @@ namespace AI
             return obj;
         }
 
-        public async writeIntroduction(world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
+        public async writeIntroduction(input: string, world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
         {
-            let prompt: string = await this.writeIntroductionTemplate(world);
+            let prompt: string = await this.writeIntroductionTemplate(input, world);
 
             const result = await API.generateText(prompt, this.getPlotSchema);
 

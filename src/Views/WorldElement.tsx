@@ -61,6 +61,7 @@ namespace Views
                     <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create a new world using AI</span></button>
                     <button class="write-introduction" title="Write an introduction to your world using AI" onclick={ () => this.onWriteIntroductionUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write an introduction to your world using AI</span></button>
                     <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
+                    <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>
             </>;
         }
@@ -85,6 +86,8 @@ namespace Views
 
         private async onAddNPCUsingAI()
         {
+            this.storyElement.beginThinking();
+
             try
             {
                 const result = await Dialogs.TextEdit("Character Description", "");
@@ -100,16 +103,20 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+
+            this.storyElement.stopThinking();
         }
 
         private async onCreateWorldUsingAI()
         {
+            await this.onDeleteWorld();
+
+            this.storyElement.beginThinking();
+
             try
             {
                 const result = await Dialogs.TextEdit("World Description", "");
                 if (!result) return;
-
-                await this.onDeleteWorld();
 
                 const world = {} as Data.World;
                 const output = await AI.Client.createWorld(result);
@@ -121,6 +128,10 @@ namespace Views
                 const player = await AI.Client.createCharacter(output.protagonist, world);
                 world.player = player;
 
+                world.npcs = [];
+                const secondaryCharacter = await AI.Client.createCharacter("Describe a secondary character either already in the world or create one (if there is no one).", world);
+                world.npcs.push(secondaryCharacter);
+
                 this.storyElement.importWorld(world);
 
                 const tabControl = this.closest("tab-control") as HTMLTabControl;
@@ -130,18 +141,26 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+
+            this.storyElement.stopThinking();
         }
 
         private async onWriteIntroductionUsingAI()
         {
+            this.storyElement.beginThinking();
+
             try
             {
+                const result = await Dialogs.TextEdit("Introduction", "Write there the story should start off.");
+                if (!result) return;
+
                 const world = this.exportWorld();
 
                 const story = world as Data.Story;
-                const introduction = await AI.Client.writeIntroduction(story);
-                const introductionImage = await AI.Client.getImage(introduction.scenery);
-                const plot: Data.Plot = [{ input: "Write an introduction.", text: introduction.plot, unrevealed: introduction.unrevealed, scenery: introduction.scenery, image: introductionImage }];
+                const introduction = await AI.Client.writeIntroduction(result, story);
+                const scenery = await AI.Client.describeScenery(introduction.plot, world);
+                const image = await AI.Client.getImage(scenery.prompt);
+                const plot: Data.Plot = [{ input: "Write an introduction.", text: introduction.plot, unrevealed: introduction.unrevealed, scenery: introduction.scenery, image: image, "image-title": scenery.title }];
 
                 this.storyElement.importPlot(plot);
 
@@ -152,6 +171,8 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+
+            this.storyElement.stopThinking();
         }
 
         private async onDeleteWorld()
