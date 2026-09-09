@@ -76,7 +76,7 @@ namespace AI
                 ...previous_plot.map(x => ({ role: "assistant", content: x } as Message)),
                 { role: "user", content: input }];
 
-            const result = await API.generateInteractions(messages, this.getPlotSchema);
+            const result = await TextAPI.generateInteractions(messages, this.getPlotSchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
@@ -86,7 +86,7 @@ namespace AI
         {
             const prompt = await this.describeSceneryTemplate(scenery, world);
             console.log("cc", this.describeScenerySchema);
-            const result = await API.generateText(prompt, this.describeScenerySchema);
+            const result = await TextAPI.generateText(prompt, this.describeScenerySchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return obj;
@@ -96,7 +96,7 @@ namespace AI
         {
             const prompt = await this.getImageTemplate(description);
 
-            const result = await API.generateImage(prompt);
+            const result = await ImageAPI.generateImage(prompt);
 
             return result;
         }
@@ -107,7 +107,7 @@ namespace AI
         {
             const prompt = await this.createCharacterTemplate(input, world);
 
-            const result = await API.generateText(prompt, this.createCharacterSchema);
+            const result = await TextAPI.generateText(prompt, this.createCharacterSchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return obj;
@@ -123,7 +123,7 @@ namespace AI
         }>
         {
             const prompt = await this.createWorldTemplate(input);
-            const result = await API.generateText(prompt, this.createWorldSchema);
+            const result = await TextAPI.generateText(prompt, this.createWorldSchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return obj;
@@ -133,7 +133,7 @@ namespace AI
         {
             let prompt: string = await this.writeIntroductionTemplate(input, world);
 
-            const result = await API.generateText(prompt, this.getPlotSchema);
+            const result = await TextAPI.generateText(prompt, this.getPlotSchema);
 
             const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
             return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };

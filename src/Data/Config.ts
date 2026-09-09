@@ -2,15 +2,37 @@ namespace Data
 {
     export interface Config
     {
-        endpoint: string;
+        TextAPI: KoboldCPPEndpoint;
+        ImageAPI: KoboldCPPEndpoint | DiffusionEndpoint;
+    }
+
+    export interface KoboldCPPEndpoint
+    {
+        name: "KoboldCPP",
+        url: string;
         username?: string;
         password?: string;
         textGenerationMaxLength?: number,
     }
 
+    export interface DiffusionEndpoint
+    {
+        name: "Diffusion",
+        url: string;
+        username?: string;
+        password?: string;
+    }
+
     const defaultConfig: Config = {
-        endpoint: "http://localhost:5001",
-        textGenerationMaxLength: 4096 //8192
+        TextAPI: {
+            name: "KoboldCPP",
+            url: "https://ai.coffinprincess.de",
+            textGenerationMaxLength: 4096 //8192
+        },
+        ImageAPI: {
+            name: "Diffusion",
+            url: "https://diffusion.coffinprincess.de"
+        }
     };
 
     export async function loadConfig(): Promise<Config>

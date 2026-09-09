@@ -151,7 +151,7 @@ namespace Views
 
             try
             {
-                const result = await Dialogs.TextEdit("Introduction", "Write there the story should start off.");
+                const result = await Dialogs.TextEdit("Introduction", "Write where the story should start off.");
                 if (!result) return;
 
                 const world = this.exportWorld();
