@@ -76,6 +76,8 @@ namespace Views
                 input.disabled = true;
             for (const button of this.querySelectorAll("button"))
                 button.disabled = true;
+            for (const button of this.querySelectorAll("select"))
+                button.disabled = true;
         }
 
         public stopThinking()
@@ -88,6 +90,8 @@ namespace Views
                 input.disabled = false;
             for (const button of this.querySelectorAll("button"))
                 button.disabled = false;
+            for (const button of this.querySelectorAll("select"))
+                button.disabled = true;
         }
     }
 

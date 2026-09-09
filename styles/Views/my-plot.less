@@ -45,9 +45,21 @@ my-plot
         gap: 0.25em;
         background-color: var(--page-background-color);
 
-        > .prompt-text
+        > .user-input
         {
-            min-height: 4em;
+            min-height: 3em;
+        }
+
+        > .submit-button
+        {
+            width: 3.5em;
+
+            > color-icon
+            {
+                aspect-ratio: 1;
+                width: calc(100% - 0.5em);
+                height: unset;
+            }
         }
     }
 }

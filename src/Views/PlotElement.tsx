@@ -24,7 +24,7 @@ namespace Views
                 { this.plotList = <div class="plot-list" /> as HTMLDivElement }
                 <div class="input">
                     { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch }></textarea> as HTMLTextAreaElement }
-                    { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() }>Submit</button> as HTMLButtonElement }
+                    { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                     <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>
             </>;

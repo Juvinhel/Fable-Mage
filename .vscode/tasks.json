@@ -108,7 +108,7 @@
             "type": "shell",
             "args": [
                 "-Path",
-                "img,node_modules\\@peach\\ui\\img,node_modules\\@peach\\ui.components\\img",
+                "img,node_modules\\@peach\\ui\\img",
                 "-Destination",
                 "dist",
                 "-Force",

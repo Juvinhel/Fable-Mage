@@ -3,8 +3,25 @@
 
 namespace AI
 {
-    export const TextAPI: TextAPI = new AI.KoboldCPP.API();
-    export const ImageAPI: ImageAPI = new AI.Diffusion.API();
+    export const API = new class
+    {
+        public get TextAPI()
+        {
+            switch (App.config.TextAPI.name)
+            {
+                case "KoboldCPP": return new AI.KoboldCPP.API(App.config.TextAPI);
+            }
+        }
+
+        public get ImageAPI()
+        {
+            switch (App.config.ImageAPI.name)
+            {
+                case "KoboldCPP": return new AI.KoboldCPP.API(App.config.ImageAPI);
+                case "Diffusion": return new AI.Diffusion.API(App.config.ImageAPI);
+            }
+        }
+    }();
 
     export interface TextAPI
     {

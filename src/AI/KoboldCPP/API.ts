@@ -2,11 +2,18 @@ namespace AI.KoboldCPP
 {
     export class API implements AI.TextAPI, AI.ImageAPI
     {
+        constructor (config: Data.KoboldCPPEndpoint)
+        {
+            this.config = config;
+        }
+
+        private config: Data.KoboldCPPEndpoint;
+
         public async generateGrammar(schema: any): Promise<string>
         {
-            const url = App.config.TextAPI.url + "/api/extra/json_to_grammar";
+            const url = this.config.url + "/api/extra/json_to_grammar";
 
-            const authorization = App.config.TextAPI.username && App.config.TextAPI.password ? btoa(App.config.TextAPI.username + ":" + App.config.TextAPI.password) : null;
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body = schema;
             const headers: HeadersInit = {};
             if (authorization) headers.authorization = "Basic " + authorization;
@@ -26,15 +33,15 @@ namespace AI.KoboldCPP
 
         public async generateText(prompt: string, schema?: any): Promise<string>
         {
-            const url = App.config.TextAPI.url + "/api/v1/generate";
+            const url = this.config.url + "/api/v1/generate";
             const grammar = schema ? await this.generateGrammar(schema) : null;
             const p = prompt.trim();
 
             console.log("generateText (prompt)", prompt);
-            const authorization = App.config.TextAPI.username && App.config.TextAPI.password ? btoa(App.config.TextAPI.username + ":" + App.config.TextAPI.password) : null;
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.GenerationInput = {
                 prompt: p,
-                max_length: App.config.TextAPI.textGenerationMaxLength,
+                max_length: this.config.textGenerationMaxLength,
             };
             if (grammar) body.grammar = grammar;
             const headers: HeadersInit = {};
@@ -57,15 +64,15 @@ namespace AI.KoboldCPP
 
         public async generateInteractions(messages: Message[], schema?): Promise<string>
         {
-            const url = App.config.TextAPI.url + "/v1/chat/completions";
+            const url = this.config.url + "/v1/chat/completions";
             const grammar = schema ? await this.generateGrammar(schema) : null;
             const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
 
             console.log("generateInteractions (messages)", m);
-            const authorization = App.config.TextAPI.username && App.config.TextAPI.password ? btoa(App.config.TextAPI.username + ":" + App.config.TextAPI.password) : null;
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: any = {
                 messages: m,
-                max_length: App.config.TextAPI.textGenerationMaxLength,
+                max_length: this.config.textGenerationMaxLength,
             };
             if (grammar) body.grammar = grammar;
             const headers: HeadersInit = {};
@@ -89,11 +96,11 @@ namespace AI.KoboldCPP
 
         public async generateImage(prompt: string): Promise<string>
         {
-            const url = App.config.ImageAPI.url + "/sdapi/v1/txt2img";
+            const url = this.config.url + "/sdapi/v1/txt2img";
             const p = prompt.trim();
 
             console.log("generateImage (prompt)", prompt);
-            const authorization = App.config.ImageAPI.username && App.config.ImageAPI.password ? btoa(App.config.ImageAPI.username + ":" + App.config.ImageAPI.password) : null;
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
                 negative_prompt: "",

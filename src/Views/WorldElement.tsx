@@ -58,8 +58,8 @@ namespace Views
                 </div>
 
                 <div>
-                    <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create a new world using AI</span></button>
-                    <button class="write-introduction" title="Write an introduction to your world using AI" onclick={ () => this.onWriteIntroductionUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write an introduction to your world using AI</span></button>
+                    <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
+                    <button class="write-introduction" title="Write an introduction to your world using AI" onclick={ () => this.onWriteIntroductionUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write introduction</span></button>
                     <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                     <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>

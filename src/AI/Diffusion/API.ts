@@ -2,13 +2,20 @@ namespace AI.Diffusion
 {
     export class API implements AI.ImageAPI
     {
+        constructor (config: Data.DiffusionEndpoint)
+        {
+            this.config = config;
+        }
+
+        private config: Data.DiffusionEndpoint;
+
         public async generateImage(prompt: string): Promise<string>
         {
-            const url = App.config.ImageAPI.url + "/generate";
+            const url = this.config.url + "/generate";
             const p = prompt.trim();
 
             console.log("generateImage (prompt)", prompt);
-            const authorization = App.config.ImageAPI.username && App.config.ImageAPI.password ? btoa(App.config.ImageAPI.username + ":" + App.config.ImageAPI.password) : null;
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
                 negative_prompt: "",

@@ -11,7 +11,6 @@
   "dependencies": {
     "@peach/helper": "file:../Peach/Helper",
     "@peach/ui": "file:../Peach/UI",
-    "@peach/ui.components": "file:../Peach/UI.Components",
     "@durian/template": "file:../Durian/Template"
   }
 }

@@ -17,7 +17,6 @@
     "include": [
         "node_modules/@peach/helper/src/**/*",
         "node_modules/@peach/ui/src/**/*",
-        "node_modules/@peach/ui.components/src/**/*",
         "node_modules/@durian/template/src/**/*",
         "modules/**/*.d.ts",
         "src/**/*",
