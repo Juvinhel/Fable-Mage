@@ -20,8 +20,8 @@ namespace AI.Diffusion
                 prompt: p,
                 negative_prompt: "",
                 steps: 20,
-                width: 512,
-                height: 512,
+                width: 1024,
+                height: 1024,
                 seed: Rand.GetIntegerFromInterval(0, Number.MAX_SAFE_INTEGER)
             };
             const headers: HeadersInit = {};

@@ -106,8 +106,8 @@ namespace AI.KoboldCPP
                 negative_prompt: "",
                 steps: 20,
                 cfg_scale: 7.5,
-                width: 512,
-                height: 512,
+                width: 1024,
+                height: 1024,
                 sd_model_checkpoint: "",
                 sampler_name: "default",
             };

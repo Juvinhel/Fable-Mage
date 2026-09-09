@@ -1,8 +1,8 @@
 namespace Views.Dialogs
 {
-    export async function TextEdit(title: string, text: string): Promise<string>
+    export async function TextEdit(title: string, text: string, placeholder?: string): Promise<string>
     {
-        const textEditDialog = buildTextEditDialog(text) as HTMLElement;
+        const textEditDialog = buildTextEditDialog(text, placeholder) as HTMLElement;
         await UI.Dialog.show(textEditDialog, { title, allowClose: true, icon: "img/icons/edit.svg", mode: "fill" });
 
         const ok = textEditDialog.classList.contains("ok");
@@ -14,10 +14,10 @@ namespace Views.Dialogs
         return null;
     }
 
-    function buildTextEditDialog(text: string)
+    function buildTextEditDialog(text: string, placeholder?: string)
     {
         return <div class="text-edit">
-            <textarea class="text-input" placeholder="input text">{ text }</textarea>
+            <textarea class="text-input" placeholder={ placeholder ?? "input text" }>{ text }</textarea>
             <button class="ok-button" onclick={ okClick }>OK</button>
             <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
         </div>;

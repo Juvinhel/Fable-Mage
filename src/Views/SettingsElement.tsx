@@ -171,6 +171,9 @@ namespace Views
                 App.config.ImageAPI = imageAPIConfig;
 
             Data.saveConfig(App.config);
+
+            const tabControl = this.closest("tab-control") as HTMLTabControl;
+            tabControl.selectedIndex = 0;
         }
 
         private onCancel()

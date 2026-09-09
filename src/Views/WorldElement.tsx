@@ -115,7 +115,7 @@ namespace Views
 
             try
             {
-                const result = await Dialogs.TextEdit("World Description", "");
+                const result = await Dialogs.TextEdit("World Description", "", "Describe your scenario including lore and background story.");
                 if (!result) return;
 
                 const world = {} as Data.World;
@@ -129,8 +129,8 @@ namespace Views
                 world.player = player;
 
                 world.npcs = [];
-                const secondaryCharacter = await AI.Client.createCharacter("Describe a secondary character either already in the world or create one (if there is no one).", world);
-                world.npcs.push(secondaryCharacter);
+                //const secondaryCharacter = await AI.Client.createCharacter("Describe a secondary character either already in the world or create one (if there is no one).", world);
+                //world.npcs.push(secondaryCharacter);
 
                 this.storyElement.importWorld(world);
 
@@ -151,7 +151,7 @@ namespace Views
 
             try
             {
-                const result = await Dialogs.TextEdit("Introduction", "Write where the story should start off.");
+                const result = await Dialogs.TextEdit("Introduction", "", "Write where the story should start off.");
                 if (!result) return;
 
                 const world = this.exportWorld();

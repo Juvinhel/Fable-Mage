@@ -9,6 +9,8 @@ namespace Views
             this.append(this.build());
         }
 
+        private storyElement: StoryElement;
+
         private turnElement: HTMLSpanElement;
         private textElement: HTMLSpanElement;
         private imageElement: HTMLImageElement;
@@ -28,6 +30,11 @@ namespace Views
                     <button class="icon-button delete-button" title="Delete plot point" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
             </>;
+        }
+
+        private connectedCallback()
+        {
+            this.storyElement = this.closest("my-story");
         }
 
         public get turn() { return parseInt(this.turnElement.textContent); }
@@ -65,10 +72,11 @@ namespace Views
             const result = await Views.Dialogs.TextEdit("Edit Image", this.scenery);
             if (result) 
             {
-                this.scenery = result;
+                this.storyElement.beginThinking();
 
                 try
                 {
+                    this.scenery = result;
                     const base64 = await AI.Client.getImage(this.scenery);
                     this.image = base64;
                 }
@@ -76,6 +84,8 @@ namespace Views
                 {
                     UI.Dialog.error(error);
                 }
+
+                this.storyElement.stopThinking();
             }
         }
 
