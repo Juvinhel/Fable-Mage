@@ -14,7 +14,8 @@ namespace AI.Diffusion
                 negative_prompt: "",
                 steps: 20,
                 width: 512,
-                height: 512
+                height: 512,
+                seed: Rand.GetIntegerFromInterval(0, Number.MAX_SAFE_INTEGER)
             };
             const headers: HeadersInit = {};
             if (authorization) headers.authorization = "Basic " + authorization;
