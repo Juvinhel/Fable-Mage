@@ -58,8 +58,11 @@ namespace Views
                 plotPointElement.unrevealed = result.unrevealed;
                 plotPointElement.scenery = result.scenery;
                 this.plotList.appendChild(plotPointElement);
+                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await this.createAmbientImage(result.scenery.trim().trimRight(".") + ".", plotPointElement);
+
+                this.userInput.value = "";
             }
             catch (error)
             {

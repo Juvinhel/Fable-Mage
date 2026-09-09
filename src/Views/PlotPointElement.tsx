@@ -16,7 +16,7 @@ namespace Views
         {
             return <>
                 <div>
-                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
+                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ title: this.imageTitle, pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div>
