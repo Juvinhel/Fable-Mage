@@ -11,7 +11,7 @@ namespace AI.Diffusion
 
         public async generateImage(prompt: string): Promise<string>
         {
-            const url = this.config.url + "/generate";
+            const url = this.config.url + "/txt2img/generate";
             const p = prompt.trim();
 
             console.log("generateImage (prompt)", prompt);
