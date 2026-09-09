@@ -70,28 +70,16 @@ namespace Views
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
-            for (const textarea of this.querySelectorAll("textarea"))
-                textarea.disabled = true;
-            for (const input of this.querySelectorAll("input"))
-                input.disabled = true;
-            for (const button of this.querySelectorAll("button"))
+            for (const button of this.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                 button.disabled = true;
-            for (const select of this.querySelectorAll("select"))
-                select.disabled = true;
         }
 
         public stopThinking()
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
-            for (const textarea of this.querySelectorAll("textarea"))
-                textarea.disabled = false;
-            for (const input of this.querySelectorAll("input"))
-                input.disabled = false;
-            for (const button of this.querySelectorAll("button"))
+            for (const button of this.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                 button.disabled = false;
-            for (const select of this.querySelectorAll("select"))
-                select.disabled = false;
         }
     }
 

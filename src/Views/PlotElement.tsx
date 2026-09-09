@@ -21,7 +21,7 @@ namespace Views
         {
             return <>
                 { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
-                { this.plotList = <div class="plot-list" /> as HTMLDivElement }
+                { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                 <div class="input">
                     { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch }></textarea> as HTMLTextAreaElement }
                     { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
@@ -33,6 +33,13 @@ namespace Views
         private connectedCallback()
         {
             this.storyElement = this.closest("my-story");
+        }
+
+        private refreshTurnCount()
+        {
+            let i = 0;
+            for (const plotPointElement of this.plotList.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
+                plotPointElement.turn = ++i;
         }
 
         private async onSubmit()
@@ -57,7 +64,10 @@ namespace Views
                 plotPointElement.text = result.plot;
                 plotPointElement.unrevealed = result.unrevealed;
                 plotPointElement.scenery = result.scenery;
-                this.plotList.appendChild(plotPointElement);
+                this.plotList.appendChild(plotPointElement); HTMLButtonElement;
+                //deactivate all inputs
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                    button.disabled = true;
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await this.createAmbientImage(result.scenery.trim().trimRight(".") + ".", plotPointElement);

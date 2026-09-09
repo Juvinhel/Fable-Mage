@@ -9,6 +9,7 @@ namespace Views
             this.append(this.build());
         }
 
+        private turnElement: HTMLSpanElement;
         private textElement: HTMLSpanElement;
         private imageElement: HTMLImageElement;
 
@@ -16,6 +17,7 @@ namespace Views
         {
             return <>
                 <div>
+                    { this.turnElement = <span class="turn" /> as HTMLSpanElement }
                     { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ title: this.imageTitle, pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
@@ -27,6 +29,9 @@ namespace Views
                 </div>
             </>;
         }
+
+        public get turn() { return parseInt(this.turnElement.textContent); }
+        public set turn(value: number) { this.turnElement.textContent = value.toFixed(0); }
 
         public input: string;
 
