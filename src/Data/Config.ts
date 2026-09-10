@@ -13,6 +13,7 @@ namespace Data
         username?: string;
         password?: string;
         textGenerationMaxLength?: number,
+        temperature?: number;
     }
 
     export interface DiffusionEndpoint
@@ -27,7 +28,8 @@ namespace Data
         TextAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de",
-            textGenerationMaxLength: 4096 //8192
+            textGenerationMaxLength: 4096, //8192
+            temperature: 0.7
         },
         ImageAPI: {
             name: "Diffusion",

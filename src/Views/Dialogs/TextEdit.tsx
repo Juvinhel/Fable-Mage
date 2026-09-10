@@ -3,7 +3,7 @@ namespace Views.Dialogs
     export async function TextEdit(title: string, text: string, placeholder?: string): Promise<string>
     {
         const textEditDialog = buildTextEditDialog(text, placeholder) as HTMLElement;
-        await UI.Dialog.show(textEditDialog, { title, allowClose: true, icon: "img/icons/edit.svg", mode: "fill" });
+        await UI.Dialog.show(textEditDialog, { title, allowClose: true, mode: "fill" });
 
         const ok = textEditDialog.classList.contains("ok");
         if (ok)

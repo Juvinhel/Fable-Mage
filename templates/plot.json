@@ -4,14 +4,14 @@
     "required": [
         "plot",
         "unseen",
-        "imagery"
+        "internal"
     ],
     "properties": {
         "plot": {
             "type": "string",
             "description": ""
         },
-        "unseen": {
+        "internal": {
             "type": "string",
             "description": ""
         },

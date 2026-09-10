@@ -14,7 +14,7 @@ namespace Views
 
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
-        private userInput: HTMLTextAreaElement;
+        public userInput: HTMLTextAreaElement;
         private submitButton: HTMLButtonElement;
 
         private build()
@@ -23,7 +23,7 @@ namespace Views
                 { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                 { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                 <div class="input">
-                    { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch }></textarea> as HTMLTextAreaElement }
+                    { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
                     { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                     <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>
@@ -58,7 +58,7 @@ namespace Views
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
                 plotPointElement.text = result.plot;
-                plotPointElement.unrevealed = result.unrevealed;
+                plotPointElement.internal = result.internal;
                 plotPointElement.scenery = result.scenery;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
                 //deactivate all inputs
@@ -97,11 +97,7 @@ namespace Views
 
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
             {
-                const plotPoint: Data.PlotPoint = { text: plotPointElement.text };
-                if (plotPointElement.input) plotPoint.input = plotPointElement.input;
-                if (plotPointElement.unrevealed) plotPoint.unrevealed = plotPointElement.unrevealed;
-                if (plotPointElement.scenery) plotPoint.scenery = plotPointElement.scenery;
-                if (includeImagesInPlot && plotPointElement.image) plotPoint.image = plotPointElement.image;
+                const plotPoint: Data.PlotPoint = plotPointElement.exportPlotPoint(includeImagesInPlot);
                 plot.push(plotPoint);
             }
 
@@ -115,11 +111,7 @@ namespace Views
             for (const plotPoint of plot)
             {
                 plotPointElement = new PlotPointElement();
-                plotPointElement.input = plotPoint.input;
-                plotPointElement.text = plotPoint.text;
-                plotPointElement.unrevealed = plotPoint.unrevealed;
-                plotPointElement.scenery = plotPoint.scenery;
-                plotPointElement.image = plotPoint.image;
+                plotPointElement.importPlotPoint(plotPoint);
                 this.plotList.appendChild(plotPointElement);
             }
             if (plotPointElement)

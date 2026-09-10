@@ -11,17 +11,33 @@
     }
 }}
 
-Act as a master fantasy and sci-fi world-builder and narrative designer.
-Write a prologue for a fictional roleplay in valid JSON format.
+You are the Game Master (GM) of this text-based adventure. 
+Write a prologue for this text-based adventure.
 Use the scenario described in the 'scenario' block and the player character described in the 'player' block. 
 Use the user input in the 'user_input' for the general direction where the story should start off.
 Focus on core aspects described in the 'focus' block.
 You may include npcs described in the 'npc' blocks.
 
-Strictly adhere to the following length constraints and use exactly these properties:
-    - plot: Prologue (3 to 5 paragraphs, overall 200 to 400 words). Refer to the player as 'you'. Include thoughts and physical sensations of the player.
-    - unseen: Thoughts and reasoning of non player characters and events happening unknown to the player (100 to 200 words). Avoid elaborate or verbose language.
-    - imagery: (150 tokens) Optimized, comma-separated text-to-image prompt of one key visual of the storyline. Avoid filler words. Describe the key character or item of the scene in detail. Describe the background shortly. Avoid filler words. 
+Strictly adhere to the following property rules:
+### plot
+- Prologue of the story
+- 200 to 400 words, divide it into sensible paragraphs
+- Refer to the player as 'you'
+- Include thoughts and physical sensations of the player.
+
+### internal
+- this is your sandbox, meant for you to remember reasoning and events
+- contains hidden motivations, secrets and immediate reactions of NPCs
+- contains changes in the environment, tracking time, or actions happening out of the player's sight
+- 100 tp 200 words
+- Avoid elaborate or verbose language
+
+### imagery
+- comma-separated text-to-image prompt
+- select one key visual from the storyline
+- describe the key character or item in detail
+- describe the background briefly
+- Avoid filler words. 
 
 <scenario>
 {{= world.scenario }}.

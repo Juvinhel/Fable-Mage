@@ -6,7 +6,7 @@ namespace Data
     export type PlotPoint = {
         input?: string;
         text: string;
-        unrevealed?: string;
+        internal?: string;
         scenery?: string;
         image?: string;
     };

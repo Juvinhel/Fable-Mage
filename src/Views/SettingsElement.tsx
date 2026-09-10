@@ -102,6 +102,10 @@ namespace Views
                     <input name="password" type="password" value={ config.password ?? "" } />
                 </div>
                 <div>
+                    <label>Temperature:</label>
+                    <input name="temperature" type="number" min="0" max="2" step="0.1" value={ config.temperature ?? "0.7" } />
+                </div>
+                <div>
                     <label>Max Content Size:</label>
                     <input name="textGenerationMaxLength" type="number" min="0" step="1" value={ config.textGenerationMaxLength ?? "" } />
                 </div>

@@ -86,15 +86,15 @@ namespace Views
 
         private async onAddNPCUsingAI()
         {
+            const result = await Dialogs.TextEdit("Character Description", "");
+            if (!result) return;
+
             this.storyElement.beginThinking();
 
             try
             {
-                const result = await Dialogs.TextEdit("Character Description", "");
-                if (!result) return;
 
                 const world = this.exportWorld();
-
                 const character = await AI.Client.createCharacter(result, world);
 
                 this.npcCardList.appendChild(new CharacterCardElement(character));
@@ -109,15 +109,14 @@ namespace Views
 
         private async onCreateWorldUsingAI()
         {
-            await this.onDeleteWorld();
+            const result = await Dialogs.TextEdit("World Description", "", "Describe your scenario including lore and background story.");
+            if (!result) return;
 
             this.storyElement.beginThinking();
 
             try
             {
-                const result = await Dialogs.TextEdit("World Description", "", "Describe your scenario including lore and background story.");
-                if (!result) return;
-
+                await this.onDeleteWorld();
                 const world = {} as Data.World;
                 const output = await AI.Client.createWorld(result);
                 world.title = output.title;
@@ -143,19 +142,19 @@ namespace Views
 
         private async onWritePrologueUsingAI()
         {
+            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
+            if (!result) return;
+
             this.storyElement.beginThinking();
 
             try
             {
-                const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
-                if (!result) return;
-
                 const world = this.exportWorld();
 
                 const story = world as Data.Story;
                 const prologue = await AI.Client.writePrologue(result, story);
                 const image = await AI.Client.getImage(prologue.scenery);
-                const plot: Data.Plot = [{ input: "Write a prologue.", text: prologue.plot, unrevealed: prologue.unrevealed, scenery: prologue.scenery, image }];
+                const plot: Data.Plot = [{ text: prologue.plot, internal: prologue.internal, scenery: prologue.scenery, image }];
 
                 this.storyElement.importPlot(plot);
                 this.storyElement.selectTab("plot");

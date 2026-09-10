@@ -39,11 +39,11 @@ namespace AI.KoboldCPP
 
             console.log("generateText (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: AI.KoboldCPP.GenerationInput = {
-                prompt: p,
-                max_length: this.config.textGenerationMaxLength,
-            };
+            const body: AI.KoboldCPP.GenerationInput = { prompt: p, };
+            if (this.config.temperature) body.temperature = this.config.temperature;
+            if (this.config.textGenerationMaxLength) body.max_length = this.config.textGenerationMaxLength;
             if (grammar) body.grammar = grammar;
+
             const headers: HeadersInit = {};
             if (authorization) headers.authorization = "Basic " + authorization;
 
@@ -70,11 +70,11 @@ namespace AI.KoboldCPP
 
             console.log("generateInteractions (messages)", m);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: any = {
-                messages: m,
-                max_length: this.config.textGenerationMaxLength,
-            };
+            const body: any = { messages: m };
+            if (this.config.temperature) body.temperature = this.config.temperature;
+            if (this.config.textGenerationMaxLength) body.max_length = this.config.textGenerationMaxLength;
             if (grammar) body.grammar = grammar;
+
             const headers: HeadersInit = {};
             if (authorization) headers.authorization = "Basic " + authorization;
 

@@ -72,12 +72,22 @@ namespace AI
         public async getPlot(
             input: string,
             plot: Data.Plot,
-            world: Data.World): Promise<{ plot: string; unrevealed: string; scenery: string; }>
+            world: Data.World): Promise<{ plot: string; internal: string; scenery: string; }>
         {
             let prompt: string = await this.getPlotTemplate(input, plot, world);
-            const result = await textAPI.generateText(prompt, this.getPlotSchema);
+
+            const messages: Message[] = [
+                { role: "system", content: this.sanitizePrompt(prompt) },
+                ...plot.map(x => ({
+                    role: "assistant",
+                    content: "Narrative:\n" + x.text + (x.internal ? "\n\nTHOUGHTS & EVENTS:\n" + x.internal : "")
+                }) as Message),
+                { role: "user", content: input }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.getPlotSchema);
             const obj = this.parseJSON(result);
-            return { plot: obj.plot.trim(), unrevealed: obj.unseen.trim(), scenery: obj.imagery.trim() };
+            return { plot: obj.plot.trim(), internal: obj.internal.trim(), scenery: obj.imagery.trim() };
         }
 
         public async getImage(description: string): Promise<string>
@@ -111,14 +121,14 @@ namespace AI
             return obj as any;
         }
 
-        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
+        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string, internal: string, scenery: string; }>
         {
             let prompt: string = await this.writePrologueTemplate(input, world);
 
             const result = await textAPI.generateText(prompt, this.getPlotSchema);
             const obj = this.parseJSON(result);
 
-            return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
+            return { plot: obj.plot, internal: obj.internal, scenery: obj.imagery };
         }
 
         private parseJSON(input: string): any
