@@ -21,7 +21,7 @@ You may include npcs described in the 'npc' blocks.
 Strictly adhere to the following length constraints and use exactly these properties:
     - plot: Prologue (3 to 5 paragraphs, overall 200 to 400 words). Refer to the player as 'you'. Include thoughts and physical sensations of the player.
     - unseen: Thoughts and reasoning of non player characters and events happening unknown to the player (100 to 200 words). Avoid elaborate or verbose language.
-    - imagery: (75 tokens) Optimized, comma-separated text-to-image prompt of one key visual of the storyline. Avoid filler words.
+    - imagery: (150 tokens) Optimized, comma-separated text-to-image prompt of one key visual of the storyline. Avoid filler words. Describe the key character or item of the scene in detail. Describe the background shortly. Avoid filler words. 
 
 <scenario>
 {{= world.scenario }}.

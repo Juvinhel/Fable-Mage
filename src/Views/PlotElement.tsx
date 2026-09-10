@@ -122,7 +122,8 @@ namespace Views
                 plotPointElement.image = plotPoint.image;
                 this.plotList.appendChild(plotPointElement);
             }
-            this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+            if (plotPointElement)
+                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
         }
     }
 
