@@ -51,13 +51,9 @@ namespace Views
             try
             {
                 const input = this.userInput.value.trim();
-
-                const previous_plot: string[] = [];
-                for (const plotPoint of this.plotList.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
-                    previous_plot.push(plotPoint.text);
-
+                const plot = this.exportPlot(false);
                 const world = this.storyElement.exportStory();
-                const result = await AI.Client.getPlot(input, previous_plot, world);
+                const result = await AI.Client.getPlot(input, plot, world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -86,11 +82,8 @@ namespace Views
         {
             try
             {
-                const world = this.storyElement.exportStory();
-                const scenery = await AI.Client.describeScenery(prompt, world);
-                const image = await AI.Client.getImage(scenery.prompt);
+                const image = await AI.Client.getImage(prompt);
                 plotPointElement.image = image;
-                plotPointElement.imageTitle = scenery.title;
             }
             catch (error)
             {
@@ -109,7 +102,6 @@ namespace Views
                 if (plotPointElement.unrevealed) plotPoint.unrevealed = plotPointElement.unrevealed;
                 if (plotPointElement.scenery) plotPoint.scenery = plotPointElement.scenery;
                 if (includeImagesInPlot && plotPointElement.image) plotPoint.image = plotPointElement.image;
-                if (includeImagesInPlot && plotPointElement.imageTitle) plotPoint["image-title"] = plotPointElement.imageTitle;
                 plot.push(plotPoint);
             }
 
@@ -119,17 +111,18 @@ namespace Views
         public importPlot(plot: Data.Plot)
         {
             this.plotList.clearChildren();
+            let plotPointElement: PlotPointElement;
             for (const plotPoint of plot)
             {
-                const plotPointElement = new PlotPointElement();
+                plotPointElement = new PlotPointElement();
                 plotPointElement.input = plotPoint.input;
                 plotPointElement.text = plotPoint.text;
                 plotPointElement.unrevealed = plotPoint.unrevealed;
                 plotPointElement.scenery = plotPoint.scenery;
                 plotPointElement.image = plotPoint.image;
-                plotPointElement.imageTitle = plotPoint["image-title"];
                 this.plotList.appendChild(plotPointElement);
             }
+            this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
         }
     }
 

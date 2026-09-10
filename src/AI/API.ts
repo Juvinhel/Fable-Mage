@@ -3,35 +3,37 @@
 
 namespace AI
 {
-    export const API = new class
-    {
-        public get TextAPI()
-        {
-            switch (App.config.TextAPI.name)
-            {
-                case "KoboldCPP": return new AI.KoboldCPP.API(App.config.TextAPI);
-            }
-        }
+    export let textAPI: TextAPI;
+    export let imageAPI: ImageAPI;
 
-        public get ImageAPI()
+    export function createTextAPI(config: any): TextAPI
+    {
+        switch (config.name)
         {
-            switch (App.config.ImageAPI.name)
-            {
-                case "KoboldCPP": return new AI.KoboldCPP.API(App.config.ImageAPI);
-                case "Diffusion": return new AI.Diffusion.API(App.config.ImageAPI);
-            }
+            case "KoboldCPP": return new AI.KoboldCPP.API(config);
         }
-    }();
+    }
+
+    export function createImageAPI(config: any): ImageAPI
+    {
+        switch (config.name)
+        {
+            case "KoboldCPP": return new AI.KoboldCPP.API(config);
+            case "Diffusion": return new AI.Diffusion.API(config);
+        }
+    }
 
     export interface TextAPI
     {
         generateText(prompt: string, schema?: any): Promise<string>;
         generateInteractions(messages: Message[], schema?: any): Promise<string>;
+        check(): Promise<void>;
     }
 
     export interface ImageAPI
     {
         generateImage(prompt: string): Promise<string>;
+        check(): Promise<void>;
     }
 
     export type Message = { content: string, role: "system" | "user" | "assistant"; };

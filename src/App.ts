@@ -12,6 +12,8 @@ class App
 
         const story = localStorage.get<Data.Story>("current-story") ?? await (await fetch("templates/sample-story.json")).json();
         this.storyElement.importStory(story);
+
+        this.storyElement.init();
     }
 
     private static visibilityChange = function (this: typeof App, event: Event)

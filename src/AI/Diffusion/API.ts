@@ -54,5 +54,19 @@ namespace AI.Diffusion
                 reader.onerror = reject;
             });
         }
+
+        public async check(): Promise<void>
+        {
+            const url = this.config.url + "/txt2img/livez";
+
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
+            const headers: HeadersInit = {};
+            if (authorization) headers.authorization = "Basic " + authorization;
+
+            const response = await fetch(url, { method: "GET", headers });
+            if (!response.ok) throw new Error("Check failed!");
+            const output = await response.text();
+            if (!!output?.trim()) throw new Error("Unexpected output!");
+        }
     };
 }

@@ -20,7 +20,7 @@ namespace Views
             return <>
                 <div>
                     { this.turnElement = <span class="turn" /> as HTMLSpanElement }
-                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ title: this.imageTitle, pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
+                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div>
@@ -51,9 +51,6 @@ namespace Views
 
         public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
         public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
-
-        public get imageTitle(): string { return this.imageElement.title; }
-        public set imageTitle(value: string) { this.imageElement.title = value; }
 
         private async onEdit()
         {

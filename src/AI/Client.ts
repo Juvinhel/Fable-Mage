@@ -4,58 +4,62 @@ namespace AI
     {
         public async initialize()
         {
-            // load templates 
-            const compiler = new Durian.Template.Compiler();
-            async function getTemplate(name: string): Promise<(...params: any[]) => Promise<string>>
+            this.getPlotTemplate = await this.getTemplate("plot");
+            this.writePrologueTemplate = await this.getTemplate("write-prologue");
+            this.getImageTemplate = await this.getTemplate("image");
+            this.createCharacterTemplate = await this.getTemplate("create-character");
+            this.createWorldTemplate = await this.getTemplate("create-world");
+
+            this.getPlotSchema = await this.getSchema("plot");
+            this.createCharacterSchema = await this.getSchema("create-character");
+            this.createWorldSchema = await this.getSchema("create-world");
+        }
+
+        private compiler = new Durian.Template.Compiler();
+        private async getTemplate(name: string): Promise<(...params: any[]) => Promise<string>>
+        {
+            let text: string;
+            let template: Durian.Template.Template;
+
+            try
             {
-                let text: string;
-                let template: Durian.Template.Template;
-
-                try
-                {
-                    text = await (await fetch("templates/" + name + ".txt")).text();
-                    template = compiler.build(text);
-                    const f = compiler.compile(template) as AsyncFunction;
-                    return async (...params: any[]) => (await f(...params)).trim();
-                }
-                catch (error)
-                {
-                    console.error("Loading Template failed:", name, error, text, template);
-                }
+                text = await (await fetch("templates/" + name + ".txt")).text();
+                template = this.compiler.build(text);
+                const f = this.compiler.compile(template) as AsyncFunction;
+                return async (...params: any[]) => this.sanitizePrompt(await f(...params));
             }
-
-            this.getPlotTemplate = await getTemplate("plot");
-            this.describeSceneryTemplate = await getTemplate("describe-scenery");
-            this.writeIntroductionTemplate = await getTemplate("write-introduction");
-            this.getImageTemplate = await getTemplate("image");
-            this.createCharacterTemplate = await getTemplate("create-character");
-            this.createWorldTemplate = await getTemplate("create-world");
-
-            async function getSchema(name: string): Promise<any>
+            catch (error)
             {
-                try
-                {
-                    return await (await fetch("templates/" + name + ".json")).json();
-                }
-                catch (error)
-                {
-                    console.error("Loading Schema failed:", name, error);
-                }
+                console.error("Loading Template failed:", name, error, text, template);
             }
+        }
 
-            this.getPlotSchema = await getSchema("plot");
-            this.describeScenerySchema = await getSchema("describe-scenery");
-            this.createCharacterSchema = await getSchema("create-character");
-            this.createWorldSchema = await getSchema("create-world");
+        private sanitizePrompt(input: string): string
+        {
+            input = input.trim();
+            input = input.replaceAll(/\n[^\S\r\n]+/, "\n");
+            input = input.replaceAll(/\n{2,}<\//, "\n</");
+            while (input.includes("\n\n\n"))
+                input = input.replace("\n\n\n", "\n\n");
+            return input;
+        }
+
+        private async getSchema(name: string): Promise<any>
+        {
+            try
+            {
+                return await (await fetch("templates/" + name + ".json")).json();
+            }
+            catch (error)
+            {
+                console.error("Loading Schema failed:", name, error);
+            }
         }
 
         private getPlotTemplate: (...params: any[]) => Promise<string>;
         private getPlotSchema: any;
 
-        private describeSceneryTemplate: (...params: any[]) => Promise<string>;
-        private describeScenerySchema: any;
-
-        private writeIntroductionTemplate: (...params: any[]) => Promise<string>;
+        private writePrologueTemplate: (...params: any[]) => Promise<string>;
 
         private getImageTemplate: (...params: any[]) => Promise<string>;
 
@@ -67,37 +71,19 @@ namespace AI
 
         public async getPlot(
             input: string,
-            previous_plot: string[],
+            plot: Data.Plot,
             world: Data.World): Promise<{ plot: string; unrevealed: string; scenery: string; }>
         {
-            let prompt: string = await this.getPlotTemplate(input, previous_plot, world);
-            const messages: Message[] = [
-                { role: "system", content: prompt },
-                ...previous_plot.map(x => ({ role: "assistant", content: x } as Message)),
-                { role: "user", content: input }];
-
-            const result = await API.TextAPI.generateInteractions(messages, this.getPlotSchema);
-
-            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
-            return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
-        }
-
-        public async describeScenery(scenery: string, world: Data.World): Promise<{ prompt: string, title: string; }>
-        {
-            const prompt = await this.describeSceneryTemplate(scenery, world);
-
-            const result = await API.TextAPI.generateText(prompt, this.describeScenerySchema);
-
-            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
-            return obj;
+            let prompt: string = await this.getPlotTemplate(input, plot, world);
+            const result = await textAPI.generateText(prompt, this.getPlotSchema);
+            const obj = this.parseJSON(result);
+            return { plot: obj.plot.trim(), unrevealed: obj.unseen.trim(), scenery: obj.imagery.trim() };
         }
 
         public async getImage(description: string): Promise<string>
         {
             const prompt = await this.getImageTemplate(description);
-
-            const result = await API.ImageAPI.generateImage(prompt);
-
+            const result = await imageAPI.generateImage(prompt);
             return result;
         }
 
@@ -106,37 +92,53 @@ namespace AI
             world: Data.World): Promise<Data.CharacterCard>
         {
             const prompt = await this.createCharacterTemplate(input, world);
-
-            const result = await API.TextAPI.generateText(prompt, this.createCharacterSchema);
-
-            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
-            return obj;
+            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
+            const obj = this.parseJSON(result);
+            return obj as Data.CharacterCard;
         }
 
         public async createWorld(input: string): Promise<{
             "title": string,
             "scenario": string,
             "author-style": string,
-            "introduction": string,
             "focus": string,
             "protagonist": string;
         }>
         {
             const prompt = await this.createWorldTemplate(input);
-            const result = await API.TextAPI.generateText(prompt, this.createWorldSchema);
+            const result = await textAPI.generateText(prompt, this.createWorldSchema);
+            const obj = this.parseJSON(result);
+            return obj as any;
+        }
 
-            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
+        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
+        {
+            let prompt: string = await this.writePrologueTemplate(input, world);
+
+            const result = await textAPI.generateText(prompt, this.getPlotSchema);
+            const obj = this.parseJSON(result);
+
+            return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
+        }
+
+        private parseJSON(input: string): any
+        {
+            const obj = JSON.parse(input.replaceAll("```json", "").replaceAll("```", ""));
+            this.cleanUpJSON(obj);
             return obj;
         }
 
-        public async writeIntroduction(input: string, world: Data.World): Promise<{ plot: string, unrevealed: string, scenery: string; }>
+        private cleanUpJSON(obj: any)
         {
-            let prompt: string = await this.writeIntroductionTemplate(input, world);
-
-            const result = await API.TextAPI.generateText(prompt, this.getPlotSchema);
-
-            const obj = JSON.parse(result.replaceAll("```json", "").replaceAll("```", ""));
-            return { plot: obj.plot, unrevealed: obj.unseen, scenery: obj.imagery };
+            // remove whitespace on string properties
+            for (const [key, value] of Object.entries(obj))
+            {
+                if (!value) continue;
+                if (typeof value === "string")
+                    obj[key] = value.trim();
+                if (typeof value === "object")
+                    this.cleanUpJSON(value);
+            }
         }
     }();
 }

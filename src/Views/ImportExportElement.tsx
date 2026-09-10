@@ -54,7 +54,7 @@ namespace Views
 
         private async onImportJSON()
         {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "text/json" });
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
             if (result.length > 0)
             {
                 const file = result.item(0);

@@ -9,6 +9,7 @@ namespace Views
             this.append(this.build());
         }
 
+        private tabControl: HTMLTabControl;
         private plotElement: PlotElement;
         private worldElement: WorldElement;
         private importExportElement: ImportExportElement;
@@ -16,12 +17,28 @@ namespace Views
 
         private build()
         {
-            return <tab-control>
+            return this.tabControl = <tab-control>
                 { this.plotElement = new PlotElement() }
                 { this.worldElement = new WorldElement() }
                 { this.importExportElement = new ImportExportElement() }
                 { this.settingsElement = new SettingsElement() }
-            </tab-control>;
+            </tab-control> as HTMLTabControl;
+        }
+
+        public init()
+        {
+            this.settingsElement.save();
+        }
+
+        public selectTab(tab: "plot" | "world" | "import-export" | "settings")
+        {
+            switch (tab)
+            {
+                case "plot": this.tabControl.select(this.plotElement); break;
+                case "world": this.tabControl.select(this.worldElement); break;
+                case "import-export": this.tabControl.select(this.importExportElement); break;
+                case "settings": this.tabControl.select(this.settingsElement); break;
+            }
         }
 
         public exportStory(includePlot = false, includeImagesInPlot = false): Data.Story

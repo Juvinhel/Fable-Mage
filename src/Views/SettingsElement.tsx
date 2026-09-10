@@ -10,6 +10,7 @@ namespace Views
             this.append(this.build());
         }
 
+        private storyElement: StoryElement;
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
 
@@ -41,6 +42,7 @@ namespace Views
 
         private connectedCallback()
         {
+            this.storyElement = this.closest("my-story");
             this.load();
         }
 
@@ -160,20 +162,52 @@ namespace Views
             return ret;
         }
 
-        private onSave()
+        private async onSave()
+        {
+            await this.save();
+        }
+
+        public async save()
         {
             const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
-            textAPIConfig.name = this.textAPISelect.value;
-            App.config.TextAPI = textAPIConfig;
+            let textAPI: AI.TextAPI;
+            try
+            {
+                textAPIConfig.name = this.textAPISelect.value;
+                textAPI = AI.createTextAPI(textAPIConfig);
+                await textAPI.check();
+            }
+            catch (error)
+            {
+                this.storyElement.selectTab("settings");
+                UI.Dialog.error({ title: "TextAPI config invalid!", text: "Something went wrong with your text api config!" });
+                return;
+            }
 
             const imageAPIConfig = this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement);
-            imageAPIConfig.name = this.imageAPISelect.value,
-                App.config.ImageAPI = imageAPIConfig;
+            let imageAPI: AI.ImageAPI;
+            try
+            {
+                imageAPIConfig.name = this.imageAPISelect.value;
+                imageAPI = AI.createImageAPI(imageAPIConfig);
+                await imageAPI.check();
 
+            }
+            catch (error)
+            {
+                this.storyElement.selectTab("settings");
+                UI.Dialog.error({ title: "ImageAPI config invalid!", text: "Something went wrong with your image api config!" });
+                return;
+            }
+
+            App.config.TextAPI = textAPIConfig;
+            App.config.ImageAPI = imageAPIConfig;
             Data.saveConfig(App.config);
 
-            const tabControl = this.closest("tab-control") as HTMLTabControl;
-            tabControl.selectedIndex = 0;
+            AI.textAPI = textAPI;
+            AI.imageAPI = imageAPI;
+
+            this.storyElement.selectTab("plot");
         }
 
         private onCancel()

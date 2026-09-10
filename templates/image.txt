@@ -1,3 +1,2 @@
 {{(description)}}
-Medium close-up full-body image of {{= description }}
-The character has a dynamic pose and is shown with exquisite beauty.
+medium close-up, full-body image, {{= description }}, dynamic pose, exquisite beauty

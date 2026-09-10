@@ -59,7 +59,7 @@ namespace Views
 
                 <div>
                     <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
-                    <button class="write-introduction" title="Write an introduction to your world using AI" onclick={ () => this.onWriteIntroductionUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write introduction</span></button>
+                    <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
                     <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                     <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                 </div>
@@ -129,13 +129,9 @@ namespace Views
                 world.player = player;
 
                 world.npcs = [];
-                //const secondaryCharacter = await AI.Client.createCharacter("Describe a secondary character either already in the world or create one (if there is no one).", world);
-                //world.npcs.push(secondaryCharacter);
 
                 this.storyElement.importWorld(world);
-
-                const tabControl = this.closest("tab-control") as HTMLTabControl;
-                tabControl.selectedIndex = 1;
+                this.storyElement.selectTab("world");
             }
             catch (error)
             {
@@ -145,27 +141,24 @@ namespace Views
             this.storyElement.stopThinking();
         }
 
-        private async onWriteIntroductionUsingAI()
+        private async onWritePrologueUsingAI()
         {
             this.storyElement.beginThinking();
 
             try
             {
-                const result = await Dialogs.TextEdit("Introduction", "", "Write where the story should start off.");
+                const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
                 if (!result) return;
 
                 const world = this.exportWorld();
 
                 const story = world as Data.Story;
-                const introduction = await AI.Client.writeIntroduction(result, story);
-                const scenery = await AI.Client.describeScenery(introduction.plot, world);
-                const image = await AI.Client.getImage(scenery.prompt);
-                const plot: Data.Plot = [{ input: "Write an introduction.", text: introduction.plot, unrevealed: introduction.unrevealed, scenery: introduction.scenery, image: image, "image-title": scenery.title }];
+                const prologue = await AI.Client.writePrologue(result, story);
+                const image = await AI.Client.getImage(prologue.scenery);
+                const plot: Data.Plot = [{ input: "Write a prologue.", text: prologue.plot, unrevealed: prologue.unrevealed, scenery: prologue.scenery, image }];
 
                 this.storyElement.importPlot(plot);
-
-                const tabControl = this.closest("tab-control") as HTMLTabControl;
-                tabControl.selectedIndex = 0;
+                this.storyElement.selectTab("plot");
             }
             catch (error)
             {
