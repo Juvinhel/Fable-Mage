@@ -57,6 +57,8 @@ namespace Views
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
+                plotPointElement.location = result.location;
+                plotPointElement.time = result.time;
                 plotPointElement.text = result.plot;
                 plotPointElement.internal = result.internal;
                 plotPointElement.scenery = result.scenery;
@@ -64,6 +66,7 @@ namespace Views
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                     button.disabled = true;
+                this.storyElement.selectTab("Plot");
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
@@ -96,6 +99,8 @@ namespace Views
                 const prologue = await AI.Client.writePrologue(result, story);
 
                 const plotPointElement = new PlotPointElement();
+                plotPointElement.location = prologue.location;
+                plotPointElement.time = prologue.time;
                 plotPointElement.text = prologue.plot;
                 plotPointElement.internal = prologue.internal;
                 plotPointElement.scenery = prologue.scenery;
@@ -103,6 +108,7 @@ namespace Views
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                     button.disabled = true;
+                this.storyElement.selectTab("Plot");
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([

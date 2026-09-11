@@ -30,15 +30,9 @@ namespace Views
             this.settingsElement.save();
         }
 
-        public selectTab(tab: "plot" | "world" | "import-export" | "settings")
+        public selectTab(tab: "Plot" | "World" | "Import / Export" | "Settings")
         {
-            switch (tab)
-            {
-                case "plot": this.tabControl.select(this.plotElement); break;
-                case "world": this.tabControl.select(this.worldElement); break;
-                case "import-export": this.tabControl.select(this.importExportElement); break;
-                case "settings": this.tabControl.select(this.settingsElement); break;
-            }
+            this.tabControl.select(tab);
         }
 
         public exportStory(includePlot = false, includeImagesInPlot = false): Data.Story

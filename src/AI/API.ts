@@ -11,6 +11,7 @@ namespace AI
         switch (config.name)
         {
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
+            case "Gemini": return new AI.Gemini.API(config);
         }
     }
 

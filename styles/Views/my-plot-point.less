@@ -4,16 +4,36 @@ my-plot-point
     grid-template-rows: 1fr max-content;
     grid-template-columns: 1fr;
     height: max-content;
-    padding: 0.25em;
+    padding: 1em;
     gap: 0.25em;
     border-radius: 0.25em;
     background: var(--dark-background-color);
     animation: show 400ms ease-in forwards;
     opacity: 0;
 
-    > div:first-child
+    > .location-time
     {
-        padding: 0.5em;
+        display: grid;
+        grid-template-rows: max-content;
+        grid-template-columns: 1fr 1fr;
+
+        > .location
+        {
+            display: block;
+            justify-self: start;
+            color: darkgray;
+        }
+
+        > .time
+        {
+            display: block;
+            justify-self: end;
+            color: darkgray;
+        }
+    }
+
+    > .plot-text
+    {
         white-space: pre-wrap;
 
         > .turn
@@ -45,7 +65,7 @@ my-plot-point
         }
     }
 
-    > div:nth-child(2)
+    > .actions
     {
         display: grid;
         grid-template-rows: 1fr;
@@ -55,7 +75,7 @@ my-plot-point
         gap: 0.25em;
     }
 
-    > div:last-child
+    > .choices-list
     {
         display: none;
         grid-template-columns: 1fr;
@@ -73,16 +93,18 @@ my-plot-point
             {
                 grid-column: 2;
                 align-self: center;
-                aspect-ratio: 1;
-                width: max-content;
-                max-width: 2em;
-                height: 100%;
-                max-height: 2em;
+                width: 2em;
+                height: 2em;
+            }
+
+            > span
+            {
+                align-self: center;
             }
         }
     }
 
-    &:last-child > div:last-child
+    &:last-child > .choices-list
     {
         display: grid;
     }

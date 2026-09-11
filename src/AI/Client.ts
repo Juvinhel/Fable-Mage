@@ -77,7 +77,7 @@ namespace AI
         public async getPlot(
             input: string,
             plot: Data.Plot,
-            world: Data.World): Promise<{ plot: string; internal: string; scenery: string; }>
+            world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; scenery: string; }>
         {
             let prompt: string = await this.getPlotTemplate(input, plot, world);
 
@@ -85,14 +85,24 @@ namespace AI
                 { role: "system", content: this.sanitizePrompt(prompt) },
                 ...plot.map(x => ({
                     role: "assistant",
-                    content: "Narrative:\n" + x.text + (x.internal ? "\n\nTHOUGHTS & EVENTS:\n" + x.internal : "")
+                    content: "Location: " + x.location + "\n" + "Time: " + x.time + "\nNarrative:\n" + x.text + (x.internal ? "\n\nTHOUGHTS & EVENTS:\n" + x.internal : "")
                 }) as Message),
                 { role: "user", content: input }
             ];
 
             const result = await textAPI.generateInteractions(messages, this.getPlotSchema);
             const obj = this.parseJSON(result);
-            return { plot: obj.plot, internal: obj.internal, scenery: obj.imagery };
+            return obj;
+        }
+
+        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; scenery: string; }>
+        {
+            let prompt: string = await this.writePrologueTemplate(input, world);
+
+            const result = await textAPI.generateText(prompt, this.getPlotSchema);
+            const obj = this.parseJSON(result);
+
+            return obj;
         }
 
         public async offerChoices(
@@ -105,7 +115,7 @@ namespace AI
                 { role: "system", content: this.sanitizePrompt(prompt) },
                 ...plot.slice(-3).map(x => ({
                     role: "assistant",
-                    content: "Narrative:\n" + x.text
+                    content: "Location: " + x.location + "\nTime: " + x.time + "\nNarrative:\n" + x.text
                 }) as Message)
             ];
 
@@ -144,16 +154,6 @@ namespace AI
             const result = await textAPI.generateText(prompt, this.createWorldSchema);
             const obj = this.parseJSON(result);
             return obj as any;
-        }
-
-        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string, internal: string, scenery: string; }>
-        {
-            let prompt: string = await this.writePrologueTemplate(input, world);
-
-            const result = await textAPI.generateText(prompt, this.getPlotSchema);
-            const obj = this.parseJSON(result);
-
-            return { plot: obj.plot, internal: obj.internal, scenery: obj.imagery };
         }
 
         private parseJSON(input: string): any

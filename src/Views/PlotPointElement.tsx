@@ -12,6 +12,8 @@ namespace Views
         private storyElement: StoryElement;
         private plotElement: PlotElement;
 
+        private locationElement: HTMLSpanElement;
+        private timeElement: HTMLSpanElement;
         private turnElement: HTMLSpanElement;
         private textElement: HTMLSpanElement;
         private imageElement: HTMLImageElement;
@@ -20,12 +22,16 @@ namespace Views
         private build()
         {
             return <>
-                <div>
+                <div class="location-time">
+                    { this.locationElement = <span class="location" /> as HTMLSpanElement }
+                    { this.timeElement = <span class="time" /> as HTMLSpanElement }
+                </div>
+                <div class="plot-text">
                     { this.turnElement = <span class="turn" /> as HTMLSpanElement }
                     { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
-                <div>
+                <div class="actions">
                     <button class="icon-button return-button" title="Return here" onclick={ () => this.onReturnHere() }><color-icon src="img/icons/return.svg" /></button>
                     <button class="icon-button edit-image-button" title="Edit image" onclick={ () => this.onEditImage() }><color-icon src="img/icons/image.svg" /></button>
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
@@ -49,6 +55,12 @@ namespace Views
 
         public get text(): string { return this.textElement.textContent; }
         public set text(value: string) { this.textElement.textContent = value; }
+
+        public get location(): string { return this.locationElement.textContent; }
+        public set location(value: string) { this.locationElement.textContent = value; }
+
+        public get time(): string { return this.timeElement.textContent; }
+        public set time(value: string) { this.timeElement.textContent = value; }
 
         public internal: string;
 
@@ -95,7 +107,7 @@ namespace Views
                 else plot.push(plotPointElement.exportPlotPoint());
             }
 
-            this.plotElement.userInput.value = input;
+            this.plotElement.userInput.value = input ?? "";
         }
 
         private async onEdit()
@@ -140,18 +152,24 @@ namespace Views
 
         public exportPlotPoint(includeImagesInPlot = false): Data.PlotPoint
         {
-            const plotPoint: Data.PlotPoint = { text: this.text };
+            const plotPoint: Data.PlotPoint = {
+                location: this.location,
+                time: this.time,
+                text: this.text,
+                internal: this.internal,
+                scenery: this.scenery
+            };
             if (this.input) plotPoint.input = this.input;
-            if (this.internal) plotPoint.internal = this.internal;
-            if (this.scenery) plotPoint.scenery = this.scenery;
             if (includeImagesInPlot && this.image) plotPoint.image = this.image;
-            if (this.choices) plotPoint.choices = this.choices;
+            if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;
             return plotPoint;
         }
 
         public importPlotPoint(plotPoint: Data.PlotPoint)
         {
             this.input = plotPoint.input;
+            this.location = plotPoint.location;
+            this.time = plotPoint.time;
             this.text = plotPoint.text;
             this.internal = plotPoint.internal;
             this.scenery = plotPoint.scenery;

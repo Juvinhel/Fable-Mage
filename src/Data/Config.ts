@@ -3,7 +3,7 @@ namespace Data
     export interface Config
     {
         language: string;
-        textAPI: KoboldCPPEndpoint;
+        textAPI: KoboldCPPEndpoint | GeminiEndpoint;
         imageAPI: KoboldCPPEndpoint | CustomImageEndpoint;
     }
 
@@ -15,6 +15,12 @@ namespace Data
         password?: string;
         textGenerationMaxLength?: number,
         temperature?: number;
+    }
+
+    export interface GeminiEndpoint
+    {
+        name: "Gemini",
+        api_key: string;
     }
 
     export interface CustomImageEndpoint

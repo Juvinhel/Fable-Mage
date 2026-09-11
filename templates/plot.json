@@ -3,11 +3,21 @@
     "type": "object",
     "required": [
         "plot",
-        "unseen",
-        "internal"
+        "time",
+        "location",
+        "internal",
+        "scenery"
     ],
     "properties": {
         "plot": {
+            "type": "string",
+            "description": ""
+        },
+        "time": {
+            "type": "string",
+            "description": ""
+        },
+        "location": {
             "type": "string",
             "description": ""
         },
@@ -15,7 +25,7 @@
             "type": "string",
             "description": ""
         },
-        "imagery": {
+        "scenery": {
             "type": "string",
             "description": ""
         }

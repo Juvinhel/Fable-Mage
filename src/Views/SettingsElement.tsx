@@ -30,6 +30,7 @@ namespace Views
                         <label>TextAPI:</label>
                         { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
                             <option value="KoboldCPP">KoboldCPP</option>
+                            <option value="Gemini">Gemini</option>
                         </select> as HTMLSelectElement }
                     </div>
                     <div>
@@ -75,7 +76,10 @@ namespace Views
             switch (apiName)
             {
                 case "KoboldCPP":
-                    this.textAPISelect.after(this.koboldCPPTextAPI(App.config.textAPI));
+                    this.textAPISelect.after(this.koboldCPPTextAPI(App.config.textAPI as any));
+                    break;
+                case "Gemini":
+                    this.textAPISelect.after(this.geminiTextAPI(App.config.textAPI as any));
                     break;
             }
         }
@@ -118,6 +122,16 @@ namespace Views
                 <div>
                     <label>Max Content Size:</label>
                     <input name="textGenerationMaxLength" type="number" min="0" step="1" value={ config.textGenerationMaxLength ?? "" } />
+                </div>
+            </div>;
+        }
+
+        private geminiTextAPI(config: Partial<Data.GeminiEndpoint>)
+        {
+            return <div class="gemini-api">
+                <div>
+                    <label>API Key:</label>
+                    <input name="api_key" type="text" value={ config.api_key ?? "" } />
                 </div>
             </div>;
         }
@@ -220,11 +234,11 @@ namespace Views
                 AI.textAPI = textAPI;
                 AI.imageAPI = imageAPI;
 
-                this.storyElement.selectTab("plot");
+                this.storyElement.selectTab("Plot");
             }
             catch (error)
             {
-                this.storyElement.selectTab("settings");
+                this.storyElement.selectTab("Settings");
                 UI.Dialog.error(error);
             }
 

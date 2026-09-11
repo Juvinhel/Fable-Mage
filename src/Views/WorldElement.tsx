@@ -120,7 +120,6 @@ namespace Views
 
             try
             {
-
                 const world = this.exportWorld();
                 const character = await AI.Client.createCharacter(result, world);
 
@@ -139,11 +138,11 @@ namespace Views
             const result = await Dialogs.TextEdit("World Description", "", "Describe your scenario including lore and background story.");
             if (!result) return;
 
+            await this.onDeleteWorld();
             this.storyElement.beginThinking();
 
             try
             {
-                await this.onDeleteWorld();
                 const world = {} as Data.World;
                 const output = await AI.Client.createWorld(result);
                 world.title = output.title;
@@ -157,7 +156,7 @@ namespace Views
                 world.npcs = [];
 
                 this.storyElement.importWorld(world);
-                this.storyElement.selectTab("world");
+                this.storyElement.selectTab("World");
             }
             catch (error)
             {
