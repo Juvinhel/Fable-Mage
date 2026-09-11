@@ -5,6 +5,7 @@
         "name",
         "appearance",
         "personality",
+        "traits",
         "background"
     ],
     "properties": {
@@ -17,6 +18,10 @@
             "description": ""
         },
         "personality": {
+            "type": "string",
+            "description": ""
+        },
+        "traits": {
             "type": "string",
             "description": ""
         },

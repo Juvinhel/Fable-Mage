@@ -4,6 +4,7 @@ Create a detailed and immersive scenario in valid JSON format.
 Expand the ideas in the user_input block giving them additional depth but don't invent new concepts.
 Include instructions what the writer should focus on.
 Do not write a narrative, this is only world building and no story.
+Write your responses in {{= App.config.language }}.
 
 Strictly adhere to these property definitions:
 - "title": Title of the narrative.

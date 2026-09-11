@@ -15,6 +15,7 @@ namespace Views
         private turnElement: HTMLSpanElement;
         private textElement: HTMLSpanElement;
         private imageElement: HTMLImageElement;
+        private choicesListElement: HTMLDivElement;
 
         private build()
         {
@@ -31,6 +32,7 @@ namespace Views
                     <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
                     <button class="icon-button delete-button" title="Delete plot point" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
+                { this.choicesListElement = <div class="choices-list"></div> as HTMLDivElement }
             </>;
         }
 
@@ -54,6 +56,29 @@ namespace Views
 
         public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
         public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
+
+        public get choices(): string[] { return [...this.choicesListElement.querySelectorAll("button")].map(x => x.textContent); }
+        public set choices(values: string[])
+        {
+            this.choicesListElement.clearChildren();
+            if (values)
+                for (const choice of values)
+                {
+                    const button = <button onclick={ (e: Event) => this.setChoice((e.currentTarget as HTMLButtonElement).textContent) }>
+                        <color-icon src="img/icons/send.svg" />
+                        <span>{ choice }</span>
+                    </button>;
+                    this.choicesListElement.append(button);
+                }
+        }
+
+        private async setChoice(choice: string)
+        {
+            if (this.plotElement.userInput.value == choice)
+                this.plotElement.submitButton.click();
+            else
+                this.plotElement.userInput.value = choice;
+        }
 
         private async onReturnHere()
         {
@@ -120,6 +145,7 @@ namespace Views
             if (this.internal) plotPoint.internal = this.internal;
             if (this.scenery) plotPoint.scenery = this.scenery;
             if (includeImagesInPlot && this.image) plotPoint.image = this.image;
+            if (this.choices) plotPoint.choices = this.choices;
             return plotPoint;
         }
 
@@ -130,6 +156,7 @@ namespace Views
             this.internal = plotPoint.internal;
             this.scenery = plotPoint.scenery;
             this.image = plotPoint.image;
+            this.choices = plotPoint.choices;
         }
     }
 

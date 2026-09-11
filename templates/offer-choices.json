@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "required": [
+        "first-choice",
+        "second-choice",
+        "third-choice"
+    ],
+    "properties": {
+        "first-choice": {
+            "type": "string",
+            "description": ""
+        },
+        "second-choice": {
+            "type": "string",
+            "description": ""
+        },
+        "third-choice": {
+            "type": "string",
+            "description": ""
+        }
+    }
+}

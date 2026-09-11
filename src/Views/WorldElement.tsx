@@ -43,8 +43,11 @@ namespace Views
                         <label>Focus:</label>
                         { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                     </div>
-                    <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 1) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
+                    <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 2) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
                         <label>Player:</label>
+                        <div class="functions">
+                            <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                        </div>
                         { this.playerCharacterCard = new CharacterCardElement() }
                     </div>
                     <div>
@@ -79,6 +82,30 @@ namespace Views
             titleHeading.textContent = this.titleInput.value.trim();
         }
 
+        private async onCreatePlayerUsingAI()
+        {
+
+            const result = await Dialogs.TextEdit("Character Description", "", "Describe your player character.");
+            if (!result) return;
+
+            this.storyElement.beginThinking();
+
+            try
+            {
+
+                const world = this.exportWorld();
+                const character = await AI.Client.createCharacter(result, world);
+
+                this.playerCharacterCard.importCharacter(character);
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+
+            this.storyElement.stopThinking();
+        }
+
         private async onAddNPC()
         {
             this.npcCardList.appendChild(new CharacterCardElement());
@@ -86,7 +113,7 @@ namespace Views
 
         private async onAddNPCUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", "");
+            const result = await Dialogs.TextEdit("Character Description", "", "Describe the NPC that should be added.");
             if (!result) return;
 
             this.storyElement.beginThinking();
@@ -142,34 +169,12 @@ namespace Views
 
         private async onWritePrologueUsingAI()
         {
-            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
-            if (!result) return;
-
-            this.storyElement.beginThinking();
-
-            try
-            {
-                const world = this.exportWorld();
-
-                const story = world as Data.Story;
-                const prologue = await AI.Client.writePrologue(result, story);
-                const image = await AI.Client.getImage(prologue.scenery);
-                const plot: Data.Plot = [{ text: prologue.plot, internal: prologue.internal, scenery: prologue.scenery, image }];
-
-                this.storyElement.importPlot(plot);
-                this.storyElement.selectTab("plot");
-            }
-            catch (error)
-            {
-                UI.Dialog.error(error);
-            }
-
-            this.storyElement.stopThinking();
+            this.storyElement.plotElement.onWritePrologueUsingAI();
         }
 
         private async onDeleteWorld()
         {
-            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", background: "" }, npcs: [], plot: [] });
+            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" }, npcs: [], plot: [] });
         }
 
         public exportWorld(): Data.World
@@ -179,12 +184,12 @@ namespace Views
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "focus": this.focusInput.value.trim().trimRight("."),
-                "player": this.playerCharacterCard.character,
+                "player": this.playerCharacterCard.exportCharacter(),
             };
 
             const npcs = [];
             for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
-                npcs.push(npcCard.character);
+                npcs.push(npcCard.exportCharacter());
             if (npcs.length > 0) story["npcs"] = npcs;
 
             return story;

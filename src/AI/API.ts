@@ -1,5 +1,5 @@
 /// <reference path="KoboldCPP/API.ts" />
-/// <reference path="Diffusion/API.ts" />
+/// <reference path="Custom/ImageAPI.ts" />
 
 namespace AI
 {
@@ -19,7 +19,7 @@ namespace AI
         switch (config.name)
         {
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
-            case "Diffusion": return new AI.Diffusion.API(config);
+            case "Custom Image API": return new AI.Custom.ImageAPI(config);
         }
     }
 

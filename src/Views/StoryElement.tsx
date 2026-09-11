@@ -10,7 +10,7 @@ namespace Views
         }
 
         private tabControl: HTMLTabControl;
-        private plotElement: PlotElement;
+        public plotElement: PlotElement;
         private worldElement: WorldElement;
         private importExportElement: ImportExportElement;
         private settingsElement: SettingsElement;
@@ -87,7 +87,7 @@ namespace Views
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
-            for (const button of this.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
                 button.disabled = true;
         }
 
@@ -95,7 +95,7 @@ namespace Views
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
-            for (const button of this.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
                 button.disabled = false;
         }
     }

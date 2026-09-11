@@ -11,6 +11,7 @@ namespace Views
         }
 
         private storyElement: StoryElement;
+        private languageComboSelect: HTMLComboSelect;
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
 
@@ -18,6 +19,13 @@ namespace Views
         {
             return <>
                 <div>
+                    <div>
+                        <label>Language:</label>
+                        { this.languageComboSelect = <combo-select placeholder="Language" allowSearch={ false } options={ [
+                            { title: "English", value: "English" },
+                            { title: "German", value: "German" }] }
+                            value="English" /> as HTMLComboSelect }
+                    </div>
                     <div>
                         <label>TextAPI:</label>
                         { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
@@ -28,7 +36,7 @@ namespace Views
                         <label>ImageAPI:</label>
                         { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                             <option value="KoboldCPP">KoboldCPP</option>
-                            <option value="Diffusion">Diffusion</option>
+                            <option value="Custom Image API">Custom Image API</option>
                         </select> as HTMLSelectElement }
                     </div>
                 </div>
@@ -48,12 +56,14 @@ namespace Views
 
         private load()
         {
+            this.languageComboSelect.value = App.config.language ?? "English";
+
             for (const option of this.textAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.TextAPI.name;
+                option.selected = option.value == App.config.textAPI.name;
             this.textAPIChange();
 
             for (const option of this.imageAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.ImageAPI.name;
+                option.selected = option.value == App.config.imageAPI.name;
             this.imageAPIChange();
         }
 
@@ -65,7 +75,7 @@ namespace Views
             switch (apiName)
             {
                 case "KoboldCPP":
-                    this.textAPISelect.after(this.koboldCPPTextAPI(App.config.TextAPI));
+                    this.textAPISelect.after(this.koboldCPPTextAPI(App.config.textAPI));
                     break;
             }
         }
@@ -78,10 +88,10 @@ namespace Views
             switch (apiName)
             {
                 case "KoboldCPP":
-                    this.imageAPISelect.after(this.koboldCPPImageAPI(App.config.ImageAPI as any));
+                    this.imageAPISelect.after(this.koboldCPPImageAPI(App.config.imageAPI as any));
                     break;
-                case "Diffusion":
-                    this.imageAPISelect.after(this.diffusionImageAPI(App.config.ImageAPI as any));
+                case "Custom Image API":
+                    this.imageAPISelect.after(this.customImageAPI(App.config.imageAPI as any));
                     break;
             }
         }
@@ -130,9 +140,9 @@ namespace Views
             </div>;
         }
 
-        private diffusionImageAPI(config: Partial<Data.DiffusionEndpoint>)
+        private customImageAPI(config: Partial<Data.CustomImageEndpoint>)
         {
-            return <div class="diffusion-api">
+            return <div class="custom-image-api">
                 <div>
                     <label>URL:</label>
                     <input name="url" type="text" value={ config.url ?? "" } />
@@ -173,45 +183,52 @@ namespace Views
 
         public async save()
         {
-            const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
-            let textAPI: AI.TextAPI;
+            this.storyElement.beginThinking();
             try
             {
-                textAPIConfig.name = this.textAPISelect.value;
-                textAPI = AI.createTextAPI(textAPIConfig);
-                await textAPI.check();
+                const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
+                let textAPI: AI.TextAPI;
+                try
+                {
+                    textAPIConfig.name = this.textAPISelect.value;
+                    textAPI = AI.createTextAPI(textAPIConfig);
+                    await textAPI.check();
+                }
+                catch (error)
+                {
+                    throw new Error("Something went wrong with your text api config!");
+                }
+
+                const imageAPIConfig = this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement);
+                let imageAPI: AI.ImageAPI;
+                try
+                {
+                    imageAPIConfig.name = this.imageAPISelect.value;
+                    imageAPI = AI.createImageAPI(imageAPIConfig);
+                    await imageAPI.check();
+                }
+                catch (error)
+                {
+                    throw new Error("Something went wrong with your image api config!");
+                }
+
+                App.config.language = this.languageComboSelect.value;
+                App.config.textAPI = textAPIConfig;
+                App.config.imageAPI = imageAPIConfig;
+                Data.saveConfig(App.config);
+
+                AI.textAPI = textAPI;
+                AI.imageAPI = imageAPI;
+
+                this.storyElement.selectTab("plot");
             }
             catch (error)
             {
                 this.storyElement.selectTab("settings");
-                UI.Dialog.error({ title: "TextAPI config invalid!", text: "Something went wrong with your text api config!" });
-                return;
+                UI.Dialog.error(error);
             }
 
-            const imageAPIConfig = this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement);
-            let imageAPI: AI.ImageAPI;
-            try
-            {
-                imageAPIConfig.name = this.imageAPISelect.value;
-                imageAPI = AI.createImageAPI(imageAPIConfig);
-                await imageAPI.check();
-
-            }
-            catch (error)
-            {
-                this.storyElement.selectTab("settings");
-                UI.Dialog.error({ title: "ImageAPI config invalid!", text: "Something went wrong with your image api config!" });
-                return;
-            }
-
-            App.config.TextAPI = textAPIConfig;
-            App.config.ImageAPI = imageAPIConfig;
-            Data.saveConfig(App.config);
-
-            AI.textAPI = textAPI;
-            AI.imageAPI = imageAPI;
-
-            this.storyElement.selectTab("plot");
+            this.storyElement.stopThinking();
         }
 
         private onCancel()

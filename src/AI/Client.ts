@@ -5,12 +5,14 @@ namespace AI
         public async initialize()
         {
             this.getPlotTemplate = await this.getTemplate("plot");
+            this.offerChoicesTemplate = await this.getTemplate("offer-choices");
             this.writePrologueTemplate = await this.getTemplate("write-prologue");
             this.getImageTemplate = await this.getTemplate("image");
             this.createCharacterTemplate = await this.getTemplate("create-character");
             this.createWorldTemplate = await this.getTemplate("create-world");
 
             this.getPlotSchema = await this.getSchema("plot");
+            this.offerChoicesSchema = await this.getSchema("offer-choices");
             this.createCharacterSchema = await this.getSchema("create-character");
             this.createWorldSchema = await this.getSchema("create-world");
         }
@@ -59,6 +61,9 @@ namespace AI
         private getPlotTemplate: (...params: any[]) => Promise<string>;
         private getPlotSchema: any;
 
+        private offerChoicesTemplate: (...params: any[]) => Promise<string>;
+        private offerChoicesSchema: any;
+
         private writePrologueTemplate: (...params: any[]) => Promise<string>;
 
         private getImageTemplate: (...params: any[]) => Promise<string>;
@@ -87,7 +92,27 @@ namespace AI
 
             const result = await textAPI.generateInteractions(messages, this.getPlotSchema);
             const obj = this.parseJSON(result);
-            return { plot: obj.plot.trim(), internal: obj.internal.trim(), scenery: obj.imagery.trim() };
+            return { plot: obj.plot, internal: obj.internal, scenery: obj.imagery };
+        }
+
+        public async offerChoices(
+            plot: Data.Plot,
+            world: Data.World): Promise<string[]>
+        {
+            let prompt: string = await this.offerChoicesTemplate(plot, world);
+
+            const messages: Message[] = [
+                { role: "system", content: this.sanitizePrompt(prompt) },
+                ...plot.slice(-3).map(x => ({
+                    role: "assistant",
+                    content: "Narrative:\n" + x.text
+                }) as Message)
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.offerChoicesSchema);
+            const obj = this.parseJSON(result);
+
+            return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
         }
 
         public async getImage(description: string): Promise<string>

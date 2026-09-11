@@ -9,5 +9,6 @@ namespace Data
         internal?: string;
         scenery?: string;
         image?: string;
+        choices?: string[];
     };
 }

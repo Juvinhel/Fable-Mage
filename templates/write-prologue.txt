@@ -17,6 +17,7 @@ Use the scenario described in the 'scenario' block and the player character desc
 Use the user input in the 'user_input' for the general direction where the story should start off.
 Focus on core aspects described in the 'focus' block.
 You may include npcs described in the 'npc' blocks.
+Write your responses in {{= App.config.language }}.
 
 Strictly adhere to the following property rules:
 ### plot

@@ -2,8 +2,9 @@ namespace Data
 {
     export interface Config
     {
-        TextAPI: KoboldCPPEndpoint;
-        ImageAPI: KoboldCPPEndpoint | DiffusionEndpoint;
+        language: string;
+        textAPI: KoboldCPPEndpoint;
+        imageAPI: KoboldCPPEndpoint | CustomImageEndpoint;
     }
 
     export interface KoboldCPPEndpoint
@@ -16,24 +17,25 @@ namespace Data
         temperature?: number;
     }
 
-    export interface DiffusionEndpoint
+    export interface CustomImageEndpoint
     {
-        name: "Diffusion",
+        name: "Custom Image API",
         url: string;
         username?: string;
         password?: string;
     }
 
     const defaultConfig: Config = {
-        TextAPI: {
+        language: "English",
+        textAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de",
             textGenerationMaxLength: 4096, //8192
             temperature: 0.7
         },
-        ImageAPI: {
-            name: "Diffusion",
-            url: "https://diffusion.coffinprincess.de"
+        imageAPI: {
+            name: "Custom Image API",
+            url: "https://diffusion.coffinprincess.de/txt2img/generate"
         }
     };
 

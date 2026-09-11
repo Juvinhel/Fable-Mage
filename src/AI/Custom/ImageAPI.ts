@@ -1,17 +1,17 @@
-namespace AI.Diffusion
+namespace AI.Custom
 {
-    export class API implements AI.ImageAPI
+    export class ImageAPI implements AI.ImageAPI
     {
-        constructor (config: Data.DiffusionEndpoint)
+        constructor (config: Data.CustomImageEndpoint)
         {
             this.config = config;
         }
 
-        private config: Data.DiffusionEndpoint;
+        private config: Data.CustomImageEndpoint;
 
         public async generateImage(prompt: string): Promise<string>
         {
-            const url = this.config.url + "/txt2img/generate";
+            const url = this.config.url;
             const p = prompt.trim();
 
             console.log("generateImage (prompt)", prompt);
@@ -57,16 +57,6 @@ namespace AI.Diffusion
 
         public async check(): Promise<void>
         {
-            const url = this.config.url + "/txt2img/livez";
-
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
-
-            const response = await fetch(url, { method: "GET", headers });
-            if (!response.ok) throw new Error("Check failed!");
-            const output = await response.text();
-            if (!!output?.trim()) throw new Error("Unexpected output!");
         }
     };
 }

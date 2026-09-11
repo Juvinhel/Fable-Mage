@@ -14,6 +14,7 @@ namespace Data
         name: string;
         appearance: string;
         personality: string;
+        traits: string;
         background: string;
         [key: string]: string;
     };

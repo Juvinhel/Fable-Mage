@@ -9,9 +9,9 @@ namespace Views
             this.append(this.build());
 
             if (character)
-                this.character = character;
+                this.importCharacter(character);
             else
-                this.character = { name: "", appearance: "", personality: "", background: "" };
+                this.importCharacter({ name: "", appearance: "", personality: "", traits: "", background: "" });
         }
 
         private propertyList: HTMLDivElement;
@@ -26,7 +26,7 @@ namespace Views
             </>;
         }
 
-        public get character(): Data.CharacterCard
+        public exportCharacter(): Data.CharacterCard
         {
             const ret: { [key: string]: string; } = {};
             for (const label of this.propertyList.querySelectorAll("label") as NodeListOf<HTMLLabelElement>)
@@ -39,7 +39,7 @@ namespace Views
             return ret as Data.CharacterCard;
         }
 
-        public set character(character: Data.CharacterCard)
+        public importCharacter(character: Data.CharacterCard)
         {
             this.propertyList.clearChildren();
 
