@@ -5,8 +5,7 @@
         "plot",
         "time",
         "location",
-        "internal",
-        "scenery"
+        "internal"
     ],
     "properties": {
         "plot": {
@@ -22,10 +21,6 @@
             "description": ""
         },
         "internal": {
-            "type": "string",
-            "description": ""
-        },
-        "scenery": {
             "type": "string",
             "description": ""
         }

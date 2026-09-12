@@ -61,7 +61,6 @@ namespace Views
                 plotPointElement.time = result.time;
                 plotPointElement.text = result.plot;
                 plotPointElement.internal = result.internal;
-                plotPointElement.scenery = result.scenery;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
@@ -70,7 +69,7 @@ namespace Views
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
-                    this.createAmbientImage(result.scenery.trim().trimRight(".") + ".", plotPointElement),
+                    this.createAmbientImage(plotPointElement.text, world, plotPointElement),
                     this.offerChoices(plot, plotPointElement, world)]);
 
                 this.userInput.value = "";
@@ -94,16 +93,13 @@ namespace Views
             {
                 this.storyElement.plotElement.plotList.clearChildren();
                 const world = this.storyElement.exportWorld();
-
-                const story = world as Data.Story;
-                const prologue = await AI.Client.writePrologue(result, story);
+                const prologue = await AI.Client.writePrologue(result, world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.location = prologue.location;
                 plotPointElement.time = prologue.time;
                 plotPointElement.text = prologue.plot;
                 plotPointElement.internal = prologue.internal;
-                plotPointElement.scenery = prologue.scenery;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
@@ -112,7 +108,7 @@ namespace Views
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
-                    this.createAmbientImage(prologue.scenery.trim().trimRight(".") + ".", plotPointElement),
+                    this.createAmbientImage(plotPointElement.text, world, plotPointElement),
                     this.offerChoices([], plotPointElement, world)]);
 
                 this.userInput.value = "";
@@ -125,10 +121,11 @@ namespace Views
             this.storyElement.stopThinking();
         }
 
-        private async createAmbientImage(prompt: string, plotPointElement: PlotPointElement)
+        private async createAmbientImage(scene: string, world: Data.World, plotPointElement: PlotPointElement)
         {
             try
             {
+                const prompt = await AI.Client.describeScene(scene, world);
                 const image = await AI.Client.getImage(prompt);
                 plotPointElement.image = image;
             }

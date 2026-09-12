@@ -7,6 +7,7 @@ namespace AI
             this.getPlotTemplate = await this.getTemplate("plot");
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
             this.writePrologueTemplate = await this.getTemplate("write-prologue");
+            this.describeSceneTemplate = await this.getTemplate("describe-scene");
             this.getImageTemplate = await this.getTemplate("image");
             this.createWorldTemplate = await this.getTemplate("create-world");
             this.createPlayerTemplate = await this.getTemplate("create-player");
@@ -67,6 +68,8 @@ namespace AI
 
         private writePrologueTemplate: (...params: any[]) => Promise<string>;
 
+        private describeSceneTemplate: (...params: any[]) => Promise<string>;
+
         private getImageTemplate: (...params: any[]) => Promise<string>;
 
         private createWorldTemplate: (...params: any[]) => Promise<string>;
@@ -79,7 +82,7 @@ namespace AI
         public async getPlot(
             input: string,
             plot: Data.Plot,
-            world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; scenery: string; }>
+            world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
             let prompt: string = await this.getPlotTemplate(input, plot, world);
 
@@ -97,7 +100,8 @@ namespace AI
             return obj;
         }
 
-        public async writePrologue(input: string, world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; scenery: string; }>
+        public async writePrologue(input: string,
+            world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
             let prompt: string = await this.writePrologueTemplate(input, world);
 
@@ -125,6 +129,21 @@ namespace AI
             const obj = this.parseJSON(result);
 
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
+        }
+
+        public async describeScene(
+            scene: string,
+            world: Data.World): Promise<string>
+        {
+            let prompt: string = await this.describeSceneTemplate(world);
+
+            const messages: Message[] = [
+                { role: "system", content: this.sanitizePrompt(prompt) },
+                { role: "user", content: scene }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.offerChoicesSchema);
+            return result.trim().trimRight(".");
         }
 
         public async getImage(description: string): Promise<string>

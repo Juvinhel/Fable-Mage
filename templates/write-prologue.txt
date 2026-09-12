@@ -40,13 +40,6 @@ Strictly adhere to the following property rules:
 - 100 tp 200 words
 - Avoid elaborate or verbose language
 
-### scenery
-- comma-separated text-to-image prompt
-- select one key visual from the storyline
-- describe the key character or item in detail
-- describe the background briefly
-- Avoid filler words. 
-
 <scenario>
 {{= world.scenario }}.
 </scenario>
@@ -68,6 +61,7 @@ Strictly adhere to the following property rules:
 {{= convertCase(key) }}: {{= property }}
 {{~}}
 </npc>
+
 {{~}}
 {{?}}
 
