@@ -1,0 +1,37 @@
+{{(input, world)}}
+You are an expert character designer. Generate a fictional character profile for the player character.
+Remember the character lives in world provided in the 'scenario' block. 
+When the world referes to as "I" it addresses the player character you are creating.
+Use the information provided in the 'user_input' block.
+Write your responses in {{= App.config.language }}.
+
+Strictly adhere to these property definitions:
+### name
+- Name of the character
+- include title of the character if present
+
+### appearance
+- A brief description of visual appearance of the character
+- include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.)
+- max 30 words
+
+### personality
+- A list of key personality traits
+- 3 to 5 comma-separated adjectives
+
+### traits
+- A list of key skills and competencies 
+- 3 to 5 comma-separated adjectives
+
+### background
+- A summarized origin story 
+- if the character is LGBTQ+ include it in the background story, include if openly or secretly
+- between around 50 and 200 words
+
+<scenario>
+{{= world.scenario }}.
+</scenario>
+
+<user_input>
+{{= input }}
+</user_input>

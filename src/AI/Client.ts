@@ -8,13 +8,14 @@ namespace AI
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
             this.writePrologueTemplate = await this.getTemplate("write-prologue");
             this.getImageTemplate = await this.getTemplate("image");
-            this.createCharacterTemplate = await this.getTemplate("create-character");
             this.createWorldTemplate = await this.getTemplate("create-world");
+            this.createPlayerTemplate = await this.getTemplate("create-player");
+            this.createNPCTemplate = await this.getTemplate("create-npc");
 
             this.getPlotSchema = await this.getSchema("plot");
             this.offerChoicesSchema = await this.getSchema("offer-choices");
-            this.createCharacterSchema = await this.getSchema("create-character");
             this.createWorldSchema = await this.getSchema("create-world");
+            this.createCharacterSchema = await this.getSchema("create-character");
         }
 
         private compiler = new Durian.Template.Compiler();
@@ -68,11 +69,12 @@ namespace AI
 
         private getImageTemplate: (...params: any[]) => Promise<string>;
 
-        private createCharacterTemplate: (...params: any[]) => Promise<string>;
-        private createCharacterSchema: any;
-
         private createWorldTemplate: (...params: any[]) => Promise<string>;
         private createWorldSchema: any;
+
+        private createPlayerTemplate: (...params: any[]) => Promise<string>;
+        private createNPCTemplate: (...params: any[]) => Promise<string>;
+        private createCharacterSchema: any;
 
         public async getPlot(
             input: string,
@@ -132,16 +134,6 @@ namespace AI
             return result;
         }
 
-        public async createCharacter(
-            input: string,
-            world: Data.World): Promise<Data.CharacterCard>
-        {
-            const prompt = await this.createCharacterTemplate(input, world);
-            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
-            const obj = this.parseJSON(result);
-            return obj as Data.CharacterCard;
-        }
-
         public async createWorld(input: string): Promise<{
             "title": string,
             "scenario": string,
@@ -154,6 +146,26 @@ namespace AI
             const result = await textAPI.generateText(prompt, this.createWorldSchema);
             const obj = this.parseJSON(result);
             return obj as any;
+        }
+
+        public async createPlayer(
+            input: string,
+            world: Data.World): Promise<Data.CharacterCard>
+        {
+            const prompt = await this.createPlayerTemplate(input, world);
+            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
+            const obj = this.parseJSON(result);
+            return obj as Data.CharacterCard;
+        }
+
+        public async createNPC(
+            input: string,
+            world: Data.World): Promise<Data.CharacterCard>
+        {
+            const prompt = await this.createNPCTemplate(input, world);
+            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
+            const obj = this.parseJSON(result);
+            return obj as Data.CharacterCard;
         }
 
         private parseJSON(input: string): any

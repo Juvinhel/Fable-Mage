@@ -30,6 +30,8 @@ namespace Views
                     </div>
                 </div>
 
+                <div class="anchor" />
+
                 <div>
                     <button onclick={ () => this.onImportJSON() }><span>Import JSON</span></button>
                     <button onclick={ () => this.onExportJSON() }><span>Export JSON</span></button>

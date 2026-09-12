@@ -60,6 +60,8 @@ namespace Views
                     </div>
                 </div>
 
+                <div class="anchor" />
+
                 <div>
                     <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
                     <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
@@ -94,9 +96,9 @@ namespace Views
             {
 
                 const world = this.exportWorld();
-                const character = await AI.Client.createCharacter(result, world);
+                const player = await AI.Client.createPlayer(result, world);
 
-                this.playerCharacterCard.importCharacter(character);
+                this.playerCharacterCard.importCharacter(player);
             }
             catch (error)
             {
@@ -121,9 +123,9 @@ namespace Views
             try
             {
                 const world = this.exportWorld();
-                const character = await AI.Client.createCharacter(result, world);
+                const npc = await AI.Client.createNPC(result, world);
 
-                this.npcCardList.appendChild(new CharacterCardElement(character));
+                this.npcCardList.appendChild(new CharacterCardElement(npc));
             }
             catch (error)
             {
@@ -150,7 +152,7 @@ namespace Views
                 world.scenario = output.scenario;
                 world.focus = output.focus;
 
-                const player = await AI.Client.createCharacter(output.protagonist, world);
+                const player = await AI.Client.createPlayer(output.protagonist, world);
                 world.player = player;
 
                 world.npcs = [];

@@ -42,6 +42,8 @@ namespace Views
                     </div>
                 </div>
 
+                <div class="anchor" />
+
                 <div>
                     <button title="Cancel" onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>Cancel</span></button>
                     <button title="Save" onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>Save</span></button>

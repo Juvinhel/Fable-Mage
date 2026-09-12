@@ -5,6 +5,12 @@ my-world
     grid-template-columns: 1fr;
     overflow-y: auto;
 
+    *
+    {
+        overflow-anchor: none;
+    }
+
+
     > div:first-child
     {
         display: grid;
@@ -52,6 +58,12 @@ my-world
         padding: 0.25em;
         gap: 0.25em;
         background-color: var(--page-background-color);
+    }
+
+    .anchor
+    {
+        height: 1px;
+        overflow-anchor: auto;
     }
 
     .functions

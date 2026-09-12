@@ -2,16 +2,32 @@
 Act as a master fantasy and sci-fi world-builder and narrative designer.
 Create a detailed and immersive scenario in valid JSON format.
 Expand the ideas in the user_input block giving them additional depth but don't invent new concepts.
-Include instructions what the writer should focus on.
 Do not write a narrative, this is only world building and no story.
 Write your responses in {{= App.config.language }}.
 
 Strictly adhere to these property definitions:
-- "title": Title of the narrative.
-- "scenario": A prosaic descriptive of the narrative world including lore, core concepts, how the world works (300 to 1000 words based on complexity). Do not create a story, opening text. You may describe key events that happened prior to the narrative.
-- "author-style": A list of key traits the author should have to write such a story (3 to 5 comma-separated adjectives).
-- "focus": Aspects a narrator should focus on when using the scenario like "erotic descriptions", "romantic interests", "character development" or "action scenes" (100 words at most).
-- "protagonist": Short description of the main character of the narrative including visuals, personality and background (1 paragraph not more than 200 words).
+### title
+- Title of the narrative
+
+### scenario
+- A prosaic descriptive of the world
+- contains lore, core concepts, inner workings of the scenario
+- 300 to 1000 words 
+- Do not create a story or an opening text
+- You may describe key events that happened prior to the narrative
+
+### author-style
+- A list of key traits the author should have to write such a story
+- 3 to 5 comma-separated adjectives
+
+### focus
+- Aspects a narrator should focus on when using the scenario 
+- e.g. "erotic descriptions", "romantic interests", "character development" or "action scenes"
+- 100 words at most
+
+### protagonist
+- Short description of the main character of the narrative including visuals, personality, skills and background 
+- not more than 200 words
 
 <user_input>
 {{= input }}
