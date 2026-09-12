@@ -124,8 +124,7 @@ namespace AI.KoboldCPP
             const output: AI.KoboldCPP.TXT2ImgOutput = await response.json();
             console.log("generateImage (output)", output);
 
-            const base64 = output.images[0];
-            return base64;
+            return "data:image/png;base64," + output.images[0];
         }
 
         public async check(): Promise<void>

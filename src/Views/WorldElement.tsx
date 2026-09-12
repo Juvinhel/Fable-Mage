@@ -196,19 +196,19 @@ namespace Views
             return story;
         }
 
-        public importWorld(data: Data.World)
+        public importWorld(world: Data.World)
         {
-            this.titleInput.value = data.title;
-            this.authorStyleInput.value = data["author-style"];
-            this.scenarioInput.value = data.scenario;
-            this.focusInput.value = data.focus;
+            this.titleInput.value = world.title;
+            this.authorStyleInput.value = world["author-style"];
+            this.scenarioInput.value = world.scenario;
+            this.focusInput.value = world.focus;
 
-            const playerCard = new CharacterCardElement(data.player);
+            const playerCard = new CharacterCardElement(world.player);
             this.playerCharacterCard.replaceWith(playerCard);
             this.playerCharacterCard = playerCard;
 
             this.npcCardList.clearChildren();
-            if (data.npcs) for (const npc of data.npcs)
+            if (world.npcs) for (const npc of world.npcs)
                 this.npcCardList.append(new CharacterCardElement(npc));
         }
     }

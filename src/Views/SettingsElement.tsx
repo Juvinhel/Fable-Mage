@@ -37,7 +37,7 @@ namespace Views
                         <label>ImageAPI:</label>
                         { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                             <option value="KoboldCPP">KoboldCPP</option>
-                            <option value="Custom Image API">Custom Image API</option>
+                            <option value="Stable Diffusion">Stable Diffusion</option>
                         </select> as HTMLSelectElement }
                     </div>
                 </div>
@@ -96,8 +96,8 @@ namespace Views
                 case "KoboldCPP":
                     this.imageAPISelect.after(this.koboldCPPImageAPI(App.config.imageAPI as any));
                     break;
-                case "Custom Image API":
-                    this.imageAPISelect.after(this.customImageAPI(App.config.imageAPI as any));
+                case "Stable Diffusion":
+                    this.imageAPISelect.after(this.stableDiffusionAPI(App.config.imageAPI as any));
                     break;
             }
         }
@@ -156,9 +156,9 @@ namespace Views
             </div>;
         }
 
-        private customImageAPI(config: Partial<Data.CustomImageEndpoint>)
+        private stableDiffusionAPI(config: Partial<Data.StableDiffusionEndpoint>)
         {
-            return <div class="custom-image-api">
+            return <div class="stable-diffusion-api">
                 <div>
                     <label>URL:</label>
                     <input name="url" type="text" value={ config.url ?? "" } />
@@ -225,6 +225,7 @@ namespace Views
                 }
                 catch (error)
                 {
+                    console.log("error", error);
                     throw new Error("Something went wrong with your image api config!");
                 }
 

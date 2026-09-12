@@ -28,7 +28,7 @@ namespace Views
                 </div>
                 <div class="plot-text">
                     { this.turnElement = <span class="turn" /> as HTMLSpanElement }
-                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: "data:image/png;base64," + this.image }] }); } } /> as HTMLImageElement }
+                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div class="actions">
@@ -66,8 +66,8 @@ namespace Views
 
         public scenery: string;
 
-        public get image(): string { return this.imageElement.src ? this.imageElement.src.splitFirst(",")[1] : null; }
-        public set image(value: string) { this.imageElement.src = value ? "data:image/png;base64," + value : ""; }
+        public get image(): string { return this.imageElement.src ? this.imageElement.src : null; }
+        public set image(value: string) { this.imageElement.src = value ? value : ""; }
 
         public get choices(): string[] { return [...this.choicesListElement.querySelectorAll("button")].map(x => x.textContent); }
         public set choices(values: string[])

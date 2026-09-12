@@ -49,9 +49,9 @@ namespace Views
             const includePlot = this.includePlotCheckbox.checked;
             const includeImagesInPlot = this.includeImagesInPlotCheckbox.checked;
 
-            const data = this.storyElement.exportStory(includePlot, includeImagesInPlot);
+            const story = this.storyElement.exportStory(includePlot, includeImagesInPlot);
 
-            DownloadHelper.downloadData(data.title + (data.plot && data.plot.length > 1 ? " turn " + data.plot.length : "") + ".json", data);
+            DownloadHelper.downloadData(story.title + (story.plot && story.plot.length > 1 ? " turn " + story.plot.length : "") + ".json", story);
         }
 
         private async onImportJSON()
@@ -61,8 +61,8 @@ namespace Views
             {
                 const file = result.item(0);
                 const text = await file.text();
-                const data = JSON.parse(text);
-                this.storyElement.importStory(data);
+                const story = JSON.parse(text);
+                this.storyElement.importStory(story);
             }
         }
     }

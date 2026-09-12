@@ -4,7 +4,7 @@ namespace Data
     {
         language: string;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint;
-        imageAPI: KoboldCPPEndpoint | CustomImageEndpoint;
+        imageAPI: KoboldCPPEndpoint | StableDiffusionEndpoint;
     }
 
     export interface KoboldCPPEndpoint
@@ -23,9 +23,9 @@ namespace Data
         api_key: string;
     }
 
-    export interface CustomImageEndpoint
+    export interface StableDiffusionEndpoint
     {
-        name: "Custom Image API",
+        name: "Stable Diffusion",
         url: string;
         username?: string;
         password?: string;
@@ -36,12 +36,12 @@ namespace Data
         textAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de",
-            textGenerationMaxLength: 4096, //8192
+            textGenerationMaxLength: 4096,
             temperature: 0.7
         },
         imageAPI: {
-            name: "Custom Image API",
-            url: "https://diffusion.coffinprincess.de/txt2img/generate"
+            name: "Stable Diffusion",
+            url: "https://diffusion.coffinprincess.de"
         }
     };
 
