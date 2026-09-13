@@ -5,6 +5,9 @@ class App
         this.config = await Data.loadConfig();
         await AI.Client.initialize();
 
+        ///@ts-ignore
+        this.extractor = await window.pipeline('feature-extraction', 'Xenova/bge-small-en-v1.5');
+
         document.addEventListener("visibilitychange", App.visibilityChange);
 
         const main = document.querySelector("main");
@@ -31,5 +34,7 @@ class App
     }.bind(this);
 
     public static config: Data.Config;
-    private static storyElement: Views.StoryElement;;
+    private static storyElement: Views.StoryElement;
+
+    public static extractor;
 }

@@ -53,7 +53,7 @@ namespace Views
                 const input = this.userInput.value.trim();
                 const plot = this.exportPlot(false);
                 const world = this.storyElement.exportStory();
-                const result = await AI.Client.getPlot(input, plot, world);
+                const result = await AI.Client.advancePlot(input, plot, world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -70,7 +70,8 @@ namespace Views
 
                 await Promise.all([
                     this.createAmbientImage(plotPointElement.text, world, plotPointElement),
-                    this.offerChoices(plot, plotPointElement, world)]);
+                    this.offerChoices(plot, plotPointElement, world),
+                    this.archiveMemory(this.plotList.children.length, plotPointElement.exportPlotPoint())]);
 
                 this.userInput.value = "";
             }
@@ -109,7 +110,8 @@ namespace Views
 
                 await Promise.all([
                     this.createAmbientImage(plotPointElement.text, world, plotPointElement),
-                    this.offerChoices([], plotPointElement, world)]);
+                    this.offerChoices([], plotPointElement, world),
+                    this.archiveMemory(1, plotPointElement.exportPlotPoint())]);
 
                 this.userInput.value = "";
             }
@@ -148,6 +150,37 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+        }
+
+        private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
+        {
+            try
+            {
+                const memories = await AI.Client.archiveMemory(plotPoint) as Data.Memory[];
+                for (const memory of memories)
+                {
+                    memory.turn = turn;
+                    memory.location = plotPoint.location;
+                    memory.time = plotPoint.time;
+                }
+
+                console.log("memories: ", memories);
+                for (const memory of memories)
+                {
+                    const output = await App.extractor(memory.content, {
+                        pooling: 'mean',
+                        normalize: true,
+                    });
+                    const vectorEmbedding = Array.from(output.data);
+                    const record = {
+                        id: `memory_${ Date.now() }`,
+                        vector: vectorEmbedding, // This is your array of floats (e.g., [0.023, -0.045, ...])
+                        metadata: memory
+                    };
+                    console.log("record", record);
+                }
+            }
+            catch { }
         }
 
         public exportPlot(includeImagesInPlot = false): Data.Plot

@@ -4,19 +4,22 @@ namespace AI
     {
         public async initialize()
         {
-            this.getPlotTemplate = await this.getTemplate("plot");
+            this.plotSchema = await this.getSchema("plot");
+            this.choicesSchema = await this.getSchema("choices");
+            this.sceneSchema = await this.getSchema("scene");
+            this.worldSchema = await this.getSchema("world");
+            this.characterSchema = await this.getSchema("character");
+            this.memorySchema = await this.getSchema("memory");
+
+            this.advancePlotTemplate = await this.getTemplate("advance-plot");
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
             this.writePrologueTemplate = await this.getTemplate("write-prologue");
             this.describeSceneTemplate = await this.getTemplate("describe-scene");
-            this.getImageTemplate = await this.getTemplate("image");
+            this.getImageTemplate = await this.getTemplate("get-image");
             this.createWorldTemplate = await this.getTemplate("create-world");
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
-
-            this.getPlotSchema = await this.getSchema("plot");
-            this.offerChoicesSchema = await this.getSchema("offer-choices");
-            this.createWorldSchema = await this.getSchema("create-world");
-            this.createCharacterSchema = await this.getSchema("create-character");
+            this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
         }
 
         private compiler = new Durian.Template.Compiler();
@@ -60,42 +63,48 @@ namespace AI
             }
         }
 
-        private getPlotTemplate: (...params: any[]) => Promise<string>;
-        private getPlotSchema: any;
-
-        private offerChoicesTemplate: (...params: any[]) => Promise<string>;
-        private offerChoicesSchema: any;
-
+        private plotSchema: any;
+        private advancePlotTemplate: (...params: any[]) => Promise<string>;
         private writePrologueTemplate: (...params: any[]) => Promise<string>;
 
+        private choicesSchema: any;
+        private offerChoicesTemplate: (...params: any[]) => Promise<string>;
+
+        private sceneSchema: any;
         private describeSceneTemplate: (...params: any[]) => Promise<string>;
 
         private getImageTemplate: (...params: any[]) => Promise<string>;
 
+        private worldSchema: any;
         private createWorldTemplate: (...params: any[]) => Promise<string>;
-        private createWorldSchema: any;
 
+        private characterSchema: any;
         private createPlayerTemplate: (...params: any[]) => Promise<string>;
         private createNPCTemplate: (...params: any[]) => Promise<string>;
-        private createCharacterSchema: any;
 
-        public async getPlot(
+        private memorySchema: any;
+        private archiveMemoryTemplate: (...params: any[]) => Promise<string>;
+
+        public async advancePlot(
             input: string,
             plot: Data.Plot,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            let prompt: string = await this.getPlotTemplate(input, plot, world);
+            const prompt: string = await this.advancePlotTemplate(input, plot, world);
 
-            const messages: Message[] = [
-                { role: "system", content: this.sanitizePrompt(prompt) },
-                ...plot.map(x => ({
-                    role: "assistant",
-                    content: "Location: " + x.location + "\n" + "Time: " + x.time + "\nNarrative:\n" + x.text + (x.internal ? "\n\nTHOUGHTS & EVENTS:\n" + x.internal : "")
-                }) as Message),
-                { role: "user", content: input }
-            ];
+            const messages: Message[] = [{ role: "system", content: this.sanitizePrompt(prompt) }];
+            for (const plotPoint of plot)
+            {
+                let content = "";
+                content += "Location: " + plotPoint.location + "\n";
+                content += "Time: " + plotPoint.time + "\n";
+                content += "Narrative: " + plotPoint.text + "\n";
+                content += "Internal: " + plotPoint.internal;
+                messages.push({ role: "assistant", content });
+            }
+            messages.push({ role: "user", content: input });
 
-            const result = await textAPI.generateInteractions(messages, this.getPlotSchema);
+            const result = await textAPI.generateInteractions(messages, this.plotSchema);
             const obj = this.parseJSON(result);
             return obj;
         }
@@ -103,9 +112,9 @@ namespace AI
         public async writePrologue(input: string,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            let prompt: string = await this.writePrologueTemplate(input, world);
+            const prompt: string = await this.writePrologueTemplate(input, world);
 
-            const result = await textAPI.generateText(prompt, this.getPlotSchema);
+            const result = await textAPI.generateText(prompt, this.plotSchema);
             const obj = this.parseJSON(result);
 
             return obj;
@@ -115,17 +124,17 @@ namespace AI
             plot: Data.Plot,
             world: Data.World): Promise<string[]>
         {
-            let prompt: string = await this.offerChoicesTemplate(plot, world);
+            const prompt: string = await this.offerChoicesTemplate(plot, world);
 
             const messages: Message[] = [
-                { role: "system", content: this.sanitizePrompt(prompt) },
+                { role: "system", content: prompt },
                 ...plot.slice(-3).map(x => ({
                     role: "assistant",
                     content: "Location: " + x.location + "\nTime: " + x.time + "\nNarrative:\n" + x.text
                 }) as Message)
             ];
 
-            const result = await textAPI.generateInteractions(messages, this.offerChoicesSchema);
+            const result = await textAPI.generateInteractions(messages, this.choicesSchema);
             const obj = this.parseJSON(result);
 
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
@@ -135,15 +144,17 @@ namespace AI
             scene: string,
             world: Data.World): Promise<string>
         {
-            let prompt: string = await this.describeSceneTemplate(world);
+            const prompt: string = await this.describeSceneTemplate(world);
 
             const messages: Message[] = [
-                { role: "system", content: this.sanitizePrompt(prompt) },
+                { role: "system", content: prompt },
                 { role: "user", content: scene }
             ];
 
-            const result = await textAPI.generateInteractions(messages, this.offerChoicesSchema);
-            return result.trim().trimRight(".");
+            const result = await textAPI.generateInteractions(messages, this.sceneSchema);
+            const obj = this.parseJSON(result);
+
+            return obj.description;
         }
 
         public async getImage(description: string): Promise<string>
@@ -162,7 +173,7 @@ namespace AI
         }>
         {
             const prompt = await this.createWorldTemplate(input);
-            const result = await textAPI.generateText(prompt, this.createWorldSchema);
+            const result = await textAPI.generateText(prompt, this.worldSchema);
             const obj = this.parseJSON(result);
             return obj as any;
         }
@@ -172,7 +183,7 @@ namespace AI
             world: Data.World): Promise<Data.CharacterCard>
         {
             const prompt = await this.createPlayerTemplate(input, world);
-            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
+            const result = await textAPI.generateText(prompt, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.CharacterCard;
         }
@@ -182,9 +193,27 @@ namespace AI
             world: Data.World): Promise<Data.CharacterCard>
         {
             const prompt = await this.createNPCTemplate(input, world);
-            const result = await textAPI.generateText(prompt, this.createCharacterSchema);
+            const result = await textAPI.generateText(prompt, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.CharacterCard;
+        }
+
+        public async archiveMemory(
+            plotPoint: Data.PlotPoint): Promise<{ category: string; summary: string; keywords: string; internal: boolean; content: string; }[]>
+        {
+            const prompt: string = await this.archiveMemoryTemplate();
+
+            let content = "";
+            content += "Narrative: " + plotPoint.text + "\n";
+            content += "Internal: " + plotPoint.internal;
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.memorySchema);
+            const arr = this.parseJSON(result);
+            return arr;
         }
 
         private parseJSON(input: string): any
