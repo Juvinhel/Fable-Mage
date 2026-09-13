@@ -18,13 +18,8 @@ namespace AI.StableDiffusion
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
-                negative_prompt: "",
-                steps: 20,
-                cfg_scale: 7.5,
                 width: 1024,
                 height: 1024,
-                sd_model_checkpoint: "",
-                sampler_name: "default",
             };
             const headers: HeadersInit = {};
             if (authorization) headers.authorization = "Basic " + authorization;

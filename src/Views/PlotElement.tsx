@@ -102,7 +102,7 @@ namespace Views
                 plotPointElement.text = prologue.plot;
                 plotPointElement.internal = prologue.internal;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
-                //deactivate all inputs
+                // deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                     button.disabled = true;
                 this.storyElement.selectTab("Plot");
@@ -128,6 +128,7 @@ namespace Views
             try
             {
                 const prompt = await AI.Client.describeScene(scene, world);
+                plotPointElement.scenery = prompt;
                 const image = await AI.Client.getImage(prompt);
                 plotPointElement.image = image;
             }
@@ -145,6 +146,9 @@ namespace Views
                 plot.push(plotPointElement.exportPlotPoint());
                 const choices = await AI.Client.offerChoices(plot, world);
                 plotPointElement.choices = choices;
+                // deactivate all inputs
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                    button.disabled = true;
             }
             catch (error)
             {
