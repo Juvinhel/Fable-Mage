@@ -10,7 +10,7 @@ namespace Views
             this.append(this.build());
         }
 
-        private storyElement: StoryElement;
+        private tabControl: HTMLTabControl;
 
         private titleInput: HTMLTextAreaElement;
         private authorStyleInput: HTMLTextAreaElement;
@@ -20,76 +20,91 @@ namespace Views
         private playerCharacterCard: CharacterCardElement;
         private npcCardList: HTMLElement;
 
+        private prologueContainer: HTMLDivElement;
+
         private build()
         {
-            return <>
-                <div>
+            return this.tabControl = <tab-control>
+                <div title="World">
                     <div>
-                        <label>Title:</label>
-                        { this.titleInput = <textarea class="title-input single-line"
-                            onkeyup={ (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault; (e.currentTarget as HTMLElement).blur(); } } }
-                            onblur={ (e: Event) => this.onTitleChanged() }
-                            ontouchend={ async (e: TouchEvent) => { await TextEditTouch(e); this.onTitleChanged(); } }
-                            value="" /> as HTMLTextAreaElement }
-                    </div>
-                    <div>
-                        <label>Author style:</label>
-                        { this.authorStyleInput = <textarea class="author-style-input single-line" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
-                    </div>
-                    <div>
-                        <label>Scenario:</label>
-                        { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
-                    </div>
-                    <div>
-                        <label>Focus:</label>
-                        { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
-                    </div>
-                    <div>
-                        <label>Tracked Stats:</label>
-                        <div class="functions">
-                            <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
+                        <div>
+                            <label>Title:</label>
+                            { this.titleInput = <textarea class="title-input single-line" value="" /> as HTMLTextAreaElement }
                         </div>
-                        { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
-                    </div>
-                    <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
-                        <label>Player:</label>
-                        <div class="functions">
-                            <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                        <div>
+                            <label>Author style:</label>
+                            { this.authorStyleInput = <textarea class="author-style-input single-line" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                         </div>
-                        { this.playerCharacterCard = new CharacterCardElement() }
+                        <div>
+                            <label>Scenario:</label>
+                            { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        </div>
+                        <div>
+                            <label>Focus:</label>
+                            { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        </div>
+                        <div>
+                            <label>Tracked Stats:</label>
+                            <div class="functions">
+                                <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
+                            </div>
+                            { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
+                        </div>
                     </div>
+
+                    <div class="anchor" />
+
                     <div>
-                        <label>NPCs:</label>
-                        <div class="functions">
-                            <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
-                            <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
-                        </div>
-                        { this.npcCardList = <div class="npc-list list" /> as HTMLElement }
+                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
+                        <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
+                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
+                <div title="Characters">
+                    <div>
+                        <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
+                            <label>Player:</label>
+                            <div class="functions">
+                                <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                            </div>
+                            { this.playerCharacterCard = new CharacterCardElement() }
+                        </div>
 
-                <div class="anchor" />
+                        <div>
+                            <label>NPCs:</label>
+                            <div class="functions">
+                                <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
+                                <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                            </div>
+                            { this.npcCardList = <div class="npc-list" /> as HTMLElement }
+                        </div>
+                    </div>
 
-                <div>
-                    <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
-                    <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
-                    <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
-                    <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                    <div class="anchor" />
+
+                    <div />
                 </div>
-            </>;
-        }
+                <div title="Prologue">
+                    { this.prologueContainer = <div /> as HTMLDivElement }
 
-        private connectedCallback()
-        {
-            this.storyElement = this.closest("my-story");
-        }
+                    <div class="anchor" />
 
-        private onTitleChanged()
-        {
-            if (!this.storyElement) return;
+                    <div>
+                        <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
+                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                    </div>
+                </div>
+                <div title="Import / Export">
+                    <div />
 
-            const titleHeading = this.storyElement.querySelector(".title") as HTMLHeadingElement;
-            titleHeading.textContent = this.titleInput.value.trim();
+                    <div class="anchor" />
+
+                    <div>
+                        <button onclick={ () => this.onImportJSON() }><span>Import JSON</span></button>
+                        <button onclick={ () => this.onExportJSON() }><span>Export JSON</span></button>
+                    </div>
+                </div>
+            </tab-control> as HTMLTabControl;
         }
 
         private onAddStat()
@@ -145,7 +160,7 @@ namespace Views
             const result = await Dialogs.TextEdit("Character Description", "", "Describe your player character.");
             if (!result) return;
 
-            this.storyElement.beginThinking();
+            this.beginThinking();
 
             try
             {
@@ -159,7 +174,7 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.storyElement.stopThinking();
+            this.stopThinking();
         }
 
         private async onAddNPC()
@@ -175,7 +190,7 @@ namespace Views
             const result = await Dialogs.TextEdit("Character Description", "", "Describe the NPC that should be added.");
             if (!result) return;
 
-            this.storyElement.beginThinking();
+            this.beginThinking();
 
             try
             {
@@ -193,7 +208,7 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.storyElement.stopThinking();
+            this.stopThinking();
         }
 
         private async onCreateWorldUsingAI()
@@ -202,7 +217,7 @@ namespace Views
             if (!result) return;
 
             await this.onDeleteWorld();
-            this.storyElement.beginThinking();
+            this.beginThinking();
 
             try
             {
@@ -218,30 +233,56 @@ namespace Views
 
                 world.npcs = [];
 
-                this.storyElement.importWorld(world);
-                this.storyElement.selectTab("World");
+                this.importWorld(world);
             }
             catch (error)
             {
                 UI.Dialog.error(error);
             }
 
-            this.storyElement.stopThinking();
+            this.stopThinking();
         }
 
         private async onWritePrologueUsingAI()
         {
-            this.storyElement.plotElement.onWritePrologueUsingAI();
+            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
+            if (!result) return;
+
+            this.beginThinking();
+
+            try
+            {
+                this.prologueContainer.clearChildren();
+                const world = this.exportWorld();
+                const prologue = await AI.Client.writePrologue(result, world);
+
+                const plotPointElement = new PlotPointElement();
+                plotPointElement.classList.add("prologue");
+                plotPointElement.location = prologue.location;
+                plotPointElement.time = prologue.time;
+                plotPointElement.text = prologue.plot;
+                plotPointElement.internal = prologue.internal;
+                this.prologueContainer.appendChild(plotPointElement); HTMLButtonElement;
+                // deactivate all inputs
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                    button.disabled = true;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+
+            this.stopThinking();
         }
 
         private async onDeleteWorld()
         {
-            this.storyElement.importStory({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" }, npcs: [], plot: [] });
+            this.importWorld({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public exportWorld(): Data.World
         {
-            const story: Data.World = {
+            const world: Data.World = {
                 "title": this.titleInput.value.trim(),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
@@ -251,14 +292,21 @@ namespace Views
 
             const stats = this.stats;
             if (stats && stats.length > 0)
-                story.stats = stats;
+                world.stats = stats;
 
             const npcs = [];
             for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
                 npcs.push(npcCard.exportCharacter());
-            if (npcs.length > 0) story["npcs"] = npcs;
+            if (npcs.length > 0) world.npcs = npcs;
 
-            return story;
+            const prologueElement = this.prologueContainer.children[0] as PlotPointElement;
+            if (prologueElement)
+            {
+                const prologue: Data.Prologue = prologueElement.exportPlotPoint();
+                world.prologue = prologue;
+            }
+
+            return world;
         }
 
         public importWorld(world: Data.World)
@@ -296,6 +344,49 @@ namespace Views
                 npccard.importCharacter(npc);
                 this.npcCardList.append(npccard);
             }
+
+            this.prologueContainer.clearChildren();
+            if (world.prologue)
+            {
+                const plotPointElement = new PlotPointElement();
+                plotPointElement.classList.add("prologue");
+                plotPointElement.importPlotPoint(world.prologue);
+            }
+        }
+
+        private onExportJSON()
+        {
+            const world = this.exportWorld();
+
+            DownloadHelper.downloadData(world.title + ".json", world);
+        }
+
+        private async onImportJSON()
+        {
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            if (result.length > 0)
+            {
+                const file = result.item(0);
+                const text = await file.text();
+                const world = JSON.parse(text);
+                this.importWorld(world);
+            }
+        }
+
+        private beginThinking()
+        {
+            for (const indicator of this.querySelectorAll(".thinking-indicator"))
+                indicator.classList.toggle("show", true);
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
+                button.disabled = true;
+        }
+
+        private stopThinking()
+        {
+            for (const indicator of this.querySelectorAll(".thinking-indicator"))
+                indicator.classList.toggle("show", false);
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
+                button.disabled = false;
         }
     }
 

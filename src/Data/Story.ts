@@ -10,8 +10,8 @@ namespace Data
         time: string;
         text: string;
         internal: string;
-        scenery: string;
 
+        scenery?: string;
         image?: string;
         choices?: string[];
     };

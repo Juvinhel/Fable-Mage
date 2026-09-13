@@ -9,6 +9,7 @@ namespace Data
             stats?: Stat[];
             player: CharacterCard;
             npcs?: CharacterCard[];
+            prologue?: Prologue;
         };
 
     export type CharacterCard = {
@@ -18,5 +19,14 @@ namespace Data
         traits: string;
         background: string;
         [key: string]: string;
+    };
+
+    export type Stat = { name: string; description: string; };
+
+    export type Prologue = {
+        location: string;
+        time: string;
+        text: string;
+        internal: string;
     };
 }

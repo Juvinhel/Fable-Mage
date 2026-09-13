@@ -124,7 +124,7 @@ namespace Views
 
         private async onEditImage()
         {
-            const result = await Views.Dialogs.TextEdit("Edit Image", this.scenery);
+            const result = await Views.Dialogs.TextEdit("Edit Image", this.scenery ?? "");
             if (result) 
             {
                 this.storyElement.beginThinking();
@@ -157,8 +157,8 @@ namespace Views
                 time: this.time,
                 text: this.text,
                 internal: this.internal,
-                scenery: this.scenery
             };
+            if (this.scenery) plotPoint.scenery = this.scenery;
             if (this.input) plotPoint.input = this.input;
             if (includeImagesInPlot && this.image) plotPoint.image = this.image;
             if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;

@@ -1,4 +1,4 @@
-my-world
+my-world > tab-control > *
 {
     display: grid;
     grid-template-rows: 1fr max-content;
@@ -45,6 +45,12 @@ my-world
         }
     }
 
+    .anchor
+    {
+        height: 1px;
+        overflow-anchor: auto;
+    }
+
     > div:last-child
     {
         display: grid;
@@ -60,22 +66,6 @@ my-world
         background-color: var(--page-background-color);
     }
 
-    .anchor
-    {
-        height: 1px;
-        overflow-anchor: auto;
-    }
-
-    .functions
-    {
-        display: grid;
-        grid-template-rows: 1fr;
-        grid-auto-columns: max-content;
-        grid-auto-flow: column;
-        justify-content: start;
-        gap: 0.25em;
-    }
-
     .stat-list
     {
         display: grid;
@@ -89,7 +79,7 @@ my-world
         }
     }
 
-    .list
+    .npc-list
     {
         display: grid;
         grid-template-columns: 1fr;
