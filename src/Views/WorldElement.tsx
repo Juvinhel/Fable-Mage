@@ -16,6 +16,7 @@ namespace Views
         private authorStyleInput: HTMLTextAreaElement;
         private scenarioInput: HTMLTextAreaElement;
         private focusInput: HTMLTextAreaElement;
+        private statList: HTMLDivElement;
         private playerCharacterCard: CharacterCardElement;
         private npcCardList: HTMLElement;
 
@@ -43,7 +44,14 @@ namespace Views
                         <label>Focus:</label>
                         { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                     </div>
-                    <div onchildrenchanged={ (e: Event) => { if ((e.currentTarget as HTMLElement).children.length <= 2) (e.currentTarget as HTMLElement).appendChild(this.playerCharacterCard = new CharacterCardElement()); } }>
+                    <div>
+                        <label>Tracked Stats:</label>
+                        <div class="functions">
+                            <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
+                        </div>
+                        { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
+                    </div>
+                    <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
                         <label>Player:</label>
                         <div class="functions">
                             <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
@@ -84,9 +92,56 @@ namespace Views
             titleHeading.textContent = this.titleInput.value.trim();
         }
 
+        private onAddStat()
+        {
+            this.statList.append(new StatDescriptionElement());
+        }
+
+        private get stats(): Data.Stat[]
+        {
+            const ret: Data.Stat[] = [];
+            for (const statDescription of this.statList.querySelectorAll("my-stat-description") as NodeListOf<StatDescriptionElement>)
+                ret.push({ name: statDescription.name, description: statDescription.description });
+            return ret;
+        };
+
+        private onStatsChanged()
+        {
+            const statNames = this.stats.map(x => x.name);
+            for (const characterCardElement of this.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
+                characterCardElement.additionalProperties = statNames;
+        }
+
+        private onStatNameChanged(e: Event)
+        {
+            const oldName = e["old-name"];
+            const newName = e["new-name"];
+            const statNames = this.stats.map(x => x.name);
+
+            for (const characterCardElement of this.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
+            {
+                const character = characterCardElement.exportCharacter();
+                characterCardElement.additionalProperties = statNames;
+                character[newName] = character[oldName];
+                delete character[oldName];
+                characterCardElement.importCharacter(character);
+            }
+        }
+
+        private onPlayerChanged(e: Event)
+        {
+            const playerContainer = e.currentTarget as HTMLElement;
+            if (playerContainer.children.length <= 2) 
+            {
+                const stats = this.stats.map(x => x.name);
+                const playerCard = new CharacterCardElement();
+                playerCard.additionalProperties = stats;
+                playerContainer.appendChild(this.playerCharacterCard = playerCard);
+            }
+        }
+
         private async onCreatePlayerUsingAI()
         {
-
             const result = await Dialogs.TextEdit("Character Description", "", "Describe your player character.");
             if (!result) return;
 
@@ -94,7 +149,6 @@ namespace Views
 
             try
             {
-
                 const world = this.exportWorld();
                 const player = await AI.Client.createPlayer(result, world);
 
@@ -110,7 +164,10 @@ namespace Views
 
         private async onAddNPC()
         {
-            this.npcCardList.appendChild(new CharacterCardElement());
+            const stats = this.stats.map(x => x.name);
+            const npccard = new CharacterCardElement();
+            npccard.additionalProperties = stats;
+            this.npcCardList.appendChild(npccard);
         }
 
         private async onAddNPCUsingAI()
@@ -125,7 +182,11 @@ namespace Views
                 const world = this.exportWorld();
                 const npc = await AI.Client.createNPC(result, world);
 
-                this.npcCardList.appendChild(new CharacterCardElement(npc));
+                const stats = this.stats.map(x => x.name);
+                const npccard = new CharacterCardElement();
+                npccard.additionalProperties = stats;
+                npccard.importCharacter(npc);
+                this.npcCardList.appendChild(npccard);
             }
             catch (error)
             {
@@ -188,6 +249,10 @@ namespace Views
                 "player": this.playerCharacterCard.exportCharacter(),
             };
 
+            const stats = this.stats;
+            if (stats && stats.length > 0)
+                story.stats = stats;
+
             const npcs = [];
             for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
                 npcs.push(npcCard.exportCharacter());
@@ -198,18 +263,39 @@ namespace Views
 
         public importWorld(world: Data.World)
         {
+            this.npcCardList.clearChildren();
+
             this.titleInput.value = world.title;
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.focusInput.value = world.focus;
 
-            const playerCard = new CharacterCardElement(world.player);
+            this.statList.clearChildren();
+            if (world.stats)
+                for (const stat of world.stats)
+                {
+                    const statDescriptionElement = new StatDescriptionElement();
+                    statDescriptionElement.name = stat.name;
+                    statDescriptionElement.description = stat.description;
+                    this.statList.append(statDescriptionElement);
+                }
+
+            const stats = world.stats.map(x => x.name);
+
+            const playerCard = new CharacterCardElement();
+            playerCard.additionalProperties = stats;
+            playerCard.importCharacter(world.player);
             this.playerCharacterCard.replaceWith(playerCard);
             this.playerCharacterCard = playerCard;
 
             this.npcCardList.clearChildren();
             if (world.npcs) for (const npc of world.npcs)
-                this.npcCardList.append(new CharacterCardElement(npc));
+            {
+                const npccard = new CharacterCardElement();
+                npccard.additionalProperties = stats;
+                npccard.importCharacter(npc);
+                this.npcCardList.append(npccard);
+            }
         }
     }
 

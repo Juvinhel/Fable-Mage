@@ -2,15 +2,15 @@ my-character-card
 {
     display: grid;
     grid-template-rows: min-content;
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: max-content 1fr max-content;
     gap: 0.25em;
 
-    > .property-list
+    > [class$="property-list"]
     {
         display: grid;
         grid-template-rows: min-content;
-        grid-template-columns: max-content 1fr;
-        grid-column: 1;
+        grid-template-columns: subgrid;
+        grid-column: 1 / -2;
         gap: 0.25em;
 
         > div
@@ -41,7 +41,8 @@ my-character-card
         grid-template-columns: 1fr;
         grid-auto-rows: max-content;
         grid-auto-flow: column;
-        grid-column: -1;
+        grid-row: 1 / -1;
+        grid-column: -2;
         align-items: start;
     }
 }

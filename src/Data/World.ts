@@ -6,6 +6,7 @@ namespace Data
             "author-style": string;
             scenario: string;
             focus: string;
+            stats?: Stat[];
             player: CharacterCard;
             npcs?: CharacterCard[];
         };

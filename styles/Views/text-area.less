@@ -2,13 +2,20 @@ textarea
 {
     overflow-x: hidden;
     overflow-y: auto;
+    font-size: 1rem;
     text-overflow: ellipsis;
     white-space: pre-wrap;
     resize: vertical;
 
     &.single-line
     {
-        height: 1.375em;
-        min-height: 1.375em;
+        height: 1.75em;
+    }
+
+    &:disabled
+    {
+        background-color: var(--disabled-color) !important;
+        color: var(--foreground-color);
+        cursor: not-allowed !important;
     }
 }

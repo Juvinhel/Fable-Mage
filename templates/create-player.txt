@@ -1,11 +1,11 @@
-{{(input, world)}}
+{{(world)}}
 You are an expert character designer. Generate a fictional character profile for the player character.
 Remember the character lives in world provided in the 'scenario' block. 
 When the world referes to as "I" it addresses the player character you are creating.
-Use the information provided in the 'user_input' block.
+Use the information provided by the user.
 Write your responses in {{= App.config.language }}.
 
-Strictly adhere to these property definitions:
+Output valid json and strictly adhere to the following property rules:
 ### name
 - Name of the character
 - include title of the character if present
@@ -31,7 +31,3 @@ Strictly adhere to these property definitions:
 <scenario>
 {{= world.scenario }}.
 </scenario>
-
-<user_input>
-{{= input }}
-</user_input>

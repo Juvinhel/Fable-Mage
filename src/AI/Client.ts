@@ -90,7 +90,7 @@ namespace AI
             plot: Data.Plot,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(input, plot, world);
+            const prompt: string = await this.advancePlotTemplate(plot, world);
 
             const messages: Message[] = [{ role: "system", content: this.sanitizePrompt(prompt) }];
             for (const plotPoint of plot)
@@ -112,9 +112,13 @@ namespace AI
         public async writePrologue(input: string,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.writePrologueTemplate(input, world);
+            const prompt: string = await this.writePrologueTemplate(world);
 
-            const result = await textAPI.generateText(prompt, this.plotSchema);
+            const messages: Message[] = [
+                { role: "system", content: this.sanitizePrompt(prompt) },
+                { role: "user", content: input }];
+
+            const result = await textAPI.generateInteractions(messages, this.plotSchema);
             const obj = this.parseJSON(result);
 
             return obj;
@@ -172,8 +176,13 @@ namespace AI
             "protagonist": string;
         }>
         {
-            const prompt = await this.createWorldTemplate(input);
-            const result = await textAPI.generateText(prompt, this.worldSchema);
+            const prompt = await this.createWorldTemplate();
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: input }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.worldSchema);
             const obj = this.parseJSON(result);
             return obj as any;
         }
@@ -182,8 +191,13 @@ namespace AI
             input: string,
             world: Data.World): Promise<Data.CharacterCard>
         {
-            const prompt = await this.createPlayerTemplate(input, world);
-            const result = await textAPI.generateText(prompt, this.characterSchema);
+            const prompt = await this.createPlayerTemplate(world);
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: input }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.CharacterCard;
         }
@@ -192,8 +206,13 @@ namespace AI
             input: string,
             world: Data.World): Promise<Data.CharacterCard>
         {
-            const prompt = await this.createNPCTemplate(input, world);
-            const result = await textAPI.generateText(prompt, this.characterSchema);
+            const prompt = await this.createNPCTemplate(world);
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: input }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.CharacterCard;
         }

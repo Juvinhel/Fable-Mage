@@ -225,7 +225,6 @@ namespace Views
                 }
                 catch (error)
                 {
-                    console.log("error", error);
                     throw new Error("Something went wrong with your image api config!");
                 }
 

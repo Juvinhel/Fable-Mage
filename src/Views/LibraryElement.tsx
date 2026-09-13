@@ -31,7 +31,6 @@ namespace Views
         {
             const response = await fetch("https://script.google.com/macros/s/AKfycbyX-Tyw47JPPwH0fNgyI540WNGmtMIZM1QgIOay1gHeJD3avjNV8_SLnW3kTLaXXqQEVQ/exec");
             const result: { title: string; cover: string; description: string; tags: string; file: string; }[] = await response.json();
-            console.log("r", result);
 
             this.listElement.clearChildren();
             for (const item of result)

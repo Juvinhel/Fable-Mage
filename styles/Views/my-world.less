@@ -76,6 +76,19 @@ my-world
         gap: 0.25em;
     }
 
+    .stat-list
+    {
+        display: grid;
+        grid-template-columns: max-content 1fr min-content;
+        grid-auto-rows: max-content;
+        gap: 0.25em;
+
+        > *
+        {
+            grid-column: 1 / -1;
+        }
+    }
+
     .list
     {
         display: grid;

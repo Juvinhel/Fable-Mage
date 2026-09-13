@@ -3,22 +3,6 @@ Act as a Stable Diffusion prompt engineer for a adventure RPG.
 The user input contains the description of a scene.
 
 <character>
-Name: Elias Richter
-Appearance: Unkempt brown hair, earnest hazel eyes, fair skin. Athletic build is beginning to soften, retaining a strong jawline. Appears male, transitioning towards androgynous.
-</character>
-
-<character>
-Name: Max Maurer
-Appearance: Athletic build, sun-kissed skin, vibrant brown hair styled in a casual mop, bright hazel eyes. Perceived male.
-Personality: Jovial, Witty, Boisterous, Teasing
-</character>
-
-<character>
-Name: Elaine Winzer
-Appearance: Slender build with dark, wavy hair often pulled into a practical, messy bun. Large, earnest brown eyes. Fair, slightly freckled skin. Female.
-</character>
-
-<character>
 Name: {{= world.player.name }}
 Appearance: {{= world.player.appearance }}
 </character>
@@ -40,7 +24,7 @@ TASK
 5. Combine into a single Stable Diffusion prompt using this structure:
    [character descriptions] + [action/pose] + [setting] + [lighting/mood] + [style]
 
-Strictly adhere to these property definitions:
+Output valid json and strictly adhere to the following property rules:
 ### description
 - prompt for Stable Diffusion
 - do not use verbose lanuage

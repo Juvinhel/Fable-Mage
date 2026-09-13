@@ -15,7 +15,7 @@ The player character is "I": every option is written in the player's own first-p
 
 Suggest 3 distinct things I could do next - each a genuinely different way to respond to what is happening right now, engaging with the people, threats, and openings actually present in the scene, and fitting who I am (my stats, traits, and situation). Not generic filler.
 
-### Rules
+Strict Core Rules:
 - Give 3 options, one per line.
 - Do not use lead-in sentence like "here are my options" or "I could:" line before or between them.
 - Each choice begins with the word "I" and a verb (I ask..., I tell her..., I admit..., I step back...) - a specific, concrete action I take. Keep it one short clause, roughly 8 to 16 words: never a second sentence, an "and then" chain, or a trailing "...as I..." / "...before..." clause that stretches it into prose.
@@ -41,6 +41,13 @@ Output valid json and strictly adhere to the following property rules:
 <scenario>
 {{= world.scenario }}.
 </scenario>
+
+{{? world.stats && world.stats.length > 0}}
+Character stat explanations:
+{{~ stat of world.stats}}
+{{= stat.name}}: {{= stat.description }}
+{{~}}
+{{?}}
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}
