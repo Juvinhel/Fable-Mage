@@ -105,8 +105,8 @@ namespace Views
                     <div class="anchor" />
 
                     <div>
-                        <button onclick={ () => this.onImportJSON() }><span>Import JSON</span></button>
-                        <button onclick={ () => this.onExportJSON() }><span>Export JSON</span></button>
+                        <button onclick={ () => this.open() }><span>Import JSON</span></button>
+                        <button onclick={ () => this.save() }><span>Export JSON</span></button>
                     </div>
                 </div>
             </tab-control> as HTMLTabControl;
@@ -345,21 +345,16 @@ namespace Views
             Views.navigate("Story");
         }
 
-        private onExportJSON()
+        public async save()
         {
             const world = this.export();
 
             DownloadHelper.downloadData(world.title + ".json", world);
         }
 
-        private async onImportJSON()
+        public async open()
         {
-            await this.openWorld();
-        }
-
-        public async openWorld()
-        {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
             if (result.length > 0)
             {
                 const file = result.item(0);

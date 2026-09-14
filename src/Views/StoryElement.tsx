@@ -61,6 +61,16 @@ namespace Views
 
                         <div />
                     </div>
+                    <div class="save-load" title="Save / Load">
+                        <div />
+
+                        <div class="anchor" />
+
+                        <div>
+                            <button onclick={ () => this.open() }><span>Load Savegame</span></button>
+                            <button onclick={ () => this.save() }><span>Save Savegame</span></button>
+                        </div>
+                    </div>
                 </tab-control> as HTMLTabControl }
             </>;
         }
@@ -274,6 +284,26 @@ namespace Views
             }
             if (plotPointElement)
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+        }
+
+        public async save()
+        {
+            const story = this.export();
+
+            DownloadHelper.downloadData(story.title + " - Turn: " + story.plot.length + 1 + ".json", story);
+        }
+
+        public async open()
+        {
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            if (result.length > 0)
+            {
+                const file = result.item(0);
+                const text = await file.text();
+                const story = JSON.parse(text);
+                this.import(story);
+            }
+            this.tabControl.select("Story");
         }
     }
 

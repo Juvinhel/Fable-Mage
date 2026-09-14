@@ -34,12 +34,13 @@ namespace Views
         private onLoadWorld()
         {
             Views.navigate("World");
-            Views.worldElement.openWorld();
+            Views.worldElement.open();
         }
 
         private onLoadSavegame()
         {
-
+            Views.navigate("Story");
+            Views.storyElement.open();
         }
     }
 

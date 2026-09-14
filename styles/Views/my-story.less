@@ -65,76 +65,10 @@ my-story > tab-control
             }
         }
     }
-
-    > .characters
-    {
-        display: grid;
-        grid-template-rows: 1fr max-content;
-        grid-template-columns: 1fr;
-        overflow-y: auto;
-
-        *
-        {
-            overflow-anchor: none;
-        }
-
-        > div:first-child
-        {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            grid-auto-rows: max-content;
-            grid-row: 1;
-            grid-column: 1;
-            height: max-content;
-            padding: 0.25em;
-            gap: 0.25em;
-
-            > *
-            {
-                display: grid;
-                grid-template-rows: min-content;
-                grid-template-columns: subgrid;
-                grid-auto-rows: min-content;
-                grid-column: 1 / -1;
-                gap: 0.25em;
-
-                > label
-                {
-                    grid-column: 1;
-                    align-self: baseline;
-                    padding: 0.25em 0;
-                }
-
-                > *:not(label)
-                {
-                    grid-column: 2;
-                }
-            }
-        }
-
-        .anchor
-        {
-            height: 1px;
-            overflow-anchor: auto;
-        }
-
-        > div:last-child
-        {
-            display: grid;
-            position: sticky;
-            bottom: 0;
-            grid-template-columns: 1fr 1fr;
-            grid-auto-rows: 1fr;
-            grid-auto-flow: dense;
-            grid-row: -2; // last row
-            grid-column: 1;
-            padding: 0.25em;
-            gap: 0.25em;
-            background-color: var(--page-background-color);
-        }
-    }
-
-    > .summary
+    
+    > .characters,
+    > .summary,
+    > .save-load
     {
         display: grid;
         grid-template-rows: 1fr max-content;

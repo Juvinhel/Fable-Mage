@@ -27,7 +27,7 @@ class App
             {
                 const currentStory = Views.storyElement.export();
                 localStorage.set("current-story", currentStory);
-            } catch (err0r) { console.log(err0r); }
+            } catch (err0r) { console.log(err0r); alert(err0r); }
         }
     }.bind(this);
 
