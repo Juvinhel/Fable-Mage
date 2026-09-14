@@ -6,13 +6,13 @@ namespace Views
         {
             super();
 
-            this.title = "World";
             this.append(this.build());
         }
 
         private tabControl: HTMLTabControl;
 
         private titleInput: HTMLTextAreaElement;
+        private coverImage: HTMLImageElement;
         private authorStyleInput: HTMLTextAreaElement;
         private scenarioInput: HTMLTextAreaElement;
         private focusInput: HTMLTextAreaElement;
@@ -30,6 +30,10 @@ namespace Views
                         <div>
                             <label>Title:</label>
                             { this.titleInput = <textarea class="title-input single-line" value="" /> as HTMLTextAreaElement }
+                        </div>
+                        <div>
+                            <label>Cover:</label>
+                            { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
                         </div>
                         <div>
                             <label>Author style:</label>
@@ -105,6 +109,16 @@ namespace Views
                     </div>
                 </div>
             </tab-control> as HTMLTabControl;
+        }
+
+        private coverPrompt: string;
+        private async onGenerateCover()
+        {
+            const result = await Dialogs.ImageEdit(this.coverImage.src, this.coverPrompt, "Describe the cover image of your world.");
+            if (!result) return;
+
+            this.coverImage.src = result.image;
+            this.coverPrompt = result.prompt;
         }
 
         private onAddStat()
@@ -221,19 +235,19 @@ namespace Views
 
             try
             {
-                const world = {} as Data.World;
                 const output = await AI.Client.createWorld(result);
-                world.title = output.title;
-                world["author-style"] = output["author-style"];
-                world.scenario = output.scenario;
-                world.focus = output.focus;
+                this.titleInput.value = output.title;
+                this.authorStyleInput.value = output["author-style"];
+                this.scenarioInput.value = output.scenario;
+                this.focusInput.value = output.focus;
 
-                const player = await AI.Client.createPlayer(output.protagonist, world);
-                world.player = player;
+                const preWorld = this.exportWorld();
+                console.log("preWorld", preWorld);
+                const [player] = await Promise.all([
+                    AI.Client.createPlayer(output.protagonist, preWorld),
+                    this.createImage(preWorld)]);
 
-                world.npcs = [];
-
-                this.importWorld(world);
+                this.playerCharacterCard.importCharacter(player);
             }
             catch (error)
             {
@@ -241,6 +255,23 @@ namespace Views
             }
 
             this.stopThinking();
+        }
+
+        private async createImage(world: Data.World)
+        {
+            if (this.coverImage.classList.contains("disabled")) return;
+
+            try
+            {
+                const prompt = await AI.Client.describeWorld(world);
+                this.coverPrompt = prompt;
+                const image = await AI.Client.getImage(prompt);
+                this.coverImage.setAttribute("src", image);
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
         }
 
         private async onWritePrologueUsingAI()
@@ -277,13 +308,43 @@ namespace Views
 
         private async onDeleteWorld()
         {
-            this.importWorld({ title: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.clearWorld();
+        }
+
+        private onExportJSON()
+        {
+            const world = this.exportWorld();
+
+            DownloadHelper.downloadData(world.title + ".json", world);
+        }
+
+        private async onImportJSON()
+        {
+            await this.openWorld();
+        }
+
+        public async openWorld()
+        {
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            if (result.length > 0)
+            {
+                const file = result.item(0);
+                const text = await file.text();
+                const world = JSON.parse(text);
+                this.importWorld(world);
+            }
+        }
+
+        public clearWorld(): void
+        {
+            this.importWorld({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public exportWorld(): Data.World
         {
             const world: Data.World = {
                 "title": this.titleInput.value.trim(),
+                "cover": this.coverImage.getAttribute("src"),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "focus": this.focusInput.value.trim().trimRight("."),
@@ -314,6 +375,7 @@ namespace Views
             this.npcCardList.clearChildren();
 
             this.titleInput.value = world.title;
+            this.coverImage.setAttribute("src", world.cover);
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.focusInput.value = world.focus;
@@ -328,7 +390,7 @@ namespace Views
                     this.statList.append(statDescriptionElement);
                 }
 
-            const stats = world.stats.map(x => x.name);
+            const stats = world.stats?.map(x => x.name) ?? [];
 
             const playerCard = new CharacterCardElement();
             playerCard.additionalProperties = stats;
@@ -354,30 +416,11 @@ namespace Views
             }
         }
 
-        private onExportJSON()
-        {
-            const world = this.exportWorld();
-
-            DownloadHelper.downloadData(world.title + ".json", world);
-        }
-
-        private async onImportJSON()
-        {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
-            if (result.length > 0)
-            {
-                const file = result.item(0);
-                const text = await file.text();
-                const world = JSON.parse(text);
-                this.importWorld(world);
-            }
-        }
-
         private beginThinking()
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
                 button.disabled = true;
         }
 
@@ -385,7 +428,7 @@ namespace Views
         {
             for (const indicator of this.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
+            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
                 button.disabled = false;
         }
     }

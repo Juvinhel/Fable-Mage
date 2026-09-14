@@ -34,7 +34,6 @@ class App
     }.bind(this);
 
     public static config: Data.Config;
-    private static storyElement: Views.StoryElement;
 
     public static extractor;
 

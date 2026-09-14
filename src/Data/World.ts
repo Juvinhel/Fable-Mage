@@ -3,6 +3,7 @@ namespace Data
     export type World =
         {
             title: string;
+            cover: string;
             "author-style": string;
             scenario: string;
             focus: string;

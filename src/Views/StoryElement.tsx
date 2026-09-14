@@ -9,72 +9,205 @@ namespace Views
             this.append(this.build());
         }
 
-        private tabControl: HTMLTabControl;
-        public plotElement: PlotElement;
-        private worldElement: WorldElement;
-        private importExportElement: ImportExportElement;
-        private settingsElement: SettingsElement;
+        private heading: HTMLHeadingElement;
+        private plotList: HTMLDivElement;
+        public userInput: HTMLTextAreaElement;
+        public submitButton: HTMLButtonElement;
 
         private build()
         {
-            return this.tabControl = <tab-control>
-                { this.plotElement = new PlotElement() }
-                { this.worldElement = new WorldElement() }
-                { this.importExportElement = new ImportExportElement() }
-                { this.settingsElement = new SettingsElement() }
-            </tab-control> as HTMLTabControl;
+            return <>
+                { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
+                { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
+                <div class="input">
+                    { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
+                    { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
+                    <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                </div>
+            </>;
         }
 
-        public init()
+        private connectedCallback()
         {
-            this.settingsElement.save();
         }
 
-        public selectTab(tab: "Plot" | "World" | "Import / Export" | "Settings")
+        private refreshTurnCount()
         {
-            this.tabControl.select(tab);
+            let i = 0;
+            for (const plotPointElement of this.plotList.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
+                plotPointElement.turn = ++i;
         }
 
-        public exportStory(includePlot = false, includeImagesInPlot = false): Data.Story
+        private async onSubmit()
         {
-            const story: Data.Story = this.worldElement.exportWorld();
+            if (this.submitButton.disabled) return;
 
-            if (includePlot)
+            this.beginThinking();
+
+            //try
+            //{
+            //    const input = this.userInput.value.trim();
+            //    const plot = this.exportPlot(false);
+            //    const world = this.storyElement.exportStory();
+            //    const result = await AI.Client.advancePlot(input, plot, world);
+            //
+            //    const plotPointElement = new PlotPointElement();
+            //    plotPointElement.input = input;
+            //    plotPointElement.location = result.location;
+            //    plotPointElement.time = result.time;
+            //    plotPointElement.text = result.plot;
+            //    plotPointElement.internal = result.internal;
+            //    this.plotList.appendChild(plotPointElement); HTMLButtonElement;
+            //    //deactivate all inputs
+            //    for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+            //        button.disabled = true;
+            //    this.storyElement.selectTab("Plot");
+            //    this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+            //
+            //    await Promise.all([
+            //        this.createAmbientImage(plotPointElement.text, world, plotPointElement),
+            //        this.offerChoices(plot, plotPointElement, world),
+            //        this.archiveMemory(this.plotList.children.length, plotPointElement.exportPlotPoint())]);
+            //
+            //    this.userInput.value = "";
+            //}
+            //catch (error)
+            //{
+            //    UI.Dialog.error(error);
+            //}
+
+            this.stopThinking();
+        }
+
+        public async onWritePrologueUsingAI()
+        {
+            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
+            if (!result) return;
+
+            this.beginThinking();
+
+            //try
+            //{
+            //    this.storyElement.plotElement.plotList.clearChildren();
+            //    const world = this.storyElement.exportWorld();
+            //    const prologue = await AI.Client.writePrologue(result, world);
+            //
+            //    const plotPointElement = new PlotPointElement();
+            //    plotPointElement.location = prologue.location;
+            //    plotPointElement.time = prologue.time;
+            //    plotPointElement.text = prologue.plot;
+            //    plotPointElement.internal = prologue.internal;
+            //    this.plotList.appendChild(plotPointElement); HTMLButtonElement;
+            //    // deactivate all inputs
+            //    for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+            //        button.disabled = true;
+            //    this.storyElement.selectTab("Plot");
+            //    this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+            //
+            //    await Promise.all([
+            //        this.createAmbientImage(plotPointElement.text, world, plotPointElement),
+            //        this.offerChoices([], plotPointElement, world),
+            //        this.archiveMemory(1, plotPointElement.exportPlotPoint())]);
+            //
+            //    this.userInput.value = "";
+            //}
+            //catch (error)
+            //{
+            //    UI.Dialog.error(error);
+            //}
+
+            this.stopThinking();
+        }
+
+        private async createAmbientImage(scene: string, world: Data.World, plotPointElement: PlotPointElement)
+        {
+            try
             {
-                const plot: Data.Plot = this.plotElement.exportPlot(includeImagesInPlot);
-                if (plot.length > 0) story.plot = plot;
+                const prompt = await AI.Client.describeScene(scene, world);
+                plotPointElement.scenery = prompt;
+                const image = await AI.Client.getImage(prompt);
+                plotPointElement.image = image;
             }
-
-            return story;
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
         }
 
-        public importStory(story: Data.Story)
+        private async offerChoices(plot: Data.Plot, plotPointElement: PlotPointElement, world: Data.World)
         {
-            this.importWorld(story);
-            this.importPlot(story.plot ?? []);
+            try
+            {
+                plot = [...plot];
+                plot.push(plotPointElement.exportPlotPoint());
+                const choices = await AI.Client.offerChoices(plot, world);
+                plotPointElement.choices = choices;
+                // deactivate all inputs
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                    button.disabled = true;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
+        {
+            try
+            {
+                const memories = await AI.Client.archiveMemory(plotPoint) as Data.Memory[];
+                for (const memory of memories)
+                {
+                    memory.turn = turn;
+                    memory.location = plotPoint.location;
+                    memory.time = plotPoint.time;
+                }
+
+                console.log("memories: ", memories);
+                for (const memory of memories)
+                {
+                    const output = await App.extractor(memory.content, {
+                        pooling: 'mean',
+                        normalize: true,
+                    });
+                    const vectorEmbedding = Array.from(output.data);
+                    const record = {
+                        id: `memory_${ Date.now() }`,
+                        vector: vectorEmbedding, // This is your array of floats (e.g., [0.023, -0.045, ...])
+                        metadata: memory
+                    };
+                    console.log("record", record);
+                }
+            }
+            catch { }
         }
 
         public exportPlot(includeImagesInPlot = false): Data.Plot
         {
-            return this.plotElement.exportPlot(includeImagesInPlot);
+            const plot: Data.Plot = [];
+
+            for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
+            {
+                const plotPoint: Data.PlotPoint = plotPointElement.exportPlotPoint(includeImagesInPlot);
+                plot.push(plotPoint);
+            }
+
+            return plot;
         }
 
         public importPlot(plot: Data.Plot)
         {
-            this.plotElement.importPlot(plot);
-        }
-
-        public exportWorld(): Data.World
-        {
-            return this.worldElement.exportWorld();
-        }
-
-        public importWorld(world: Data.World)
-        {
-            this.worldElement.importWorld(world);
-
-            const titleHeading = this.querySelector(".title") as HTMLHeadingElement;
-            titleHeading.textContent = world.title;
+            this.plotList.clearChildren();
+            let plotPointElement: PlotPointElement;
+            for (const plotPoint of plot)
+            {
+                plotPointElement = new PlotPointElement();
+                plotPointElement.importPlotPoint(plotPoint);
+                this.plotList.appendChild(plotPointElement);
+            }
+            if (plotPointElement)
+                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
         }
 
         public beginThinking()

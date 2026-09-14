@@ -10,7 +10,6 @@ namespace Views
         }
 
         private storyElement: StoryElement;
-        private plotElement: PlotElement;
 
         private locationElement: HTMLSpanElement;
         private timeElement: HTMLSpanElement;
@@ -45,7 +44,6 @@ namespace Views
         private connectedCallback()
         {
             this.storyElement = this.closest("my-story");
-            this.plotElement = this.closest("my-plot");
         }
 
         public get turn() { return parseInt(this.turnElement.textContent); }
@@ -86,10 +84,10 @@ namespace Views
 
         private async setChoice(choice: string)
         {
-            if (this.plotElement.userInput.value == choice)
-                this.plotElement.submitButton.click();
+            if (this.storyElement.userInput.value == choice)
+                this.storyElement.submitButton.click();
             else
-                this.plotElement.userInput.value = choice;
+                this.storyElement.userInput.value = choice;
         }
 
         private async onReturnHere()
@@ -100,14 +98,14 @@ namespace Views
             const input = this.input;
             const plot: Data.Plot = [];
             let remove = false;
-            for (const plotPointElement of this.plotElement.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
+            for (const plotPointElement of this.storyElement.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
             {
                 if (plotPointElement == this) remove = true;
                 if (remove) plotPointElement.remove();
                 else plot.push(plotPointElement.exportPlotPoint());
             }
 
-            this.plotElement.userInput.value = input ?? "";
+            this.storyElement.userInput.value = input ?? "";
         }
 
         private async onEdit()

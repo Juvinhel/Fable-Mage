@@ -6,7 +6,6 @@ namespace Views
         {
             super();
 
-            this.title = "Settings";
             this.append(this.build());
         }
 

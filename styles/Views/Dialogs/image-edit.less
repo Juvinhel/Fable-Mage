@@ -1,0 +1,69 @@
+.image-edit
+{
+    display: grid;
+    grid-template-rows: 20em 1fr auto auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "image image"
+        "text text"
+        "generate generate"
+        "cancel ok";
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 1em;
+    border-radius: var(--corner-radius);
+
+    > .image
+    {
+        grid-area: image;
+        align-self: center;
+        justify-self: center;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    > .text-input
+    {
+        display: block;
+        grid-area: text;
+        width: calc(100% - 0.5em);
+        height: 100%;
+        padding: 0.25em;
+        border: none;
+        border-radius: var(--corner-radius);
+        background-color: white;
+        color: black;
+        font-size: 1.125em;
+        font-family: monospace;
+    }
+
+    > .generate-button
+    {
+        grid-area: generate;
+        width: 100%;
+    }
+
+    > .ok-button
+    {
+        grid-area: ok;
+        background: var(--ok-color);
+        color: var(--foreground-color);
+
+        &:hover
+        {
+            background: var(--highlight-ok-color);
+        }
+    }
+
+    > .cancel-button
+    {
+        grid-area: cancel;
+        background: var(--cancel-color);
+        color: var(--foreground-color);
+
+        &:hover
+        {
+            background: var(--highlight-cancel-color);
+        }
+    }
+}

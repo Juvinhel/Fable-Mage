@@ -6,7 +6,7 @@ namespace AI
         {
             this.plotSchema = await this.getSchema("plot");
             this.choicesSchema = await this.getSchema("choices");
-            this.sceneSchema = await this.getSchema("scene");
+            this.imagePromptSchema = await this.getSchema("image-prompt");
             this.worldSchema = await this.getSchema("world");
             this.characterSchema = await this.getSchema("character");
             this.memorySchema = await this.getSchema("memory");
@@ -17,6 +17,7 @@ namespace AI
             this.describeSceneTemplate = await this.getTemplate("describe-scene");
             this.getImageTemplate = await this.getTemplate("get-image");
             this.createWorldTemplate = await this.getTemplate("create-world");
+            this.describeWorldTemplate = await this.getTemplate("describe-world");
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
             this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
@@ -70,13 +71,14 @@ namespace AI
         private choicesSchema: any;
         private offerChoicesTemplate: (...params: any[]) => Promise<string>;
 
-        private sceneSchema: any;
+        private imagePromptSchema: any;
         private describeSceneTemplate: (...params: any[]) => Promise<string>;
 
         private getImageTemplate: (...params: any[]) => Promise<string>;
 
         private worldSchema: any;
         private createWorldTemplate: (...params: any[]) => Promise<string>;
+        private describeWorldTemplate: (...params: any[]) => Promise<string>;
 
         private characterSchema: any;
         private createPlayerTemplate: (...params: any[]) => Promise<string>;
@@ -155,7 +157,7 @@ namespace AI
                 { role: "user", content: scene }
             ];
 
-            const result = await textAPI.generateInteractions(messages, this.sceneSchema);
+            const result = await textAPI.generateInteractions(messages, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
             return obj.description;
@@ -185,6 +187,21 @@ namespace AI
             const result = await textAPI.generateInteractions(messages, this.worldSchema);
             const obj = this.parseJSON(result);
             return obj as any;
+        }
+
+        public async describeWorld(world: Data.World): Promise<string>
+        {
+            const prompt: string = await this.describeWorldTemplate(world);
+
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: world.scenario }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.imagePromptSchema);
+            const obj = this.parseJSON(result);
+
+            return obj.description;
         }
 
         public async createPlayer(
