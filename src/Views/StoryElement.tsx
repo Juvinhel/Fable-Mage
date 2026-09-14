@@ -11,6 +11,7 @@ namespace Views
 
         private tabControl: HTMLTabControl;
 
+        private storyTab: HTMLElement;
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
         public userInput: HTMLTextAreaElement;
@@ -25,7 +26,7 @@ namespace Views
         {
             return <>
                 { this.tabControl = <tab-control>
-                    <div class="story" title="Story">
+                    { this.storyTab = <div class="story" title="Story">
                         { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input">
@@ -33,7 +34,7 @@ namespace Views
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
-                    </div>
+                    </div> as HTMLElement }
                     <div class="characters" title="Characters">
                         <div>
                             <div >
@@ -117,7 +118,7 @@ namespace Views
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                     button.disabled = true;
                 this.tabControl.select("Story");
-                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+                this.storyTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
                     this.createAmbientImage(plotPointElement.text, this.world, plotPointElement),
@@ -290,7 +291,7 @@ namespace Views
         {
             const story = this.export();
 
-            DownloadHelper.downloadData(story.title + " - Turn: " + story.plot.length + 1 + ".json", story);
+            DownloadHelper.downloadData(story.title + " - Turn: " + story.plot.length + ".json", story);
         }
 
         public async open()
