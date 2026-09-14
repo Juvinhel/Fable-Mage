@@ -72,4 +72,26 @@ class App
             Views.navigate("Settings");
         }
     }
+
+    public static beginThinking()
+    {
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
+        {
+            for (const indicator of element.querySelectorAll(".thinking-indicator"))
+                indicator.classList.toggle("show", true);
+            for (const button of element.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
+                button.disabled = true;
+        }
+    }
+
+    public static stopThinking()
+    {
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
+        {
+            for (const indicator of element.querySelectorAll(".thinking-indicator"))
+                indicator.classList.toggle("show", false);
+            for (const button of element.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
+                button.disabled = false;
+        }
+    }
 }

@@ -15,9 +15,7 @@ namespace Views
             return <>
                 <h1>Fable Mage</h1>
 
-                <div class="background">
-                    <img src="img/home-cover.png" />
-                </div>
+                <img class="background" src="img/home-cover.png" />
 
                 <div>
                     <button onclick={ () => this.onCreateNewWorld() }><span>Create new World</span></button>
@@ -30,7 +28,7 @@ namespace Views
         private onCreateNewWorld()
         {
             Views.navigate("World");
-            Views.worldElement.clearWorld();
+            Views.worldElement.createWorldUsingAI();
         }
 
         private onLoadWorld()

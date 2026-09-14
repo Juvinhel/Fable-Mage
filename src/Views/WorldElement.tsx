@@ -59,8 +59,9 @@ namespace Views
                     <div class="anchor" />
 
                     <div>
-                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.onCreateWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
+                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
                         <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
+                        <button onclick={ () => this.onStartStory() }><span>Start Story</span></button>
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
@@ -176,7 +177,7 @@ namespace Views
             if (!result) return;
             this.previousCreatePlayerPrompt = result;
 
-            this.beginThinking();
+            App.beginThinking();
 
             try
             {
@@ -192,7 +193,7 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         private async onAddNPC()
@@ -210,7 +211,7 @@ namespace Views
             if (!result) return;
             this.previousCreateNPCPrompt = result;
 
-            this.beginThinking();
+            App.beginThinking();
 
             try
             {
@@ -230,7 +231,7 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         private async createPortrait(character: Data.Character, characterCardElement: CharacterCardElement)
@@ -249,14 +250,14 @@ namespace Views
         }
 
         private previousCreateWorldPrompt = "";
-        private async onCreateWorldUsingAI()
+        public async createWorldUsingAI()
         {
             const result = await Dialogs.TextEdit("World Description", this.previousCreateWorldPrompt, "Describe your scenario including lore and background story.");
             if (!result) return;
             this.previousCreateWorldPrompt = result;
 
             await this.onDeleteWorld();
-            this.beginThinking();
+            App.beginThinking();
 
             try
             {
@@ -279,7 +280,7 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         private async createImage(world: Data.World)
@@ -306,7 +307,7 @@ namespace Views
             if (!result) return;
             this.previousCreateProloguePrompt = result;
 
-            this.beginThinking();
+            App.beginThinking();
 
             try
             {
@@ -330,12 +331,18 @@ namespace Views
                 UI.Dialog.error(error);
             }
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         private async onDeleteWorld()
         {
             this.clearWorld();
+        }
+
+        private async onStartStory()
+        {
+            Views.storyElement.startStory(this.exportWorld());
+            Views.navigate("Story");
         }
 
         private onExportJSON()
@@ -348,7 +355,6 @@ namespace Views
         private async onImportJSON()
         {
             await this.openWorld();
-            this.tabControl.select("World");
         }
 
         public async openWorld()
@@ -361,6 +367,7 @@ namespace Views
                 const world = JSON.parse(text);
                 this.importWorld(world);
             }
+            this.tabControl.select("World");
         }
 
         public clearWorld(): void
@@ -443,22 +450,6 @@ namespace Views
                 plotPointElement.importPlotPoint(world.prologue);
                 this.prologueContainer.append(plotPointElement);
             }
-        }
-
-        private beginThinking()
-        {
-            for (const indicator of this.querySelectorAll(".thinking-indicator"))
-                indicator.classList.toggle("show", true);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
-                button.disabled = true;
-        }
-
-        private stopThinking()
-        {
-            for (const indicator of this.querySelectorAll(".thinking-indicator"))
-                indicator.classList.toggle("show", false);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select, img") as NodeListOf<any>)
-                button.disabled = false;
         }
     }
 

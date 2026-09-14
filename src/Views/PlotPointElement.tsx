@@ -122,24 +122,11 @@ namespace Views
 
         private async onEditImage()
         {
-            const result = await Views.Dialogs.TextEdit("Edit Image", this.scenery ?? "");
-            if (result) 
-            {
-                this.storyElement.beginThinking();
+            const result = await Dialogs.ImageEdit(this.image, this.scenery, "Describe the ambient image of the plot.");
+            if (!result) return;
 
-                try
-                {
-                    this.scenery = result;
-                    const base64 = await AI.Client.getImage(this.scenery);
-                    this.image = base64;
-                }
-                catch (error)
-                {
-                    UI.Dialog.error(error);
-                }
-
-                this.storyElement.stopThinking();
-            }
+            this.scenery = result.prompt;
+            this.image = result.image;
         }
 
         private async onDelete()

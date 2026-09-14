@@ -27,8 +27,15 @@ namespace Views
             </>;
         }
 
-        private connectedCallback()
+        private world: Data.World;
+
+        private async connectedCallback()
         {
+            if (!this.world)
+            {
+                await UI.Dialog.message({ title: "No world loaded!", text: "Load a world first." });
+                Views.navigate("World");
+            }
         }
 
         private refreshTurnCount()
@@ -42,7 +49,7 @@ namespace Views
         {
             if (this.submitButton.disabled) return;
 
-            this.beginThinking();
+            App.beginThinking();
 
             //try
             //{
@@ -76,7 +83,7 @@ namespace Views
             //    UI.Dialog.error(error);
             //}
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         public async onWritePrologueUsingAI()
@@ -84,7 +91,7 @@ namespace Views
             const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
             if (!result) return;
 
-            this.beginThinking();
+            App.beginThinking();
 
             //try
             //{
@@ -116,7 +123,7 @@ namespace Views
             //    UI.Dialog.error(error);
             //}
 
-            this.stopThinking();
+            App.stopThinking();
         }
 
         private async createAmbientImage(scene: string, world: Data.World, plotPointElement: PlotPointElement)
@@ -183,6 +190,20 @@ namespace Views
             catch { }
         }
 
+        public async startStory(world: Data.World)
+        {
+            this.world = world;
+
+            this.plotList.clearChildren();
+            this.heading.textContent = world.title;
+            if (world.prologue)
+            {
+                const plotPointElement = new PlotPointElement();
+                plotPointElement.importPlotPoint(world.prologue);
+                this.plotList.append(plotPointElement);
+            }
+        }
+
         public exportPlot(includeImagesInPlot = false): Data.Plot
         {
             const plot: Data.Plot = [];
@@ -208,22 +229,6 @@ namespace Views
             }
             if (plotPointElement)
                 this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
-        }
-
-        public beginThinking()
-        {
-            for (const indicator of this.querySelectorAll(".thinking-indicator"))
-                indicator.classList.toggle("show", true);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
-                button.disabled = true;
-        }
-
-        public stopThinking()
-        {
-            for (const indicator of this.querySelectorAll(".thinking-indicator"))
-                indicator.classList.toggle("show", false);
-            for (const button of this.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
-                button.disabled = false;
         }
     }
 
