@@ -1,65 +1,136 @@
-my-story
+my-story > tab-control
 {
-    display: grid;
-    grid-template-rows: max-content 1fr max-content;
-    grid-template-columns: 1fr;
-    grid-template-areas: "title" "plot-list" "input";
-    overflow-y: auto;
-
-    > .title
-    {
-        z-index: 1000;
-        position: sticky;
-        top: 0;
-        grid-area: title;
-        padding: 0.25em;
-        background-color: var(--page-background-color);
-        font-style: italic;
-        font-size: 1.375em;
-        text-align: center;
-    }
-
-    > .plot-list
+    > .story
     {
         display: grid;
+        grid-template-rows: max-content 1fr max-content;
         grid-template-columns: 1fr;
-        grid-auto-rows: max-content;
-        grid-area: plot-list;
-        height: max-content;
-        padding: 0.25em;
+        grid-template-areas: "title" "plot-list" "input";
         overflow-y: auto;
-        gap: 0.75em;
-    }
 
-    > .input
-    {
-        display: grid;
-        z-index: 1100;
-        position: sticky;
-        bottom: 0;
-        grid-template-rows: 1fr;
-        grid-template-columns: 1fr auto;
-        grid-area: input;
-        padding: 0.25em;
-        overflow: visible;
-        gap: 0.25em;
-        background-color: var(--page-background-color);
-
-        > .user-input
+        > .title
         {
-            min-height: 3em;
+            z-index: 1000;
+            position: sticky;
+            top: 0;
+            grid-area: title;
+            padding: 0.25em;
+            background-color: var(--page-background-color);
+            font-style: italic;
+            font-size: 1.375em;
+            text-align: center;
         }
 
-        > .submit-button
+        > .plot-list
         {
-            width: 3.5em;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: max-content;
+            grid-area: plot-list;
+            height: max-content;
+            padding: 0.25em;
+            overflow-y: auto;
+            gap: 0.75em;
+        }
 
-            > color-icon
+        > .input
+        {
+            display: grid;
+            z-index: 1100;
+            position: sticky;
+            bottom: 0;
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr auto;
+            grid-area: input;
+            padding: 0.25em;
+            overflow: visible;
+            gap: 0.25em;
+            background-color: var(--page-background-color);
+
+            > .user-input
             {
-                aspect-ratio: 1;
-                width: calc(100% - 0.5em);
-                height: unset;
+                min-height: 3em;
             }
+
+            > .submit-button
+            {
+                width: 3.5em;
+
+                > color-icon
+                {
+                    aspect-ratio: 1;
+                    width: calc(100% - 0.5em);
+                    height: unset;
+                }
+            }
+        }
+    }
+
+    > .characters
+    {
+        display: grid;
+        grid-template-rows: 1fr max-content;
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+
+        *
+        {
+            overflow-anchor: none;
+        }
+
+        > div:first-child
+        {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-auto-rows: max-content;
+            grid-row: 1;
+            grid-column: 1;
+            height: max-content;
+            padding: 0.25em;
+            gap: 0.25em;
+
+            > *
+            {
+                display: grid;
+                grid-template-rows: min-content;
+                grid-template-columns: subgrid;
+                grid-auto-rows: min-content;
+                grid-column: 1 / -1;
+                gap: 0.25em;
+
+                > label
+                {
+                    grid-column: 1;
+                    align-self: baseline;
+                    padding: 0.25em 0;
+                }
+
+                > *:not(label)
+                {
+                    grid-column: 2;
+                }
+            }
+        }
+
+        .anchor
+        {
+            height: 1px;
+            overflow-anchor: auto;
+        }
+
+        > div:last-child
+        {
+            display: grid;
+            position: sticky;
+            bottom: 0;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: 1fr;
+            grid-auto-flow: dense;
+            grid-row: -2; // last row
+            grid-column: 1;
+            padding: 0.25em;
+            gap: 0.25em;
+            background-color: var(--page-background-color);
         }
     }
 }

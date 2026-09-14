@@ -15,21 +15,19 @@ class App
 
         await this.initAI();
 
-        //const story = localStorage.get<Data.Story>("current-story") ?? await (await fetch("templates/sample-story.json")).json();
-        //this.storyElement.importStory(story);
-        //
-        //this.storyElement.init();
+        const story = localStorage.get<Data.Story>("current-story") ?? await (await fetch("templates/sample-story.json")).json();
+        Views.storyElement.import(story);
     }
 
     private static visibilityChange = function (this: typeof App, event: Event)
     {
         if (document.visibilityState == "hidden")
         {
-            //try
-            //{
-            //    const currentStory = this.storyElement.exportStory(true, true);
-            //    localStorage.set("current-story", currentStory);
-            //} catch { }
+            try
+            {
+                const currentStory = Views.storyElement.export();
+                localStorage.set("current-story", currentStory);
+            } catch { }
         }
     }.bind(this);
 

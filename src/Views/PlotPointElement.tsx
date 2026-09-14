@@ -102,7 +102,7 @@ namespace Views
             {
                 if (plotPointElement == this) remove = true;
                 if (remove) plotPointElement.remove();
-                else plot.push(plotPointElement.exportPlotPoint());
+                else plot.push(plotPointElement.export());
             }
 
             this.storyElement.userInput.value = input ?? "";
@@ -135,7 +135,7 @@ namespace Views
                 this.remove();
         }
 
-        public exportPlotPoint(includeImagesInPlot = false): Data.PlotPoint
+        public export(): Data.PlotPoint
         {
             const plotPoint: Data.PlotPoint = {
                 location: this.location,
@@ -145,12 +145,12 @@ namespace Views
             };
             if (this.scenery) plotPoint.scenery = this.scenery;
             if (this.input) plotPoint.input = this.input;
-            if (includeImagesInPlot && this.image) plotPoint.image = this.image;
+            if (this.image) plotPoint.image = this.image;
             if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;
             return plotPoint;
         }
 
-        public importPlotPoint(plotPoint: Data.PlotPoint)
+        public import(plotPoint: Data.PlotPoint)
         {
             this.input = plotPoint.input;
             this.location = plotPoint.location;

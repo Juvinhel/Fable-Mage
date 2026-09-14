@@ -79,7 +79,7 @@ namespace Views
 
         public set additionalProperties(values: string[])
         {
-            const data = this.exportCharacter();
+            const data = this.export();
 
             this.additionalPropertiesList.clearChildren();
             for (const property of values)
@@ -90,7 +90,7 @@ namespace Views
                 </div>);
             }
 
-            this.importCharacter(data);
+            this.import(data);
         }
 
         public previousGeneratePortraitPrompt: string;
@@ -106,7 +106,7 @@ namespace Views
             this.portraitImage.src = result.image;
         }
 
-        public exportCharacter(): Data.Character
+        public export(): Data.Character
         {
             const ret = {} as Data.Character;
             ret.name = this.name;
@@ -126,7 +126,7 @@ namespace Views
             return ret;
         }
 
-        public importCharacter(character: Data.Character)
+        public import(character: Data.Character)
         {
             this.name = character.name;
             this.portrait = character.portrait;

@@ -150,11 +150,11 @@ namespace Views
 
             for (const characterCardElement of this.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
             {
-                const character = characterCardElement.exportCharacter();
+                const character = characterCardElement.export();
                 characterCardElement.additionalProperties = statNames;
                 character[newName] = character[oldName];
                 delete character[oldName];
-                characterCardElement.importCharacter(character);
+                characterCardElement.import(character);
             }
         }
 
@@ -181,10 +181,10 @@ namespace Views
 
             try
             {
-                const world = this.exportWorld();
+                const world = this.export();
                 const player = await AI.Client.createPlayer(result, world);
 
-                this.playerCharacterCard.importCharacter(player);
+                this.playerCharacterCard.import(player);
 
                 this.createPortrait(player, this.playerCharacterCard);
             }
@@ -215,13 +215,13 @@ namespace Views
 
             try
             {
-                const world = this.exportWorld();
+                const world = this.export();
                 const npc = await AI.Client.createNPC(result, world);
 
                 const stats = this.stats.map(x => x.name);
                 const npccard = new CharacterCardElement();
                 npccard.additionalProperties = stats;
-                npccard.importCharacter(npc);
+                npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
 
                 this.createPortrait(npc, npccard);
@@ -267,13 +267,13 @@ namespace Views
                 this.scenarioInput.value = output.scenario;
                 this.focusInput.value = output.focus;
 
-                const preWorld = this.exportWorld();
+                const preWorld = this.export();
                 console.log("preWorld", preWorld);
                 const [player] = await Promise.all([
                     AI.Client.createPlayer(output.protagonist, preWorld),
                     this.createImage(preWorld)]);
 
-                this.playerCharacterCard.importCharacter(player);
+                this.playerCharacterCard.import(player);
             }
             catch (error)
             {
@@ -312,7 +312,7 @@ namespace Views
             try
             {
                 this.prologueContainer.clearChildren();
-                const world = this.exportWorld();
+                const world = this.export();
                 const prologue = await AI.Client.writePrologue(result, world);
 
                 const plotPointElement = new PlotPointElement();
@@ -341,13 +341,13 @@ namespace Views
 
         private async onStartStory()
         {
-            Views.storyElement.startStory(this.exportWorld());
+            Views.storyElement.startStory(this.export());
             Views.navigate("Story");
         }
 
         private onExportJSON()
         {
-            const world = this.exportWorld();
+            const world = this.export();
 
             DownloadHelper.downloadData(world.title + ".json", world);
         }
@@ -365,17 +365,17 @@ namespace Views
                 const file = result.item(0);
                 const text = await file.text();
                 const world = JSON.parse(text);
-                this.importWorld(world);
+                this.import(world);
             }
             this.tabControl.select("World");
         }
 
         public clearWorld(): void
         {
-            this.importWorld({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.import({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
-        public exportWorld(): Data.World
+        public export(): Data.World
         {
             const world: Data.World = {
                 "title": this.titleInput.value.trim(),
@@ -383,7 +383,7 @@ namespace Views
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "focus": this.focusInput.value.trim().trimRight("."),
-                "player": this.playerCharacterCard.exportCharacter(),
+                "player": this.playerCharacterCard.export(),
             };
 
             const stats = this.stats;
@@ -392,20 +392,20 @@ namespace Views
 
             const npcs = [];
             for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
-                npcs.push(npcCard.exportCharacter());
+                npcs.push(npcCard.export());
             if (npcs.length > 0) world.npcs = npcs;
 
             const prologueElement = this.prologueContainer.children[0] as PlotPointElement;
             if (prologueElement)
             {
-                const prologue: Data.Prologue = prologueElement.exportPlotPoint();
+                const prologue: Data.Prologue = prologueElement.export();
                 world.prologue = prologue;
             }
 
             return world;
         }
 
-        public importWorld(world: Data.World)
+        public import(world: Data.World)
         {
             this.npcCardList.clearChildren();
 
@@ -429,7 +429,7 @@ namespace Views
 
             const playerCard = new CharacterCardElement();
             playerCard.additionalProperties = stats;
-            playerCard.importCharacter(world.player);
+            playerCard.import(world.player);
             this.playerCharacterCard.replaceWith(playerCard);
             this.playerCharacterCard = playerCard;
 
@@ -438,7 +438,7 @@ namespace Views
             {
                 const npccard = new CharacterCardElement();
                 npccard.additionalProperties = stats;
-                npccard.importCharacter(npc);
+                npccard.import(npc);
                 this.npcCardList.append(npccard);
             }
 
@@ -447,7 +447,7 @@ namespace Views
             {
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.classList.add("prologue");
-                plotPointElement.importPlotPoint(world.prologue);
+                plotPointElement.import(world.prologue);
                 this.prologueContainer.append(plotPointElement);
             }
         }

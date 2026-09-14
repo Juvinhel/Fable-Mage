@@ -14,16 +14,40 @@ namespace Views
         public userInput: HTMLTextAreaElement;
         public submitButton: HTMLButtonElement;
 
+        private playerCharacterCard: CharacterCardElement;
+        private npcCardList: HTMLElement;
+
         private build()
         {
             return <>
-                { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
-                { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
-                <div class="input">
-                    { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
-                    { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
-                    <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
-                </div>
+                <tab-control>
+                    <div class="story" title="Story">
+                        { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
+                        { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
+                        <div class="input">
+                            { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
+                            { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
+                            <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                        </div>
+                    </div>
+                    <div class="characters" title="Characters">
+                        <div>
+                            <div >
+                                <label>Player:</label>
+                                { this.playerCharacterCard = new CharacterCardElement() }
+                            </div>
+
+                            <div>
+                                <label>NPCs:</label>
+                                { this.npcCardList = <div class="npc-list" /> as HTMLElement }
+                            </div>
+                        </div>
+
+                        <div class="anchor" />
+
+                        <div />
+                    </div>
+                </tab-control>
             </>;
         }
 
@@ -146,7 +170,7 @@ namespace Views
             try
             {
                 plot = [...plot];
-                plot.push(plotPointElement.exportPlotPoint());
+                plot.push(plotPointElement.export());
                 const choices = await AI.Client.offerChoices(plot, world);
                 plotPointElement.choices = choices;
                 // deactivate all inputs
@@ -196,35 +220,80 @@ namespace Views
 
             this.plotList.clearChildren();
             this.heading.textContent = world.title;
+
+            const stats = world.stats?.map(x => x.name) ?? [];
+
+            const playerCard = new CharacterCardElement();
+            playerCard.additionalProperties = stats;
+            playerCard.import(world.player);
+            this.playerCharacterCard.replaceWith(playerCard);
+            this.playerCharacterCard = playerCard;
+
+            this.npcCardList.clearChildren();
+            if (world.npcs) for (const npc of world.npcs)
+            {
+                const npccard = new CharacterCardElement();
+                npccard.additionalProperties = stats;
+                npccard.import(npc);
+                this.npcCardList.append(npccard);
+            }
+
             if (world.prologue)
             {
                 const plotPointElement = new PlotPointElement();
-                plotPointElement.importPlotPoint(world.prologue);
+                plotPointElement.import(world.prologue);
                 this.plotList.append(plotPointElement);
             }
         }
 
-        public exportPlot(includeImagesInPlot = false): Data.Plot
+        public export(): Data.Story
         {
-            const plot: Data.Plot = [];
+            const story = JSON.clone(this.world) as Data.Story;
 
+            const plot: Data.Plot = [];
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
             {
-                const plotPoint: Data.PlotPoint = plotPointElement.exportPlotPoint(includeImagesInPlot);
+                const plotPoint: Data.PlotPoint = plotPointElement.export();
                 plot.push(plotPoint);
             }
+            story.plot = plot;
 
-            return plot;
+            return story;
         }
 
-        public importPlot(plot: Data.Plot)
+        public import(story: Data.Story)
         {
+            const world = JSON.clone(story);
+            delete world.plot;
+
+            // world
+            this.heading.textContent = world.title;
+
+            const stats = world.stats?.map(x => x.name) ?? [];
+
+            const playerCard = new CharacterCardElement();
+            playerCard.additionalProperties = stats;
+            playerCard.import(world.player);
+            this.playerCharacterCard.replaceWith(playerCard);
+            this.playerCharacterCard = playerCard;
+
+            this.npcCardList.clearChildren();
+            if (world.npcs) for (const npc of world.npcs)
+            {
+                const npccard = new CharacterCardElement();
+                npccard.additionalProperties = stats;
+                npccard.import(npc);
+                this.npcCardList.append(npccard);
+            }
+            this.world = world;
+
+            // plot
             this.plotList.clearChildren();
             let plotPointElement: PlotPointElement;
-            for (const plotPoint of plot)
+            for (const plotPoint of story.plot)
             {
                 plotPointElement = new PlotPointElement();
-                plotPointElement.importPlotPoint(plotPoint);
+                plotPointElement.import(plotPoint);
                 this.plotList.appendChild(plotPointElement);
             }
             if (plotPointElement)
