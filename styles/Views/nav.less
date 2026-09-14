@@ -1,0 +1,75 @@
+nav
+{
+    margin-bottom: 0.5em;
+    overflow: hidden;
+    background-color: var(--background-color);
+
+    button
+    {
+        padding: 0.5em 1em;
+        float: left;
+        border-radius: 0;
+        background: transparent;
+        color: var(--text-color);
+        font-size: 1.25em;
+        text-align: center;
+        text-decoration: none;
+
+        &.active
+        {
+            background-color: var(--accent-color);
+        }
+
+        &:hover
+        {
+            background-color: var(--highlight-color);
+        }
+
+        > color-icon
+        {
+            color: var(--text-color);
+        }
+    }
+
+    .icon
+    {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 600px)
+{
+    nav button:not(:first-child)
+    {
+        display: none;
+    }
+
+    nav button.icon
+    {
+        display: block;
+        float: right;
+    }
+}
+
+@media screen and (max-width: 600px)
+{
+    nav.responsive
+    {
+        position: relative;
+    }
+
+    nav.responsive .icon
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    nav.responsive button:not(.icon)
+    {
+        display: block;
+        width: 100%;
+        float: none;
+        text-align: left;
+    }
+}

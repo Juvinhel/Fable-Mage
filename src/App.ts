@@ -10,8 +10,8 @@ class App
 
         document.addEventListener("visibilitychange", App.visibilityChange);
 
-        const main = document.querySelector("main");
-        main.appendChild(new Views.WorldElement());
+        document.body.prepend(Views.Nav());
+        Views.navigate("Home");
 
         await this.initAI();
 
@@ -70,7 +70,7 @@ class App
         catch (error)
         {
             UI.Dialog.error(error);
-            // open Settings Dialog
+            Views.navigate("Settings");
         }
     }
 }

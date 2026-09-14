@@ -10,7 +10,6 @@ namespace Views
             this.append(this.build());
         }
 
-        private storyElement: StoryElement;
         private languageComboSelect: HTMLComboSelect;
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
@@ -53,7 +52,6 @@ namespace Views
 
         private connectedCallback()
         {
-            this.storyElement = this.closest("my-story");
             this.load();
         }
 
@@ -199,7 +197,6 @@ namespace Views
 
         public async save()
         {
-            this.storyElement.beginThinking();
             try
             {
                 const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
@@ -236,15 +233,13 @@ namespace Views
                 AI.textAPI = textAPI;
                 AI.imageAPI = imageAPI;
 
-                this.storyElement.selectTab("Plot");
+                UI.Dialog.message({ title: "Seetings Saved!", text: "Your settings have been saved." });
             }
             catch (error)
             {
-                this.storyElement.selectTab("Settings");
+                Views.navigate("Settings");
                 UI.Dialog.error(error);
             }
-
-            this.storyElement.stopThinking();
         }
 
         private onCancel()
