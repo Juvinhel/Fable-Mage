@@ -51,6 +51,8 @@ Character stat explanations:
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}
+{{? key != "portrait" }}
 {{= convertCase(key) }}: {{= property }}
+{{?}}
 {{~}}
 </player>

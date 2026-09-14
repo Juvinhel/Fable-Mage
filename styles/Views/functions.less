@@ -1,0 +1,19 @@
+.functions
+{
+    display: grid;
+    gap: 0.25em;
+
+    &.horizontal
+    {
+        grid-template-rows: 1fr;
+        grid-auto-columns: max-content;
+        grid-auto-flow: column;
+    }
+
+    &.vertical
+    {
+        grid-template-columns: 1fr;
+        grid-auto-rows: max-content;
+        grid-auto-flow: row;
+    }
+}

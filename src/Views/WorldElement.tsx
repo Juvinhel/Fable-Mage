@@ -49,7 +49,7 @@ namespace Views
                         </div>
                         <div>
                             <label>Tracked Stats:</label>
-                            <div class="functions">
+                            <div class="functions horizontal">
                                 <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
                             </div>
                             { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
@@ -68,7 +68,7 @@ namespace Views
                     <div>
                         <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
                             <label>Player:</label>
-                            <div class="functions">
+                            <div class="functions horizontal">
                                 <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
                             </div>
                             { this.playerCharacterCard = new CharacterCardElement() }
@@ -76,7 +76,7 @@ namespace Views
 
                         <div>
                             <label>NPCs:</label>
-                            <div class="functions">
+                            <div class="functions horizontal">
                                 <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
                                 <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
                             </div>
@@ -111,14 +111,14 @@ namespace Views
             </tab-control> as HTMLTabControl;
         }
 
-        private coverPrompt: string;
+        private previousGenerateCoverPrompt: string;
         private async onGenerateCover()
         {
-            const result = await Dialogs.ImageEdit(this.coverImage.src, this.coverPrompt, "Describe the cover image of your world.");
+            const result = await Dialogs.ImageEdit(this.coverImage.src, this.previousGenerateCoverPrompt, "Describe the cover image of your world.");
             if (!result) return;
 
-            this.coverImage.src = result.image;
-            this.coverPrompt = result.prompt;
+            this.previousGenerateCoverPrompt = result.prompt;
+            result.image ? this.coverImage.setAttribute("src", result.image) : this.coverImage.removeAttribute("src");
         }
 
         private onAddStat()
@@ -169,10 +169,12 @@ namespace Views
             }
         }
 
+        private previousCreatePlayerPrompt = "";
         private async onCreatePlayerUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", "", "Describe your player character.");
+            const result = await Dialogs.TextEdit("Character Description", this.previousCreatePlayerPrompt, "Describe your player character.");
             if (!result) return;
+            this.previousCreatePlayerPrompt = result;
 
             this.beginThinking();
 
@@ -182,6 +184,8 @@ namespace Views
                 const player = await AI.Client.createPlayer(result, world);
 
                 this.playerCharacterCard.importCharacter(player);
+
+                this.createPortrait(player, this.playerCharacterCard);
             }
             catch (error)
             {
@@ -199,10 +203,12 @@ namespace Views
             this.npcCardList.appendChild(npccard);
         }
 
+        private previousCreateNPCPrompt = "";
         private async onAddNPCUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", "", "Describe the NPC that should be added.");
+            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
             if (!result) return;
+            this.previousCreateNPCPrompt = result;
 
             this.beginThinking();
 
@@ -216,6 +222,8 @@ namespace Views
                 npccard.additionalProperties = stats;
                 npccard.importCharacter(npc);
                 this.npcCardList.appendChild(npccard);
+
+                this.createPortrait(npc, npccard);
             }
             catch (error)
             {
@@ -225,10 +233,27 @@ namespace Views
             this.stopThinking();
         }
 
+        private async createPortrait(character: Data.Character, characterCardElement: CharacterCardElement)
+        {
+            try
+            {
+                const prompt = await AI.Client.describeCharacter(character);
+                characterCardElement.previousGeneratePortraitPrompt = prompt;
+                const image = await AI.Client.getImage(prompt);
+                characterCardElement.portrait = image;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private previousCreateWorldPrompt = "";
         private async onCreateWorldUsingAI()
         {
-            const result = await Dialogs.TextEdit("World Description", "", "Describe your scenario including lore and background story.");
+            const result = await Dialogs.TextEdit("World Description", this.previousCreateWorldPrompt, "Describe your scenario including lore and background story.");
             if (!result) return;
+            this.previousCreateWorldPrompt = result;
 
             await this.onDeleteWorld();
             this.beginThinking();
@@ -264,7 +289,7 @@ namespace Views
             try
             {
                 const prompt = await AI.Client.describeWorld(world);
-                this.coverPrompt = prompt;
+                this.previousGenerateCoverPrompt = prompt;
                 const image = await AI.Client.getImage(prompt);
                 this.coverImage.setAttribute("src", image);
             }
@@ -274,10 +299,12 @@ namespace Views
             }
         }
 
+        private previousCreateProloguePrompt;
         private async onWritePrologueUsingAI()
         {
-            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
+            const result = await Dialogs.TextEdit("Prologue", this.previousCreateProloguePrompt, "Write where the story should start off.");
             if (!result) return;
+            this.previousCreateProloguePrompt = result;
 
             this.beginThinking();
 
@@ -321,6 +348,7 @@ namespace Views
         private async onImportJSON()
         {
             await this.openWorld();
+            this.tabControl.select("World");
         }
 
         public async openWorld()
@@ -337,7 +365,7 @@ namespace Views
 
         public clearWorld(): void
         {
-            this.importWorld({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.importWorld({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public exportWorld(): Data.World
@@ -375,7 +403,7 @@ namespace Views
             this.npcCardList.clearChildren();
 
             this.titleInput.value = world.title;
-            this.coverImage.setAttribute("src", world.cover);
+            world.cover ? this.coverImage.setAttribute("src", world.cover) : this.coverImage.removeAttribute("src");
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.focusInput.value = world.focus;
@@ -413,6 +441,7 @@ namespace Views
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.classList.add("prologue");
                 plotPointElement.importPlotPoint(world.prologue);
+                this.prologueContainer.append(plotPointElement);
             }
         }
 

@@ -36,10 +36,12 @@ Output valid json and strictly adhere to the following property rules:
 - [Include internal thoughts, psychological dissonance, and physical sensations of the player BUT not of any other character]
 
 ### time
-- [Current timeframe of the scene, formatted strictly as: dd.MM.yyyy hh:mm - dd.MM.yyyy hh:mm]
+- [Current timeframe of the scene]
+- [formatted strictly as: dd.MM.yyyy hh:mm - dd.MM.yyyy hh:mm]
 
 ### location
 - [Name of the current location]
+- [maximum 8 words]
 
 ### internal
 - [Sandbox for your GM tracking: hidden motivations, secret NPC thoughts, out-of-sight environmental changes, and progression clocks]
@@ -62,7 +64,9 @@ Character stat explanations:
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}
+{{? key != "portrait" }}
 {{= convertCase(key) }}: {{= property }}
+{{?}}
 {{~}}
 </player>
 
@@ -70,7 +74,9 @@ Character stat explanations:
 {{~ npc of world.npcs }}
 <npc>
 {{~ [key, property] of Object.entries(npc) }}
+{{? key != "portrait" }}
 {{= convertCase(key) }}: {{= property }}
+{{?}}
 {{~}}
 </npc>
 

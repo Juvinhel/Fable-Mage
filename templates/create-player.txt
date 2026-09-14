@@ -13,6 +13,7 @@ Output valid json and strictly adhere to the following property rules:
 ### appearance
 - A brief description of visual appearance of the character
 - include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.)
+- include build and stature
 - max 30 words
 
 ### personality

@@ -10,6 +10,7 @@ namespace Views
         }
 
         private nameProperty: HTMLTextAreaElement;
+        private portraitImage: HTMLImageElement;
         private appearanceProperty: HTMLTextAreaElement;
         private personalityProperty: HTMLTextAreaElement;
         private traitsProperty: HTMLTextAreaElement;
@@ -20,6 +21,7 @@ namespace Views
         private build()
         {
             return <>
+                { this.portraitImage = <img class="portrait" onclick={ () => this.onGeneratePortrait() } /> as HTMLImageElement }
                 <div class="base-property-list">
                     <div>
                         <label>Name:</label>
@@ -43,7 +45,7 @@ namespace Views
                     </div>
                 </div>
                 { this.additionalPropertiesList = <div class="additional-property-list" /> as HTMLDivElement }
-                <div class="functions">
+                <div class="functions vertical">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
             </>;
@@ -51,6 +53,9 @@ namespace Views
 
         public get name(): string { return this.nameProperty.value; }
         public set name(value: string) { this.nameProperty.value = value; }
+
+        public get portrait(): string { return this.portraitImage.getAttribute("src"); }
+        public set portrait(value: string) { value ? this.portraitImage.setAttribute("src", value) : this.portraitImage.removeAttribute("src"); }
 
         public get appearance(): string { return this.appearanceProperty.value; }
         public set appearance(value: string) { this.appearanceProperty.value = value; }
@@ -88,14 +93,29 @@ namespace Views
             this.importCharacter(data);
         }
 
-        public exportCharacter(): Data.CharacterCard
+        public previousGeneratePortraitPrompt: string;
+        private async onGeneratePortrait()
         {
-            const ret = {} as Data.CharacterCard;
-            ret.name = this.nameProperty.value;
-            ret.appearance = this.appearanceProperty.value;
-            ret.personality = this.personalityProperty.value;
-            ret.traits = this.traitsProperty.value;
-            ret.background = this.backgroundProperty.value;
+            if (!this.previousGeneratePortraitPrompt)
+                this.previousGeneratePortraitPrompt = this.appearanceProperty.value;
+
+            const result = await Dialogs.ImageEdit(this.portraitImage.src, this.previousGeneratePortraitPrompt, "Describe the portrait of your character.");
+            if (!result) return;
+
+            this.previousGeneratePortraitPrompt = result.prompt;
+            this.portraitImage.src = result.image;
+        }
+
+        public exportCharacter(): Data.Character
+        {
+            const ret = {} as Data.Character;
+            ret.name = this.name;
+            ret.portrait = this.portrait;
+            ret.appearance = this.appearance;
+            ret.personality = this.personality;
+            ret.traits = this.traits;
+            ret.background = this.background;
+
             for (const label of this.additionalPropertiesList.querySelectorAll("label"))
             {
                 const nextInput = label.nextElementSibling as HTMLTextAreaElement;
@@ -106,13 +126,14 @@ namespace Views
             return ret;
         }
 
-        public importCharacter(character: Data.CharacterCard)
+        public importCharacter(character: Data.Character)
         {
-            this.nameProperty.value = character.name;
-            this.appearanceProperty.value = character.appearance;
-            this.personalityProperty.value = character.personality;
-            this.traitsProperty.value = character.traits;
-            this.backgroundProperty.value = character.background;
+            this.name = character.name;
+            this.portrait = character.portrait;
+            this.appearance = character.appearance;
+            this.personality = character.personality;
+            this.traits = character.traits;
+            this.background = character.background;
 
             for (const [key, value] of Object.entries(character))
             {

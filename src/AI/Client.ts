@@ -20,6 +20,7 @@ namespace AI
             this.describeWorldTemplate = await this.getTemplate("describe-world");
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
+            this.describeCharacterTemplate = await this.getTemplate("create-npc");
             this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
         }
 
@@ -83,6 +84,7 @@ namespace AI
         private characterSchema: any;
         private createPlayerTemplate: (...params: any[]) => Promise<string>;
         private createNPCTemplate: (...params: any[]) => Promise<string>;
+        private describeCharacterTemplate: (...params: any[]) => Promise<string>;
 
         private memorySchema: any;
         private archiveMemoryTemplate: (...params: any[]) => Promise<string>;
@@ -206,7 +208,7 @@ namespace AI
 
         public async createPlayer(
             input: string,
-            world: Data.World): Promise<Data.CharacterCard>
+            world: Data.World): Promise<Data.Character>
         {
             const prompt = await this.createPlayerTemplate(world);
             const messages: Message[] = [
@@ -216,12 +218,12 @@ namespace AI
 
             const result = await textAPI.generateInteractions(messages, this.characterSchema);
             const obj = this.parseJSON(result);
-            return obj as Data.CharacterCard;
+            return obj as Data.Character;
         }
 
         public async createNPC(
             input: string,
-            world: Data.World): Promise<Data.CharacterCard>
+            world: Data.World): Promise<Data.Character>
         {
             const prompt = await this.createNPCTemplate(world);
             const messages: Message[] = [
@@ -231,7 +233,22 @@ namespace AI
 
             const result = await textAPI.generateInteractions(messages, this.characterSchema);
             const obj = this.parseJSON(result);
-            return obj as Data.CharacterCard;
+            return obj as Data.Character;
+        }
+
+        public async describeCharacter(character: Data.Character): Promise<string>
+        {
+            const prompt: string = await this.describeCharacterTemplate(character);
+
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: character.appearance }
+            ];
+
+            const result = await textAPI.generateInteractions(messages, this.imagePromptSchema);
+            const obj = this.parseJSON(result);
+
+            return obj.description;
         }
 
         public async archiveMemory(

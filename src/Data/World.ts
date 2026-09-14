@@ -8,13 +8,14 @@ namespace Data
             scenario: string;
             focus: string;
             stats?: Stat[];
-            player: CharacterCard;
-            npcs?: CharacterCard[];
+            player: Character;
+            npcs?: Character[];
             prologue?: Prologue;
         };
 
-    export type CharacterCard = {
+    export type Character = {
         name: string;
+        portrait: string;
         appearance: string;
         personality: string;
         traits: string;

@@ -4,7 +4,7 @@ The user input contains the scenario of a fictional world.
 
 TASK
 1. Generate an enticing description of the core concept.
-5. Combine into a single Stable Diffusion prompt.
+2. Combine into a single Stable Diffusion prompt.
 
 Output valid json and strictly adhere to the following property rules:
 ### description

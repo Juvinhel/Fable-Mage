@@ -1,16 +1,45 @@
 my-character-card
 {
     display: grid;
-    grid-template-rows: min-content;
-    grid-template-columns: max-content 1fr max-content;
+    grid-template-rows: min-content min-content;
+    grid-template-columns: max-content max-content 1fr max-content;
+    grid-template-areas:
+        "portrait base-property-list base-property-list functions"
+        ". additional-property-list additional-property-list functions";
     gap: 0.25em;
+
+    > .portrait
+    {
+        display: block;
+        grid-area: portrait;
+        width: 10em;
+        height: 10em;
+
+        background-image: url("img/default-portrait.png");
+        background-size: contain;
+    }
+
+    > .base-property-list
+    {
+        grid-area: base-property-list;
+    }
+
+    > .additional-property-list
+    {
+        grid-area: additional-property-list;
+    }
+
+    > .functions
+    {
+        grid-area: functions;
+    }
 
     > [class$="property-list"]
     {
         display: grid;
         grid-template-rows: min-content;
         grid-template-columns: subgrid;
-        grid-column: 1 / -2;
+
         gap: 0.25em;
 
         > div
