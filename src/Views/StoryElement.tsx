@@ -9,6 +9,8 @@ namespace Views
             this.append(this.build());
         }
 
+        private tabControl: HTMLTabControl;
+
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
         public userInput: HTMLTextAreaElement;
@@ -17,10 +19,12 @@ namespace Views
         private playerCharacterCard: CharacterCardElement;
         private npcCardList: HTMLElement;
 
+        private summaryElement: HTMLTextAreaElement;
+
         private build()
         {
             return <>
-                <tab-control>
+                { this.tabControl = <tab-control>
                     <div class="story" title="Story">
                         { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
@@ -47,7 +51,17 @@ namespace Views
 
                         <div />
                     </div>
-                </tab-control>
+                    <div class="summary" title="Summary">
+                        <div>
+                            <label>Summary</label>
+                            { this.summaryElement = <textarea></textarea> as HTMLTextAreaElement }
+                        </div>
+
+                        <div class="anchor" />
+
+                        <div />
+                    </div>
+                </tab-control> as HTMLTabControl }
             </>;
         }
 
@@ -75,77 +89,39 @@ namespace Views
 
             App.beginThinking();
 
-            //try
-            //{
-            //    const input = this.userInput.value.trim();
-            //    const plot = this.exportPlot(false);
-            //    const world = this.storyElement.exportStory();
-            //    const result = await AI.Client.advancePlot(input, plot, world);
-            //
-            //    const plotPointElement = new PlotPointElement();
-            //    plotPointElement.input = input;
-            //    plotPointElement.location = result.location;
-            //    plotPointElement.time = result.time;
-            //    plotPointElement.text = result.plot;
-            //    plotPointElement.internal = result.internal;
-            //    this.plotList.appendChild(plotPointElement); HTMLButtonElement;
-            //    //deactivate all inputs
-            //    for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
-            //        button.disabled = true;
-            //    this.storyElement.selectTab("Plot");
-            //    this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
-            //
-            //    await Promise.all([
-            //        this.createAmbientImage(plotPointElement.text, world, plotPointElement),
-            //        this.offerChoices(plot, plotPointElement, world),
-            //        this.archiveMemory(this.plotList.children.length, plotPointElement.exportPlotPoint())]);
-            //
-            //    this.userInput.value = "";
-            //}
-            //catch (error)
-            //{
-            //    UI.Dialog.error(error);
-            //}
+            try
+            {
+                const input = this.userInput.value.trim();
+                const story = this.export();
+                const plot = story.plot;
+                const result = await AI.Client.advancePlot(input, story.plot, this.world);
 
-            App.stopThinking();
-        }
+                const plotPointElement = new PlotPointElement();
+                plotPointElement.input = input;
+                plotPointElement.location = result.location;
+                plotPointElement.time = result.time;
+                plotPointElement.text = result.plot;
+                plotPointElement.internal = result.internal;
+                this.plotList.appendChild(plotPointElement); HTMLButtonElement;
+                //deactivate all inputs
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                    button.disabled = true;
+                this.tabControl.select("Story");
+                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
-        public async onWritePrologueUsingAI()
-        {
-            const result = await Dialogs.TextEdit("Prologue", "", "Write where the story should start off.");
-            if (!result) return;
+                await Promise.all([
+                    this.createAmbientImage(plotPointElement.text, this.world, plotPointElement),
+                    this.offerChoices(plot, plotPointElement, this.world)]);
 
-            App.beginThinking();
+                plot.push(plotPointElement.export());
+                this.summaryElement.value = await AI.Client.summarizeProgression(plot);
 
-            //try
-            //{
-            //    this.storyElement.plotElement.plotList.clearChildren();
-            //    const world = this.storyElement.exportWorld();
-            //    const prologue = await AI.Client.writePrologue(result, world);
-            //
-            //    const plotPointElement = new PlotPointElement();
-            //    plotPointElement.location = prologue.location;
-            //    plotPointElement.time = prologue.time;
-            //    plotPointElement.text = prologue.plot;
-            //    plotPointElement.internal = prologue.internal;
-            //    this.plotList.appendChild(plotPointElement); HTMLButtonElement;
-            //    // deactivate all inputs
-            //    for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
-            //        button.disabled = true;
-            //    this.storyElement.selectTab("Plot");
-            //    this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
-            //
-            //    await Promise.all([
-            //        this.createAmbientImage(plotPointElement.text, world, plotPointElement),
-            //        this.offerChoices([], plotPointElement, world),
-            //        this.archiveMemory(1, plotPointElement.exportPlotPoint())]);
-            //
-            //    this.userInput.value = "";
-            //}
-            //catch (error)
-            //{
-            //    UI.Dialog.error(error);
-            //}
+                this.userInput.value = "";
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
 
             App.stopThinking();
         }

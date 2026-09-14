@@ -64,8 +64,8 @@ namespace Views
 
         public scenery: string;
 
-        public get image(): string { return this.imageElement.src ? this.imageElement.src : null; }
-        public set image(value: string) { this.imageElement.src = value ? value : ""; }
+        public get image(): string { return this.imageElement.getAttribute("src"); }
+        public set image(value: string) { value ? this.imageElement.setAttribute("src", value) : this.imageElement.removeAttribute("src"); }
 
         public get choices(): string[] { return [...this.choicesListElement.querySelectorAll("button")].map(x => x.textContent); }
         public set choices(values: string[])

@@ -13,6 +13,7 @@ namespace AI
 
             this.advancePlotTemplate = await this.getTemplate("advance-plot");
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
+            this.summarizeProgressionTemplate = await this.getTemplate("summarize-progression");
             this.writePrologueTemplate = await this.getTemplate("write-prologue");
             this.describeSceneTemplate = await this.getTemplate("describe-scene");
             this.getImageTemplate = await this.getTemplate("get-image");
@@ -72,6 +73,8 @@ namespace AI
         private choicesSchema: any;
         private offerChoicesTemplate: (...params: any[]) => Promise<string>;
 
+        private summarizeProgressionTemplate: (...params: any[]) => Promise<string>;
+
         private imagePromptSchema: any;
         private describeSceneTemplate: (...params: any[]) => Promise<string>;
 
@@ -96,7 +99,7 @@ namespace AI
         {
             const prompt: string = await this.advancePlotTemplate(plot, world);
 
-            const messages: Message[] = [{ role: "system", content: this.sanitizePrompt(prompt) }];
+            const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
             {
                 let content = "";
@@ -119,7 +122,7 @@ namespace AI
             const prompt: string = await this.writePrologueTemplate(world);
 
             const messages: Message[] = [
-                { role: "system", content: this.sanitizePrompt(prompt) },
+                { role: "system", content: prompt },
                 { role: "user", content: input }];
 
             const result = await textAPI.generateInteractions(messages, this.plotSchema);
@@ -146,6 +149,24 @@ namespace AI
             const obj = this.parseJSON(result);
 
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
+        }
+
+        public async summarizeProgression(plot: Data.Plot): Promise<string>
+        {
+            const prompt: string = await this.summarizeProgressionTemplate(plot.length + 1);
+            const messages: Message[] = [{ role: "system", content: prompt }];
+            for (const plotPoint of plot)
+            {
+                let content = "";
+                content += "Location: " + plotPoint.location + "\n";
+                content += "Time: " + plotPoint.time + "\n";
+                content += "Narrative: " + plotPoint.text + "\n";
+                content += "Internal: " + plotPoint.internal;
+                messages.push({ role: "assistant", content });
+            }
+
+            const result = await textAPI.generateInteractions(messages);
+            return result;
         }
 
         public async describeScene(

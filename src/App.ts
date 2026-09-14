@@ -6,7 +6,7 @@ class App
         await AI.Client.initialize();
 
         ///@ts-ignore
-        this.extractor = await window.pipeline('feature-extraction', 'Xenova/bge-small-en-v1.5');
+        //this.extractor = await window.pipeline('feature-extraction', 'Xenova/bge-small-en-v1.5');
 
         document.addEventListener("visibilitychange", App.visibilityChange);
 
@@ -15,8 +15,8 @@ class App
 
         await this.initAI();
 
-        const story = localStorage.get<Data.Story>("current-story") ?? await (await fetch("templates/sample-story.json")).json();
-        Views.storyElement.import(story);
+        const story = localStorage.get<Data.Story>("current-story");
+        if (story) Views.storyElement.import(story);
     }
 
     private static visibilityChange = function (this: typeof App, event: Event)
@@ -27,7 +27,7 @@ class App
             {
                 const currentStory = Views.storyElement.export();
                 localStorage.set("current-story", currentStory);
-            } catch { }
+            } catch (err0r) { console.log(err0r); }
         }
     }.bind(this);
 

@@ -1,0 +1,10 @@
+{{(turn)}}
+We are at turn {{= turn}}. 
+Produce a COMPRESSED SESSION MEMORY under 500 tokens.
+Key facts to keep in memory are:
+- current status of each character
+- key relationships
+- inventory
+- open plot threads
+- important world facts
+Cut anything already resolved or no longer relevant.
