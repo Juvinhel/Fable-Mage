@@ -188,7 +188,11 @@ namespace Views
         private async updatePlayer(plotPoint: Data.PlotPoint)
         {
             const player = this.world.player;
-            await AI.Client.updateCharacter(player, this.world, [plotPoint]);
+            const character = await AI.Client.updateCharacter(player, this.world, [plotPoint]);
+            const portrait = this.playerCharacterCard.portrait;
+            this.playerCharacterCard.import(character);
+            this.playerCharacterCard.portrait = portrait;
+            this.world.player = this.playerCharacterCard.export();
         }
 
         private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
@@ -296,15 +300,12 @@ namespace Views
 
             // plot
             this.plotList.clearChildren();
-            let plotPointElement: PlotPointElement;
             for (const plotPoint of story.plot)
             {
-                plotPointElement = new PlotPointElement();
+                const plotPointElement = new PlotPointElement();
                 plotPointElement.import(plotPoint);
                 this.plotList.appendChild(plotPointElement);
             }
-            if (plotPointElement)
-                this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
         }
 
         public async save()
@@ -325,6 +326,10 @@ namespace Views
                 this.import(story);
             }
             this.tabControl.select("Plot");
+
+            await delay(50); // or scroll wont work
+            if (this.plotList.children.length)
+                this.plotTab.scrollTo({ behavior: "smooth", top: (this.plotList.querySelector("my-plot-point:last-child") as HTMLElement).offsetTop - 4 });
         }
     }
 
