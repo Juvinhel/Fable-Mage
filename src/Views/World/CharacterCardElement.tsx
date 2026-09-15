@@ -1,4 +1,4 @@
-namespace Views
+namespace Views.World
 {
     export class CharacterCardElement extends HTMLElement
     {

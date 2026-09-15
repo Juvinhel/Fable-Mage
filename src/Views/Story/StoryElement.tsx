@@ -1,4 +1,4 @@
-namespace Views
+namespace Views.Story
 {
     export class StoryElement extends HTMLElement
     {
@@ -18,7 +18,7 @@ namespace Views
         public userInput: HTMLTextAreaElement;
         public submitButton: HTMLButtonElement;
 
-        private playerCharacterCard: CharacterCardElement;
+        private playerCharacterCard: World.CharacterCardElement;
         private npcCardList: HTMLElement;
 
         private summaryElement: HTMLTextAreaElement;
@@ -35,12 +35,13 @@ namespace Views
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
+                        <div class="fly-out" />
                     </div> as HTMLElement }
                     { this.charactersTab = <div class="characters" title="Characters">
                         <div>
                             <div >
                                 <label>Player:</label>
-                                { this.playerCharacterCard = new CharacterCardElement() }
+                                { this.playerCharacterCard = new World.CharacterCardElement() }
                             </div>
 
                             <div>
@@ -92,7 +93,7 @@ namespace Views
 
         private async onAddNPC()
         {
-            const npccard = new CharacterCardElement();
+            const npccard = new World.CharacterCardElement();
             this.npcCardList.appendChild(npccard);
         }
 
@@ -110,7 +111,7 @@ namespace Views
                 const world = this.export();
                 const npc = await AI.Client.createNPC(result, world);
 
-                const npccard = new CharacterCardElement();
+                const npccard = new World.CharacterCardElement();
                 npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
 
@@ -124,7 +125,7 @@ namespace Views
             App.stopThinking();
         }
 
-        private async createPortrait(character: Data.Character, characterCardElement: CharacterCardElement)
+        private async createPortrait(character: Data.Character, characterCardElement: World.CharacterCardElement)
         {
             try
             {
@@ -309,7 +310,7 @@ namespace Views
 
             const stats = world.stats?.map(x => x.name) ?? [];
 
-            const playerCard = new CharacterCardElement();
+            const playerCard = new World.CharacterCardElement();
             playerCard.additionalProperties = stats;
             playerCard.import(world.player);
             this.playerCharacterCard.replaceWith(playerCard);
@@ -318,7 +319,7 @@ namespace Views
             this.npcCardList.clearChildren();
             if (world.npcs) for (const npc of world.npcs)
             {
-                const npccard = new CharacterCardElement();
+                const npccard = new World.CharacterCardElement();
                 npccard.additionalProperties = stats;
                 npccard.import(npc);
                 this.npcCardList.append(npccard);
@@ -337,7 +338,7 @@ namespace Views
             const story = JSON.clone(this.world) as Data.Story;
             story.player = this.playerCharacterCard.export();
             story.npcs = [];
-            for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
+            for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<World.CharacterCardElement>)
                 story.npcs.push(npcCard.export());
 
             const plot: Data.Plot = [];
@@ -361,7 +362,7 @@ namespace Views
 
             const stats = world.stats?.map(x => x.name) ?? [];
 
-            const playerCard = new CharacterCardElement();
+            const playerCard = new World.CharacterCardElement();
             playerCard.additionalProperties = stats;
             playerCard.import(world.player);
             this.playerCharacterCard.replaceWith(playerCard);
@@ -370,7 +371,7 @@ namespace Views
             this.npcCardList.clearChildren();
             if (world.npcs) for (const npc of world.npcs)
             {
-                const npccard = new CharacterCardElement();
+                const npccard = new World.CharacterCardElement();
                 npccard.import(npc);
                 this.npcCardList.append(npccard);
             }

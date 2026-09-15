@@ -2,6 +2,8 @@ class App
 {
     public static async Start()
     {
+        await this.startServiceWorker();
+
         this.config = await Data.loadConfig();
         await AI.Client.initialize();
 
@@ -12,6 +14,26 @@ class App
         Views.navigate("Home");
 
         await this.initAI();
+    }
+
+    private static async startServiceWorker()
+    {
+        if ("serviceWorker" in navigator)
+        {
+            const registration = await navigator.serviceWorker.register("sw.js");
+            let refreshing = false;
+
+            navigator.serviceWorker.addEventListener("controllerchange", () =>
+            {   // new server worker was installed and activated
+                if (!refreshing && confirm("A new version of the app is available. Do you want to reload?\nMake sure to save your story or world to the disk first!"))
+                {
+                    window.location.reload();
+                    refreshing = true;
+                }
+            });
+
+            await registration.update();
+        }
     }
 
     public static config: Data.Config;

@@ -1,9 +1,8 @@
-my-import-export
+my-world .import-export-tab
 {
     display: grid;
-    grid-template-rows: 1fr max-content;
+    grid-template-rows: 1fr max-content max-content;
     grid-template-columns: 1fr;
-    overflow-y: auto;
 
     > div:first-child
     {
@@ -35,6 +34,7 @@ my-import-export
             > *:not(label)
             {
                 grid-column: 2;
+                width: 100%;
             }
         }
     }
@@ -52,11 +52,5 @@ my-import-export
         padding: 0.25em;
         gap: 0.25em;
         background-color: var(--page-background-color);
-    }
-
-    .anchor
-    {
-        height: 1px;
-        overflow-anchor: auto;
     }
 }

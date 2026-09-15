@@ -137,6 +137,16 @@
             "hide": true,
         },
         {
+            "label": "Build ServiceWorker",
+            "command": "workbox generateSW workbox-config.js",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "hide": true,
+        },
+        {
             "label": "Build",
             "dependsOrder": "sequence",
             "dependsOn": [
@@ -148,7 +158,8 @@
                 "Copy Fonts",
                 "Copy Images",
                 "Copy Templates",
-                "Generate Version"
+                "Generate Version",
+                "Build ServiceWorker",
             ],
             "group": {
                 "kind": "build",

@@ -1,4 +1,4 @@
-namespace Views
+namespace Views.World
 {
     export class WorldElement extends HTMLElement
     {
@@ -26,7 +26,7 @@ namespace Views
         private build()
         {
             return this.tabControl = <tab-control>
-                <div title="World">
+                <div title="World" class="world-tab">
                     <div>
                         <div>
                             <label>Title:</label>
@@ -70,7 +70,7 @@ namespace Views
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div title="Characters">
+                <div title="Characters" class="characters-tab">
                     <div>
                         <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
                             <label>Player:</label>
@@ -94,7 +94,7 @@ namespace Views
 
                     <div />
                 </div>
-                <div title="Prologue">
+                <div title="Prologue" class="prologue-tab">
                     { this.prologueContainer = <div /> as HTMLDivElement }
 
                     <div class="anchor" />
@@ -104,7 +104,7 @@ namespace Views
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div title="Import / Export">
+                <div title="Import / Export" class="import-export-tab">
                     <div />
 
                     <div class="anchor" />
@@ -316,16 +316,13 @@ namespace Views
                 const world = this.export();
                 const prologue = await AI.Client.writePrologue(result, world);
 
-                const plotPointElement = new PlotPointElement();
-                plotPointElement.classList.add("prologue");
-                plotPointElement.location = prologue.location;
-                plotPointElement.time = prologue.time;
-                plotPointElement.text = prologue.plot;
-                plotPointElement.internal = prologue.internal;
-                this.prologueContainer.appendChild(plotPointElement); HTMLButtonElement;
-                // deactivate all inputs
-                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
-                    button.disabled = true;
+                const prologueElement = new PrologueElement();
+                prologueElement.classList.add("prologue");
+                prologueElement.location = prologue.location;
+                prologueElement.time = prologue.time;
+                prologueElement.text = prologue.plot;
+                prologueElement.internal = prologue.internal;
+                this.prologueContainer.appendChild(prologueElement); HTMLButtonElement;
             }
             catch (error)
             {
@@ -394,7 +391,7 @@ namespace Views
                 npcs.push(npcCard.export());
             if (npcs.length > 0) world.npcs = npcs;
 
-            const prologueElement = this.prologueContainer.children[0] as PlotPointElement;
+            const prologueElement = this.prologueContainer.querySelector("my-prologue") as PrologueElement;
             if (prologueElement)
             {
                 const prologue: Data.Prologue = prologueElement.export();
@@ -447,10 +444,9 @@ namespace Views
             this.prologueContainer.clearChildren();
             if (world.prologue)
             {
-                const plotPointElement = new PlotPointElement();
-                plotPointElement.classList.add("prologue");
-                plotPointElement.import(world.prologue);
-                this.prologueContainer.append(plotPointElement);
+                const prologueElement = new PrologueElement();
+                prologueElement.import(world.prologue);
+                this.prologueContainer.append(prologueElement);
             }
         }
     }

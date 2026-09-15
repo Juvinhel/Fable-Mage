@@ -1,8 +1,8 @@
 my-plot-point
 {
     display: grid;
-    grid-template-rows: 1fr max-content;
     grid-template-columns: 1fr;
+    grid-auto-rows: max-content;
     height: max-content;
     padding: 1em;
     gap: 0.25em;
@@ -116,26 +116,5 @@ my-plot-point
     {
         --button-text-color: white;
         font-size: 1.25em;
-    }
-
-    &.prologue
-    {
-        .return-button
-        {
-            display: none;
-        }
-
-        .edit-image-button
-        {
-            display: none;
-        }
-    }
-}
-
-@keyframes show
-{
-    100%
-    {
-        opacity: 1;
     }
 }

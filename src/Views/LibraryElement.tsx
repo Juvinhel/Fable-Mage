@@ -10,8 +10,6 @@ namespace Views
             this.append(this.build());
         }
 
-        private storyElement: StoryElement;
-
         private listElement: HTMLDivElement;
 
         private build()
@@ -23,7 +21,6 @@ namespace Views
 
         private connectedCallback()
         {
-            this.storyElement = this.closest("my-story");
             this.load();
         }
 

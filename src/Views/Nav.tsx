@@ -1,5 +1,5 @@
-///<reference path="StoryElement.tsx" />
-///<reference path="WorldElement.tsx" />
+///<reference path="Story/StoryElement.tsx" />
+///<reference path="World/WorldElement.tsx" />
 ///<reference path="SettingsElement.tsx" />
 
 namespace Views
@@ -7,8 +7,8 @@ namespace Views
     export function Nav()
     {
         homeElement = new HomeElement();
-        storyElement = new StoryElement();
-        worldElement = new WorldElement();
+        storyElement = new Story.StoryElement();
+        worldElement = new World.WorldElement();
         settingsElement = new SettingsElement();
 
         return <nav>
@@ -23,8 +23,8 @@ namespace Views
     }
 
     export let homeElement: HomeElement;
-    export let storyElement: StoryElement;
-    export let worldElement: WorldElement;
+    export let storyElement: Story.StoryElement;
+    export let worldElement: World.WorldElement;
     export let settingsElement: SettingsElement;
 
     function toggleDropDown(e: Event)

@@ -1,4 +1,4 @@
-namespace Views
+namespace Views.Story
 {
     export class PlotPointElement extends HTMLElement
     {

@@ -10,4 +10,5 @@ module.exports = {
 	],
 	skipWaiting: true,
 	clientsClaim: true,
+	maximumFileSizeToCacheInBytes: 5242880,
 };
