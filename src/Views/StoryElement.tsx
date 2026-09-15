@@ -12,6 +12,7 @@ namespace Views
         private tabControl: HTMLTabControl;
 
         private plotTab: HTMLElement;
+        private charactersTab: HTMLDivElement;
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
         public userInput: HTMLTextAreaElement;
@@ -35,7 +36,7 @@ namespace Views
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
                     </div> as HTMLElement }
-                    <div class="characters" title="Characters">
+                    { this.charactersTab = <div class="characters" title="Characters">
                         <div>
                             <div >
                                 <label>Player:</label>
@@ -44,6 +45,10 @@ namespace Views
 
                             <div>
                                 <label>NPCs:</label>
+                                <div class="functions horizontal">
+                                    <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
+                                    <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                                </div>
                                 { this.npcCardList = <div class="npc-list" /> as HTMLElement }
                             </div>
                         </div>
@@ -51,7 +56,7 @@ namespace Views
                         <div class="anchor" />
 
                         <div />
-                    </div>
+                    </div> as HTMLDivElement }
                     <div class="summary" title="Summary">
                         <div>
                             <label>Summary</label>
@@ -85,7 +90,56 @@ namespace Views
                 plotPointElement.turn = ++i;
         }
 
-        private summaryInterval = 5;
+        private async onAddNPC()
+        {
+            const npccard = new CharacterCardElement();
+            this.npcCardList.appendChild(npccard);
+        }
+
+        private previousCreateNPCPrompt = "";
+        private async onAddNPCUsingAI()
+        {
+            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
+            if (!result) return;
+            this.previousCreateNPCPrompt = result;
+
+            App.beginThinking();
+
+            try
+            {
+                const world = this.export();
+                const npc = await AI.Client.createNPC(result, world);
+
+                const npccard = new CharacterCardElement();
+                npccard.import(npc);
+                this.npcCardList.appendChild(npccard);
+
+                this.createPortrait(npc, npccard);
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+
+            App.stopThinking();
+        }
+
+        private async createPortrait(character: Data.Character, characterCardElement: CharacterCardElement)
+        {
+            try
+            {
+                const prompt = await AI.Client.describeCharacter(character);
+                characterCardElement.previousGeneratePortraitPrompt = prompt;
+                const image = await AI.Client.getImage(prompt);
+                characterCardElement.portrait = image;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private summaryInterval = 3;
         private async onSubmit()
         {
             if (this.submitButton.disabled) return;
@@ -96,6 +150,9 @@ namespace Views
             {
                 const input = this.userInput.value.trim();
                 const story = this.export();
+                story.player = this.calculateCharacter(story.player.name);
+                for (let i = 0; i < story.npcs.length; ++i) story.npcs[i] = this.calculateCharacter(story.npcs[i].name);
+
                 const plot = story.plot;
                 let plotPointsToSubmit = story.plot.length % this.summaryInterval;
                 if (!plotPointsToSubmit) plotPointsToSubmit = this.summaryInterval;
@@ -108,16 +165,17 @@ namespace Views
                 plotPointElement.time = result.time;
                 plotPointElement.text = result.plot;
                 plotPointElement.internal = result.internal;
+                plotPointElement.scenery = "generating image ...";
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
                 //deactivate all inputs
-                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
+                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea, img") as NodeListOf<any>)
                     button.disabled = true;
                 this.tabControl.select("Plot");
                 this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
                     this.updateSummary(),
-                    this.updatePlayer(plotPointElement.export()),
+                    this.updatePlayer(plotPointElement),
                     this.createAmbientImage(plotPointElement.text, this.world, plotPointElement),
                     this.offerChoices(plot, plotPointElement, this.world)]);
 
@@ -169,30 +227,46 @@ namespace Views
             const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
 
             const lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary);
-            console.log("i", lastSummaryIndex);
             const plotPointElementsSinceLastSummary = plotPointElements.slice(lastSummaryIndex >= 0 ? lastSummaryIndex : 0);
-            console.log("pp", plotPointElementsSinceLastSummary);
 
             const createSummary = plotPointElementsSinceLastSummary.length >= 2 * this.summaryInterval;
             if (createSummary)
             {
                 const turnsToSummarize = plotPointElementsSinceLastSummary.slice(0, -1 * this.summaryInterval);
-                console.log("SUMMARY:", turnsToSummarize);
 
                 this.summaryElement.value =
                     turnsToSummarize.last().summary = await AI.Client.summarizeProgression(plotPointElements[lastSummaryIndex]?.summary ?? "", turnsToSummarize.map(x => x.export()), this.world);
             }
-
         }
 
-        private async updatePlayer(plotPoint: Data.PlotPoint)
+        private calculateCharacter(name: string): Data.Character
+        {
+            let character = this.world.player.name == name ? this.world.player : this.world.npcs?.first(x => x.name == name);
+            if (!character) return;
+            character = JSON.clone(character);
+            for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
+            {
+                let diff: Partial<Data.Character>;
+                if (plotPointElement.playerChanges?.name == name)
+                    diff = plotPointElement.playerChanges;
+                if (plotPointElement.npcChanges)
+                    for (const npc of plotPointElement.npcChanges)
+                        if (npc.name == name)
+                            diff = npc;
+
+                if (diff) for (const [key, value] of Object.entries(diff))
+                    if (key != "name")
+                        character[key] = "name";
+            }
+            return character;
+        }
+
+        private async updatePlayer(plotPointElement: PlotPointElement)
         {
             const player = this.world.player;
-            const character = await AI.Client.updateCharacter(player, this.world, [plotPoint]);
-            const portrait = this.playerCharacterCard.portrait;
-            this.playerCharacterCard.import(character);
-            this.playerCharacterCard.portrait = portrait;
-            this.world.player = this.playerCharacterCard.export();
+            const character = await AI.Client.updateCharacter(player, this.world, [plotPointElement.export()]);
+            if (Object.entries(character).length > 1)
+                plotPointElement.playerChanges = character;
         }
 
         private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
@@ -261,6 +335,10 @@ namespace Views
         public export(): Data.Story
         {
             const story = JSON.clone(this.world) as Data.Story;
+            story.player = this.playerCharacterCard.export();
+            story.npcs = [];
+            for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
+                story.npcs.push(npcCard.export());
 
             const plot: Data.Plot = [];
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)

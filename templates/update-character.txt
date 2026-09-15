@@ -29,8 +29,9 @@ The narrator in the user input refers to the player as "You".
 1. Analyze the user's action or dialogue
 2. Determine how their actions affect their stats (e.g., if they sprinted, fought, or used heavy data functions, decrease the Energy Level accordingly)
 3. If relevant, update other dynamic fields (like appearance or traits) ONLY if permanent changes occur
-4. Output the updated character sheet in valid JSON
-5. Do not include extra conversational fluff
+4. Output the updated character sheet in valid JSON, only output the properties that changed (except for name)
+5. Always output the name of the character
+6. Do not include extra conversational fluff
 
 ### Current Character Sheet:
 {{= character == world.player ? "<player>" : "<npc>" }}

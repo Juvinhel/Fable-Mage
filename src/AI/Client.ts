@@ -9,6 +9,7 @@ namespace AI
             this.imagePromptSchema = await this.getSchema("image-prompt");
             this.worldSchema = await this.getSchema("world");
             this.characterSchema = await this.getSchema("character");
+            this.characterUpdateSchema = await this.getSchema("character-update");
             this.memorySchema = await this.getSchema("memory");
 
             this.advancePlotTemplate = await this.getTemplate("advance-plot");
@@ -88,7 +89,10 @@ namespace AI
         private characterSchema: any;
         private createPlayerTemplate: (...params: any[]) => Promise<string>;
         private createNPCTemplate: (...params: any[]) => Promise<string>;
+
+        private characterUpdateSchema: any;
         private updateCharacterTemplate: (...params: any[]) => Promise<string>;
+
         private describeCharacterTemplate: (...params: any[]) => Promise<string>;
 
         private memorySchema: any;
@@ -278,7 +282,7 @@ namespace AI
                 messages.push({ role: "user", content });
             }
 
-            const result = await textAPI.generateInteractions(messages, this.characterSchema);
+            const result = await textAPI.generateInteractions(messages, this.characterUpdateSchema);
             const obj = this.parseJSON(result);
             return obj as Data.Character;
         }

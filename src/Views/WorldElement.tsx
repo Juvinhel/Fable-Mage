@@ -202,7 +202,6 @@ namespace Views
 
         private async onAddNPC()
         {
-            const stats = this.stats.map(x => x.name);
             const npccard = new CharacterCardElement();
             this.npcCardList.appendChild(npccard);
         }

@@ -51,16 +51,18 @@ my-plot-point
 
         > img
         {
+            aspect-ratio: 1;
             width: 20em;
             max-width: 50%;
             margin: 0 0 1em 1em;
             float: right;
             border-radius: 0.5em;
-            opacity: 0;
+            background-image: url("img/default-scene.png");
+            background-size: contain;
 
-            &[src]
+            &:not(.hidden)
             {
-                animation: show 400ms ease-in forwards;
+                display: block;
             }
         }
     }

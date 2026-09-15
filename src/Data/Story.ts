@@ -15,5 +15,7 @@ namespace Data
         image?: string;
         choices?: string[];
         summary?: string;
+        playerChanges?: Partial<Character>;
+        npcChanges?: Partial<Character>[];
     };
 }
