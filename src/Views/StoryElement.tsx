@@ -11,7 +11,7 @@ namespace Views
 
         private tabControl: HTMLTabControl;
 
-        private storyTab: HTMLElement;
+        private plotTab: HTMLElement;
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
         public userInput: HTMLTextAreaElement;
@@ -26,7 +26,7 @@ namespace Views
         {
             return <>
                 { this.tabControl = <tab-control>
-                    { this.storyTab = <div class="story" title="Story">
+                    { this.plotTab = <div class="plot" title="Plot">
                         { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input">
@@ -78,15 +78,6 @@ namespace Views
 
         private world: Data.World;
 
-        private async connectedCallback()
-        {
-            if (!this.world)
-            {
-                await UI.Dialog.message({ title: "No world loaded!", text: "Load a world first." });
-                Views.navigate("World");
-            }
-        }
-
         private refreshTurnCount()
         {
             let i = 0;
@@ -94,6 +85,7 @@ namespace Views
                 plotPointElement.turn = ++i;
         }
 
+        private summaryInterval = 5;
         private async onSubmit()
         {
             if (this.submitButton.disabled) return;
@@ -105,7 +97,10 @@ namespace Views
                 const input = this.userInput.value.trim();
                 const story = this.export();
                 const plot = story.plot;
-                const result = await AI.Client.advancePlot(input, story.plot, this.world);
+                let plotPointsToSubmit = story.plot.length % this.summaryInterval;
+                if (!plotPointsToSubmit) plotPointsToSubmit = this.summaryInterval;
+
+                const result = await AI.Client.advancePlot(input, this.summaryElement.value, story.plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -117,15 +112,14 @@ namespace Views
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
                     button.disabled = true;
-                this.tabControl.select("Story");
-                this.storyTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+                this.tabControl.select("Plot");
+                this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
+                    this.updateSummary(),
+                    this.updatePlayer(plotPointElement.export()),
                     this.createAmbientImage(plotPointElement.text, this.world, plotPointElement),
                     this.offerChoices(plot, plotPointElement, this.world)]);
-
-                plot.push(plotPointElement.export());
-                this.summaryElement.value = await AI.Client.summarizeProgression(plot);
 
                 this.userInput.value = "";
             }
@@ -168,6 +162,33 @@ namespace Views
             {
                 UI.Dialog.error(error);
             }
+        }
+
+        private async updateSummary()
+        {
+            const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
+
+            const lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary);
+            console.log("i", lastSummaryIndex);
+            const plotPointElementsSinceLastSummary = plotPointElements.slice(lastSummaryIndex >= 0 ? lastSummaryIndex : 0);
+            console.log("pp", plotPointElementsSinceLastSummary);
+
+            const createSummary = plotPointElementsSinceLastSummary.length >= 2 * this.summaryInterval;
+            if (createSummary)
+            {
+                const turnsToSummarize = plotPointElementsSinceLastSummary.slice(0, -1 * this.summaryInterval);
+                console.log("SUMMARY:", turnsToSummarize);
+
+                this.summaryElement.value =
+                    turnsToSummarize.last().summary = await AI.Client.summarizeProgression(plotPointElements[lastSummaryIndex]?.summary ?? "", turnsToSummarize.map(x => x.export()), this.world);
+            }
+
+        }
+
+        private async updatePlayer(plotPoint: Data.PlotPoint)
+        {
+            const player = this.world.player;
+            await AI.Client.updateCharacter(player, this.world, [plotPoint]);
         }
 
         private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
@@ -268,7 +289,6 @@ namespace Views
             if (world.npcs) for (const npc of world.npcs)
             {
                 const npccard = new CharacterCardElement();
-                npccard.additionalProperties = stats;
                 npccard.import(npc);
                 this.npcCardList.append(npccard);
             }
@@ -284,7 +304,7 @@ namespace Views
                 this.plotList.appendChild(plotPointElement);
             }
             if (plotPointElement)
-                this.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
+                this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
         }
 
         public async save()
@@ -304,7 +324,7 @@ namespace Views
                 const story = JSON.parse(text);
                 this.import(story);
             }
-            this.tabControl.select("Story");
+            this.tabControl.select("Plot");
         }
     }
 

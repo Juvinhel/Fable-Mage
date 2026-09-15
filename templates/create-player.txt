@@ -3,7 +3,6 @@ You are an expert character designer. Generate a fictional character profile for
 Remember the character lives in world provided in the 'scenario' block. 
 When the world referes to as "I" it addresses the player character you are creating.
 Use the information provided by the user.
-Write your responses in {{= App.config.language }}.
 
 Output valid json and strictly adhere to the following property rules:
 ### name

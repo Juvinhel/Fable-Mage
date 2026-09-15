@@ -16,6 +16,7 @@ namespace Views
         private authorStyleInput: HTMLTextAreaElement;
         private scenarioInput: HTMLTextAreaElement;
         private focusInput: HTMLTextAreaElement;
+        private tagsInput: HTMLMultiSelect;
         private statList: HTMLDivElement;
         private playerCharacterCard: CharacterCardElement;
         private npcCardList: HTMLElement;
@@ -46,6 +47,10 @@ namespace Views
                         <div>
                             <label>Focus:</label>
                             { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        </div>
+                        <div>
+                            <label>Tags:</label>
+                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
                         </div>
                         <div>
                             <label>Tracked Stats:</label>
@@ -138,8 +143,7 @@ namespace Views
         private onStatsChanged()
         {
             const statNames = this.stats.map(x => x.name);
-            for (const characterCardElement of this.querySelectorAll("my-character-card") as NodeListOf<CharacterCardElement>)
-                characterCardElement.additionalProperties = statNames;
+            this.playerCharacterCard.additionalProperties = statNames;
         }
 
         private onStatNameChanged(e: Event)
@@ -200,7 +204,6 @@ namespace Views
         {
             const stats = this.stats.map(x => x.name);
             const npccard = new CharacterCardElement();
-            npccard.additionalProperties = stats;
             this.npcCardList.appendChild(npccard);
         }
 
@@ -220,7 +223,6 @@ namespace Views
 
                 const stats = this.stats.map(x => x.name);
                 const npccard = new CharacterCardElement();
-                npccard.additionalProperties = stats;
                 npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
 
@@ -341,8 +343,8 @@ namespace Views
 
         private async onStartStory()
         {
-            Views.storyElement.startStory(this.export());
             Views.navigate("Story");
+            Views.storyElement.startStory(this.export());
         }
 
         public async save()
@@ -381,6 +383,9 @@ namespace Views
                 "player": this.playerCharacterCard.export(),
             };
 
+            if (this.tagsInput.checkedOptions.length > 0)
+                world.tags = this.tagsInput.checkedOptions.map(x => x.value);
+
             const stats = this.stats;
             if (stats && stats.length > 0)
                 world.stats = stats;
@@ -409,6 +414,9 @@ namespace Views
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.focusInput.value = world.focus;
+
+            if (world.tags)
+                this.tagsInput.checkedOptions = world.tags.map(x => this.tagsInput.options.first(t => t.value == x));
 
             this.statList.clearChildren();
             if (world.stats)

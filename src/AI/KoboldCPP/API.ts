@@ -9,6 +9,9 @@ namespace AI.KoboldCPP
 
         private config: Data.KoboldCPPEndpoint;
 
+        public max_length: number;
+        public max_context_length: number;
+
         public async generateGrammar(schema: any): Promise<string>
         {
             const url = this.config.url + "/api/extra/json_to_grammar";
@@ -39,9 +42,8 @@ namespace AI.KoboldCPP
 
             console.log("generateText (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: AI.KoboldCPP.GenerationInput = { prompt: p, };
+            const body: AI.KoboldCPP.GenerationInput = { prompt: p, max_length: this.max_length, max_context_length: this.max_context_length };
             if (this.config.temperature) body.temperature = this.config.temperature;
-            if (this.config.textGenerationMaxLength) body.max_length = this.config.textGenerationMaxLength;
             if (grammar) body.grammar = grammar;
 
             const headers: HeadersInit = {};
@@ -57,6 +59,8 @@ namespace AI.KoboldCPP
             const output: AI.KoboldCPP.GenerationOutput = await response.json();
             let result = output.results[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
+            //TODO: remove
+            if (result.finish_reason != "stop") console.log("invalid result", result);
             console.log("generateText (result)", result.text);
 
             return result.text;
@@ -70,9 +74,8 @@ namespace AI.KoboldCPP
 
             console.log("generateInteractions (messages)", m);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: any = { messages: m };
+            const body: any = { messages: m, max_length: this.max_length, max_context_length: this.max_context_length };
             if (this.config.temperature) body.temperature = this.config.temperature;
-            if (this.config.textGenerationMaxLength) body.max_length = this.config.textGenerationMaxLength;
             if (grammar) body.grammar = grammar;
 
             const headers: HeadersInit = {};
@@ -88,6 +91,8 @@ namespace AI.KoboldCPP
             const output: any = await response.json();
             let result = output.choices[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
+            //TODO: remove
+            if (result.finish_reason != "stop") console.log("invalid result", result);
             console.log("generateInteractions (result)", result.message.content);
 
             const text: string = result.message.content;
@@ -129,17 +134,32 @@ namespace AI.KoboldCPP
 
         public async check(): Promise<void>
         {
-            const url = this.config.url + "/api/v1/info/version";
+            {
+                const url = this.config.url + "/api/v1/config/max_context_length";
+                const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
+                const headers: HeadersInit = {};
+                if (authorization) headers.authorization = "Basic " + authorization;
 
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
+                const response = await fetch(url, { method: "GET", headers });
+                if (!response.ok) throw new Error("Check failed!");
+                const output = await response.json();
+                this.max_context_length = output.value;
+            }
 
-            const response = await fetch(url, { method: "GET", headers });
-            if (!response.ok) throw new Error("Check failed!");
-            const output = await response.json();
-            const version = output.result;
-            if (typeof version != "string") throw new Error("Unexpected output!");
+            {
+                const url = this.config.url + "/api/v1/config/max_length";
+                const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
+                const headers: HeadersInit = {};
+                if (authorization) headers.authorization = "Basic " + authorization;
+
+                const response = await fetch(url, { method: "GET", headers });
+                if (!response.ok) throw new Error("Check failed!");
+                const output = await response.json();
+                this.max_length = output.value;
+            }
+
+            //TODO: remove
+            this.max_length = 4096;
         }
     };
 }

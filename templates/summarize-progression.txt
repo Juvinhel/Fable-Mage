@@ -1,10 +1,12 @@
-{{(turn)}}
+{{(turn, world)}}
 We are at turn {{= turn}}. 
 Produce a COMPRESSED SESSION MEMORY under 500 tokens.
+The player characters name is "{{= world.player.name}}".
+The narrator in the input refers to the player as "You".
+
 Key facts to keep in memory are:
-- current status of each character
+- Do not track character status or inventory these are tracked separatle
 - key relationships
-- inventory
 - open plot threads
 - important world facts
 Cut anything already resolved or no longer relevant.

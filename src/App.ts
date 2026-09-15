@@ -12,9 +12,6 @@ class App
         Views.navigate("Home");
 
         await this.initAI();
-
-        const story = localStorage.get<Data.Story>("current-story");
-        if (story) Views.storyElement.import(story);
     }
 
     public static config: Data.Config;

@@ -14,5 +14,6 @@ namespace Data
         scenery?: string;
         image?: string;
         choices?: string[];
+        summary?: string;
     };
 }

@@ -25,22 +25,22 @@ namespace Views
             </>;
         }
 
-        private onCreateNewWorld()
+        private async onCreateNewWorld()
         {
             Views.navigate("World");
-            Views.worldElement.createWorldUsingAI();
+            await Views.worldElement.createWorldUsingAI();
         }
 
-        private onLoadWorld()
+        private async onLoadWorld()
         {
             Views.navigate("World");
-            Views.worldElement.open();
+            await Views.worldElement.open();
         }
 
-        private onLoadSavegame()
+        private async onLoadSavegame()
         {
             Views.navigate("Story");
-            Views.storyElement.open();
+            await Views.storyElement.open();
         }
     }
 

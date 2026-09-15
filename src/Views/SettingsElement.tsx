@@ -7,6 +7,8 @@ namespace Views
             super();
 
             this.append(this.build());
+
+            this.load();
         }
 
         private languageComboSelect: HTMLComboSelect;
@@ -17,13 +19,6 @@ namespace Views
         {
             return <>
                 <div>
-                    <div>
-                        <label>Language:</label>
-                        { this.languageComboSelect = <combo-select placeholder="Language" allowSearch={ false } options={ [
-                            { title: "English", value: "English" },
-                            { title: "German", value: "German" }] }
-                            value="English" /> as HTMLComboSelect }
-                    </div>
                     <div>
                         <label>TextAPI:</label>
                         { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
@@ -49,15 +44,8 @@ namespace Views
             </>;
         }
 
-        private connectedCallback()
-        {
-            this.load();
-        }
-
         private load()
         {
-            this.languageComboSelect.value = App.config.language ?? "English";
-
             for (const option of this.textAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.textAPI.name;
             this.textAPIChange();
@@ -117,10 +105,6 @@ namespace Views
                 <div>
                     <label>Temperature:</label>
                     <input name="temperature" type="number" min="0" max="2" step="0.1" value={ config.temperature ?? "0.7" } />
-                </div>
-                <div>
-                    <label>Max Content Size:</label>
-                    <input name="textGenerationMaxLength" type="number" min="0" step="1" value={ config.textGenerationMaxLength ?? "" } />
                 </div>
             </div>;
         }
@@ -224,7 +208,6 @@ namespace Views
                     throw new Error("Something went wrong with your image api config!");
                 }
 
-                App.config.language = this.languageComboSelect.value;
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
                 Data.saveConfig(App.config);

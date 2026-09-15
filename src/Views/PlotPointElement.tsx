@@ -35,7 +35,6 @@ namespace Views
                     <button class="icon-button edit-image-button" title="Edit image" onclick={ () => this.onEditImage() }><color-icon src="img/icons/image.svg" /></button>
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
                     <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
-                    <button class="icon-button delete-button" title="Delete plot point" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
                 { this.choicesListElement = <div class="choices-list"></div> as HTMLDivElement }
             </>;
@@ -81,6 +80,9 @@ namespace Views
                     this.choicesListElement.append(button);
                 }
         }
+
+        // summary of previous turns
+        public summary: string;
 
         private async setChoice(choice: string)
         {
@@ -129,12 +131,6 @@ namespace Views
             this.image = result.image;
         }
 
-        private async onDelete()
-        {
-            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this plot-point?", title: "Delete plot-point?" }))
-                this.remove();
-        }
-
         public export(): Data.PlotPoint
         {
             const plotPoint: Data.PlotPoint = {
@@ -147,6 +143,7 @@ namespace Views
             if (this.input) plotPoint.input = this.input;
             if (this.image) plotPoint.image = this.image;
             if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;
+            if (this.summary) plotPoint.summary = this.summary;
             return plotPoint;
         }
 
@@ -160,6 +157,7 @@ namespace Views
             this.scenery = plotPoint.scenery;
             this.image = plotPoint.image;
             this.choices = plotPoint.choices;
+            this.summary = plotPoint.summary;
         }
     }
 

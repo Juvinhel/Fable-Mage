@@ -2,7 +2,6 @@ namespace Data
 {
     export interface Config
     {
-        language: string;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint;
         imageAPI: KoboldCPPEndpoint | StableDiffusionEndpoint;
     }
@@ -13,7 +12,6 @@ namespace Data
         url: string;
         username?: string;
         password?: string;
-        textGenerationMaxLength?: number,
         temperature?: number;
     }
 
@@ -32,11 +30,9 @@ namespace Data
     }
 
     const defaultConfig: Config = {
-        language: "English",
         textAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de",
-            textGenerationMaxLength: 4096,
             temperature: 0.7
         },
         imageAPI: {

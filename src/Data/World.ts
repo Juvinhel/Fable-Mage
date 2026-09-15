@@ -11,6 +11,7 @@ namespace Data
             player: Character;
             npcs?: Character[];
             prologue?: Prologue;
+            tags?: string[];
         };
 
     export type Character = {

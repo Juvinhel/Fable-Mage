@@ -6,6 +6,11 @@ namespace Views
 {
     export function Nav()
     {
+        homeElement = new HomeElement();
+        storyElement = new StoryElement();
+        worldElement = new WorldElement();
+        settingsElement = new SettingsElement();
+
         return <nav>
             <button title="Home" onclick={ () => navigate("Home") }>Home</button>
             <button title="Story" onclick={ () => navigate("Story") }>Story</button>
@@ -17,10 +22,10 @@ namespace Views
         </nav>;
     }
 
-    export const homeElement: HomeElement = new HomeElement();
-    export const storyElement: StoryElement = new StoryElement();
-    export const worldElement: WorldElement = new WorldElement();
-    export const settingsElement: SettingsElement = new SettingsElement();
+    export let homeElement: HomeElement;
+    export let storyElement: StoryElement;
+    export let worldElement: WorldElement;
+    export let settingsElement: SettingsElement;
 
     function toggleDropDown(e: Event)
     {

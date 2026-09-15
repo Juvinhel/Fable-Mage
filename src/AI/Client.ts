@@ -21,6 +21,7 @@ namespace AI
             this.describeWorldTemplate = await this.getTemplate("describe-world");
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
+            this.updateCharacterTemplate = await this.getTemplate("update-character");
             this.describeCharacterTemplate = await this.getTemplate("create-npc");
             this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
         }
@@ -87,6 +88,7 @@ namespace AI
         private characterSchema: any;
         private createPlayerTemplate: (...params: any[]) => Promise<string>;
         private createNPCTemplate: (...params: any[]) => Promise<string>;
+        private updateCharacterTemplate: (...params: any[]) => Promise<string>;
         private describeCharacterTemplate: (...params: any[]) => Promise<string>;
 
         private memorySchema: any;
@@ -94,12 +96,15 @@ namespace AI
 
         public async advancePlot(
             input: string,
+            summary: string,
             plot: Data.Plot,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
             const prompt: string = await this.advancePlotTemplate(plot, world);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
+            if (summary)
+                messages.push({ role: "assistant", content: "Summary of older turns:" + summary });
             for (const plotPoint of plot)
             {
                 let content = "";
@@ -151,10 +156,12 @@ namespace AI
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
         }
 
-        public async summarizeProgression(plot: Data.Plot): Promise<string>
+        public async summarizeProgression(previousSummary: string, plot: Data.Plot, world: Data.World): Promise<string>
         {
-            const prompt: string = await this.summarizeProgressionTemplate(plot.length + 1);
+            const prompt: string = await this.summarizeProgressionTemplate(plot.length + 1, world);
             const messages: Message[] = [{ role: "system", content: prompt }];
+            if (previousSummary)
+                messages.push({ role: "assistant", content: "Summary of older turns:" + previousSummary });
             for (const plotPoint of plot)
             {
                 let content = "";
@@ -162,7 +169,7 @@ namespace AI
                 content += "Time: " + plotPoint.time + "\n";
                 content += "Narrative: " + plotPoint.text + "\n";
                 content += "Internal: " + plotPoint.internal;
-                messages.push({ role: "assistant", content });
+                messages.push({ role: "user", content });
             }
 
             const result = await textAPI.generateInteractions(messages);
@@ -251,6 +258,25 @@ namespace AI
                 { role: "system", content: prompt },
                 { role: "user", content: input }
             ];
+
+            const result = await textAPI.generateInteractions(messages, this.characterSchema);
+            const obj = this.parseJSON(result);
+            return obj as Data.Character;
+        }
+
+        public async updateCharacter(character: Data.Character, world: Data.World, plot: Data.Plot): Promise<Data.Character>
+        {
+            const prompt = await this.updateCharacterTemplate(character, world);
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+            ];
+            for (const plotPoint of plot)
+            {
+                let content = "";
+                content += "Narrative: " + plotPoint.text + "\n";
+                content += "Internal: " + plotPoint.internal;
+                messages.push({ role: "user", content });
+            }
 
             const result = await textAPI.generateInteractions(messages, this.characterSchema);
             const obj = this.parseJSON(result);
