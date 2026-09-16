@@ -1,0 +1,83 @@
+my-story .plot-tab
+{
+    display: grid;
+    grid-template-rows: max-content 0 1fr max-content;
+    grid-template-columns: 1fr minmax(20em, 30%);
+    grid-template-areas:
+        "title title"
+        ". fly-out"
+        "plot-list fly-out"
+        "input input";
+    overflow-y: auto;
+
+    > .title
+    {
+        z-index: 1000;
+        position: sticky;
+        anchor-name: --title;
+        top: 0;
+        grid-area: title;
+        padding: 0.25em;
+        background-color: var(--page-background-color);
+        font-style: italic;
+        font-size: 1.375em;
+        text-align: center;
+    }
+
+    > .plot-list
+    {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: max-content;
+        grid-area: plot-list;
+        height: max-content;
+        padding: 0.25em;
+        overflow-y: auto;
+        gap: 0.75em;
+    }
+
+    > .input
+    {
+        display: grid;
+        z-index: 1100;
+        position: sticky;
+        anchor-name: --input;
+        bottom: 0;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr auto;
+        grid-area: input;
+        padding: 0.25em;
+        overflow: visible;
+        gap: 0.25em;
+        background-color: var(--page-background-color);
+
+        > .user-input
+        {
+            min-height: 3em;
+        }
+
+        > .submit-button
+        {
+            width: 3.5em;
+
+            > color-icon
+            {
+                aspect-ratio: 1;
+                width: calc(100% - 0.5em);
+                height: unset;
+            }
+        }
+    }
+
+    > my-stats-fly-out
+    {
+
+        position: fixed;
+        top: anchor(--title bottom);
+        right: anchor(--input right);
+        bottom: anchor(--input top);
+        width: 20em;
+        width: calc(30% - 0.25em);
+        overflow-y: auto;
+    }
+}

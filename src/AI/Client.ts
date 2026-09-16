@@ -268,7 +268,7 @@ namespace AI
             return obj as Data.Character;
         }
 
-        public async updateCharacter(character: Data.Character, world: Data.World, plot: Data.Plot): Promise<Data.Character>
+        public async updateCharacter(character: Data.Character, world: Data.World, plot: Data.Plot): Promise<Partial<Data.Character>>
         {
             const prompt = await this.updateCharacterTemplate(character, world);
             const messages: Message[] = [
@@ -283,8 +283,9 @@ namespace AI
             }
 
             const result = await textAPI.generateInteractions(messages, this.characterUpdateSchema);
-            const obj = this.parseJSON(result);
-            return obj as Data.Character;
+            const obj = this.parseJSON(result) as Partial<Data.Character>;
+
+            return Object.fromEntries(Object.entries(obj).map(([key, value]) => [Helper.convertPascalCaseToKebabCase(key), value]));
         }
 
         public async describeCharacter(character: Data.Character): Promise<string>

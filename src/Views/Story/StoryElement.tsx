@@ -12,14 +12,11 @@ namespace Views.Story
         private tabControl: HTMLTabControl;
 
         private plotTab: HTMLElement;
-        private charactersTab: HTMLDivElement;
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
         public userInput: HTMLTextAreaElement;
         public submitButton: HTMLButtonElement;
-
-        private playerCharacterCard: World.CharacterCardElement;
-        private npcCardList: HTMLElement;
+        private statsFlyOut: StatsFlyOutElement;
 
         private summaryElement: HTMLTextAreaElement;
 
@@ -27,37 +24,18 @@ namespace Views.Story
         {
             return <>
                 { this.tabControl = <tab-control>
-                    { this.plotTab = <div class="plot" title="Plot">
+                    { this.plotTab = <div class="plot-tab" title="Plot">
                         { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
-                        <div class="input">
+                        <div class="input"
+                            // fix for bottom-anchor not working
+                            onsizechanged={ (e: UI.Events.SizeChangedEvent) => { this.statsFlyOut.style.bottom = "calc(0.25em + " + e.newSize.height + "px)"; } }>
                             { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
-                        <div class="fly-out" />
+                        { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
-                    { this.charactersTab = <div class="characters" title="Characters">
-                        <div>
-                            <div >
-                                <label>Player:</label>
-                                { this.playerCharacterCard = new World.CharacterCardElement() }
-                            </div>
-
-                            <div>
-                                <label>NPCs:</label>
-                                <div class="functions horizontal">
-                                    <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
-                                    <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
-                                </div>
-                                { this.npcCardList = <div class="npc-list" /> as HTMLElement }
-                            </div>
-                        </div>
-
-                        <div class="anchor" />
-
-                        <div />
-                    </div> as HTMLDivElement }
                     <div class="summary" title="Summary">
                         <div>
                             <label>Summary</label>
@@ -91,53 +69,24 @@ namespace Views.Story
                 plotPointElement.turn = ++i;
         }
 
-        private async onAddNPC()
+        public async returnHere(returnalElement: PlotPointElement)
         {
-            const npccard = new World.CharacterCardElement();
-            this.npcCardList.appendChild(npccard);
-        }
+            if (!await UI.Dialog.confirm({ title: "Load from here?", text: "Do you really want to load from this point?\nAll plot-points afterwards will be lost." }))
+                return;
 
-        private previousCreateNPCPrompt = "";
-        private async onAddNPCUsingAI()
-        {
-            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
-            if (!result) return;
-            this.previousCreateNPCPrompt = result;
-
-            App.beginThinking();
-
-            try
+            const input = returnalElement.input;
+            const plot: Data.Plot = [];
+            let remove = false;
+            for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
             {
-                const world = this.export();
-                const npc = await AI.Client.createNPC(result, world);
-
-                const npccard = new World.CharacterCardElement();
-                npccard.import(npc);
-                this.npcCardList.appendChild(npccard);
-
-                this.createPortrait(npc, npccard);
-            }
-            catch (error)
-            {
-                UI.Dialog.error(error);
+                if (plotPointElement == returnalElement) remove = true;
+                if (remove) plotPointElement.remove();
+                else plot.push(plotPointElement.export());
             }
 
-            App.stopThinking();
-        }
+            this.userInput.value = input ?? "";
 
-        private async createPortrait(character: Data.Character, characterCardElement: World.CharacterCardElement)
-        {
-            try
-            {
-                const prompt = await AI.Client.describeCharacter(character);
-                characterCardElement.previousGeneratePortraitPrompt = prompt;
-                const image = await AI.Client.getImage(prompt);
-                characterCardElement.portrait = image;
-            }
-            catch (error)
-            {
-                UI.Dialog.error(error);
-            }
+            this.statsFlyOut.updateCharacters(this.calculateCharacter(this.world.player.name), this.world.npcs ?? []);
         }
 
         private summaryInterval = 3;
@@ -257,7 +206,7 @@ namespace Views.Story
 
                 if (diff) for (const [key, value] of Object.entries(diff))
                     if (key != "name")
-                        character[key] = "name";
+                        character[key] = value;
             }
             return character;
         }
@@ -268,6 +217,8 @@ namespace Views.Story
             const character = await AI.Client.updateCharacter(player, this.world, [plotPointElement.export()]);
             if (Object.entries(character).length > 1)
                 plotPointElement.playerChanges = character;
+
+            this.statsFlyOut.updateCharacters(this.calculateCharacter(player.name), this.world.npcs ?? []);
         }
 
         private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
@@ -303,43 +254,15 @@ namespace Views.Story
 
         public async startStory(world: Data.World)
         {
-            this.world = world;
-
-            this.plotList.clearChildren();
-            this.heading.textContent = world.title;
-
-            const stats = world.stats?.map(x => x.name) ?? [];
-
-            const playerCard = new World.CharacterCardElement();
-            playerCard.additionalProperties = stats;
-            playerCard.import(world.player);
-            this.playerCharacterCard.replaceWith(playerCard);
-            this.playerCharacterCard = playerCard;
-
-            this.npcCardList.clearChildren();
-            if (world.npcs) for (const npc of world.npcs)
-            {
-                const npccard = new World.CharacterCardElement();
-                npccard.additionalProperties = stats;
-                npccard.import(npc);
-                this.npcCardList.append(npccard);
-            }
-
-            if (world.prologue)
-            {
-                const plotPointElement = new PlotPointElement();
-                plotPointElement.import(world.prologue);
-                this.plotList.append(plotPointElement);
-            }
+            const story = JSON.clone(world) as Data.Story;
+            story.plot = [];
+            if (story.prologue) story.plot.push(story.prologue);
+            this.import(story);
         }
 
         public export(): Data.Story
         {
             const story = JSON.clone(this.world) as Data.Story;
-            story.player = this.playerCharacterCard.export();
-            story.npcs = [];
-            for (const npcCard of this.npcCardList.querySelectorAll("my-character-card") as NodeListOf<World.CharacterCardElement>)
-                story.npcs.push(npcCard.export());
 
             const plot: Data.Plot = [];
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
@@ -359,22 +282,6 @@ namespace Views.Story
 
             // world
             this.heading.textContent = world.title;
-
-            const stats = world.stats?.map(x => x.name) ?? [];
-
-            const playerCard = new World.CharacterCardElement();
-            playerCard.additionalProperties = stats;
-            playerCard.import(world.player);
-            this.playerCharacterCard.replaceWith(playerCard);
-            this.playerCharacterCard = playerCard;
-
-            this.npcCardList.clearChildren();
-            if (world.npcs) for (const npc of world.npcs)
-            {
-                const npccard = new World.CharacterCardElement();
-                npccard.import(npc);
-                this.npcCardList.append(npccard);
-            }
             this.world = world;
 
             // plot
@@ -385,6 +292,10 @@ namespace Views.Story
                 plotPointElement.import(plotPoint);
                 this.plotList.appendChild(plotPointElement);
             }
+
+            //this.plotTab.append(this.statsFlyOut = new StatsFlyOuttElement());
+            this.statsFlyOut.reset();
+            this.statsFlyOut.updateCharacters(this.calculateCharacter(world.player.name), this.world.npcs ?? []);
         }
 
         public async save()

@@ -1,4 +1,5 @@
 {{(turn, world)}}
+
 We are at turn {{= turn}}. 
 Produce a COMPRESSED SESSION MEMORY under 500 tokens.
 The player characters name is "{{= world.player.name}}".

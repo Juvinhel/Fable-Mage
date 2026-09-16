@@ -99,20 +99,7 @@ namespace Views.Story
 
         private async onReturnHere()
         {
-            if (!await UI.Dialog.confirm({ title: "Load from here?", text: "Do you really want to load from this point?\nAll plot-points afterwards will be lost." }))
-                return;
-
-            const input = this.input;
-            const plot: Data.Plot = [];
-            let remove = false;
-            for (const plotPointElement of this.storyElement.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
-            {
-                if (plotPointElement == this) remove = true;
-                if (remove) plotPointElement.remove();
-                else plot.push(plotPointElement.export());
-            }
-
-            this.storyElement.userInput.value = input ?? "";
+            this.storyElement.returnHere(this);
         }
 
         private async onEdit()

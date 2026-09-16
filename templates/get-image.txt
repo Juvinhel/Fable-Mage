@@ -1,2 +1,3 @@
 {{(description)}}
+
 medium close-up, full-body image, {{= description }}, dynamic pose, exquisite beauty

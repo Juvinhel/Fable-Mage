@@ -1,4 +1,5 @@
 {{(world)}}
+
 You are an expert character designer. Generate a fictional character profile of a non player character.
 Remember the character lives in the world provided in the 'scenario' block but the character is NOT the main character.
 Use the information provided in the 'user_input' block.

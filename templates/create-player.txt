@@ -1,4 +1,5 @@
 {{(world)}}
+
 You are an expert character designer. Generate a fictional character profile for the player character.
 Remember the character lives in world provided in the 'scenario' block. 
 When the world referes to as "I" it addresses the player character you are creating.

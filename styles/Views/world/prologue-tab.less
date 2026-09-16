@@ -3,4 +3,19 @@ my-world .prologue-tab
     display: grid;
     grid-template-rows: 1fr max-content max-content;
     grid-template-columns: 1fr;
+
+    > div:last-child
+    {
+        display: grid;
+        position: sticky;
+        bottom: 0;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 1fr;
+        grid-auto-flow: dense;
+        grid-row: -2; // last row
+        grid-column: 1;
+        padding: 0.25em;
+        gap: 0.25em;
+        background-color: var(--page-background-color);
+    }
 }

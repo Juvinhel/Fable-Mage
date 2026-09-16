@@ -1,4 +1,5 @@
 {{(world)}}
+
 Act as a Stable Diffusion prompt engineer for a adventure RPG.
 The user input contains the description of a scene.
 

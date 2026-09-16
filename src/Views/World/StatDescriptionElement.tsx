@@ -24,8 +24,8 @@ namespace Views.World
             </>;
         }
 
-        public get name(): string { return this.nameInput.value.trim(); }
-        public set name(value: string) { this.nameInput.value = value ?? ""; }
+        public get name(): string { return Helper.convertTitleCaseToKebabCase(this.nameInput.value.trim()); }
+        public set name(value: string) { this.nameInput.value = Helper.converKebabCaseToTitleCase(value) ?? ""; }
 
         public get description(): string { return this.descriptionInput.value.trim(); }
         public set description(value: string) { this.descriptionInput.value = value ?? ""; }

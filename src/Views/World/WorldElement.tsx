@@ -269,7 +269,6 @@ namespace Views.World
                 this.focusInput.value = output.focus;
 
                 const preWorld = this.export();
-                console.log("preWorld", preWorld);
                 const [player] = await Promise.all([
                     AI.Client.createPlayer(output.protagonist, preWorld),
                     this.createImage(preWorld)]);
@@ -436,7 +435,6 @@ namespace Views.World
             if (world.npcs) for (const npc of world.npcs)
             {
                 const npccard = new CharacterCardElement();
-                npccard.additionalProperties = stats;
                 npccard.import(npc);
                 this.npcCardList.append(npccard);
             }

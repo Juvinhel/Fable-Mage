@@ -1,21 +1,21 @@
 {{(world)}}
-{{ 
-    function convertCase(input)
-    {
-        return input.replace(/(^\w|-\w)/g, clearAndUpper);
-    }    
-    
-    function clearAndUpper(text)
-    {
-        return text.replace(/-/, "").toUpperCase();
-    }
-}}
 
 You are the Game Master (GM) of this text-based adventure. 
 Write a prologue for this text-based adventure.
 Use the scenario described in the 'scenario' block and the player character described in the 'player' block. 
 Use the user input to determine what should happen in the prologue.
 Your writing style should be: {{= world["author-style"] }}.
+
+Character Stat Rules:
+"appearance": A brief description of visual appearance of the character. Include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.). Include build and stature
+"personality": A list of key personality traits. Comma-separated adjectives.
+"traits": A list of key skills and competencies. Comma-separated adjectives.
+"background": A summarized origin story.
+{{? world.stats && world.stats.length > 0}}
+{{~ stat of world.stats}}
+"{{= stat.name}}": {{= stat.description }}
+{{~}}
+{{?}}
 
 Output valid json and strictly adhere to the following property rules:
 ### plot
@@ -47,14 +47,14 @@ Output valid json and strictly adhere to the following property rules:
 {{? world.stats && world.stats.length > 0}}
 Character Stat Rules:
 {{~ stat of world.stats}}
-{{= stat.name}}: {{= stat.description }}
+"{{= stat.name}}": {{= stat.description }}
 {{~}}
 {{?}}
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}
 {{? key != "portrait" }}
-{{= convertCase(key) }}: {{= property }}
+"{{= key }}": {{= property }}
 {{?}}
 {{~}}
 </player>
@@ -63,7 +63,7 @@ Character Stat Rules:
 {{~ npc of world.npcs }}
 <npc>
 {{~ [key, property] of Object.entries(npc) }}
-{{= convertCase(key) }}: {{= property }}
+"{{= key }}": {{= property }}
 {{~}}
 </npc>
 

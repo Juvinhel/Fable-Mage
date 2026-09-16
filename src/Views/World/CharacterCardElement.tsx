@@ -85,7 +85,7 @@ namespace Views.World
             for (const property of values)
             {
                 this.additionalPropertiesList.append(<div>
-                    <label for={ property }>{ property }:</label>
+                    <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>
                     <textarea class="single-line" ontouchend={ TextEditTouch } />
                 </div>);
             }
