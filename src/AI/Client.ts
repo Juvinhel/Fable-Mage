@@ -23,7 +23,7 @@ namespace AI
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
             this.updateCharacterTemplate = await this.getTemplate("update-character");
-            this.describeCharacterTemplate = await this.getTemplate("create-npc");
+            this.describeCharacterTemplate = await this.getTemplate("describe-character");
             this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
         }
 

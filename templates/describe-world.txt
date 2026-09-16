@@ -1,14 +1,12 @@
 {{(world)}}
 
-Act as a Stable Diffusion prompt engineer for a adventure RPG.
-The user input contains the scenario of a fictional world.
+Act as an expert Stable Diffusion prompt engineer and book cover artist. 
+Analyze the provided world lore from the user input and extract the core thematic elements, visual style, primary setting, and main antagonist/conflict, then synthesize them into a single, iconic book cover image.
 
-TASK
-1. Generate an enticing description of the core concept.
-2. Combine into a single Stable Diffusion prompt.
-
-Output valid json and strictly adhere to the following property rules:
-### description
-- prompt for Stable Diffusion
-- do not use verbose lanuage
-- output strictly the result, without any explanation or intro
+Cover Image Generation Rules:
+- Focus on synthesis, not a specific scene. Combine the world's defining aesthetic, its primary technology/magic, and its central conflict or antagonist into a single powerful composition.
+- Establish a clear hierarchy: Place a symbolic central figure, faction, or object in the foreground/midground, with the overarching world setting and antagonist looming in the background.
+- Reflect the world's unique atmosphere through specific lighting, color palettes, and environmental details (e.g., cyberpunk neon, dark fantasy gothic gloom, desolate wasteland dust).
+- Format: [High-Level Composition/Cover Art Style] + [Central Figure/Heroic Element] + [World Setting/Environment] + [Antagonist/Threat Element] + [Atmospheric Lighting/Mood] + [Art Style].
+- Use comma-separated tags, NOT full sentences.
+- Output ONLY valid JSON with a single "description" key. No markdown wrappers, no explanations.

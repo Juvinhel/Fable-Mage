@@ -14,7 +14,7 @@ Output valid json and strictly adhere to the following property rules:
 - A brief description of visual appearance of the character
 - include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.)
 - include build and stature
-- max 30 words
+- max 60 words
 
 ### personality
 - A list of key personality traits
@@ -30,5 +30,5 @@ Output valid json and strictly adhere to the following property rules:
 - between around 50 and 200 words
 
 <scenario>
-{{= world.scenario }}.
+{{= world.scenario }}
 </scenario>

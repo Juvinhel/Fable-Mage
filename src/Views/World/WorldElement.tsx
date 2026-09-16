@@ -183,21 +183,24 @@ namespace Views.World
 
             App.beginThinking();
 
+            await this.createPlayerUsingAI(result);
+
+            App.stopThinking();
+        }
+
+        private async createPlayerUsingAI(prompt: string)
+        {
             try
             {
                 const world = this.export();
-                const player = await AI.Client.createPlayer(result, world);
-
+                const player = await AI.Client.createPlayer(prompt, world);
                 this.playerCharacterCard.import(player);
-
-                this.createPortrait(player, this.playerCharacterCard);
+                await this.createPortrait(player, this.playerCharacterCard);
             }
             catch (error)
             {
                 UI.Dialog.error(error);
             }
-
-            App.stopThinking();
         }
 
         private async onAddNPC()
@@ -220,12 +223,11 @@ namespace Views.World
                 const world = this.export();
                 const npc = await AI.Client.createNPC(result, world);
 
-                const stats = this.stats.map(x => x.name);
                 const npccard = new CharacterCardElement();
                 npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
 
-                this.createPortrait(npc, npccard);
+                await this.createPortrait(npc, npccard);
             }
             catch (error)
             {
@@ -268,12 +270,9 @@ namespace Views.World
                 this.scenarioInput.value = output.scenario;
                 this.focusInput.value = output.focus;
 
-                const preWorld = this.export();
-                const [player] = await Promise.all([
-                    AI.Client.createPlayer(output.protagonist, preWorld),
-                    this.createImage(preWorld)]);
-
-                this.playerCharacterCard.import(player);
+                await Promise.all([
+                    this.createPlayerUsingAI(output.protagonist),
+                    this.createCoverImage()]);
             }
             catch (error)
             {
@@ -283,12 +282,13 @@ namespace Views.World
             App.stopThinking();
         }
 
-        private async createImage(world: Data.World)
+        private async createCoverImage()
         {
             if (this.coverImage.classList.contains("disabled")) return;
 
             try
             {
+                const world = this.export();
                 const prompt = await AI.Client.describeWorld(world);
                 this.previousGenerateCoverPrompt = prompt;
                 const image = await AI.Client.getImage(prompt);
