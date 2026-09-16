@@ -9,19 +9,21 @@ Output valid json and strictly adhere to the following property rules:
 
 ### scenario
 - A prosaic descriptive of the world
-- contains lore, core concepts, inner workings of the scenario
+- Contains lore, core concepts, inner workings of the world
+- Contains key events and premises
 - 300 to 1000 words 
 - Do not create a story or an opening text
 - You may describe key events that happened prior to the narrative
 
+### rules
+- Operational rules, pacing guidelines, and behavioral directives for the AI narrator to follow during gameplay.
+- Include difficulties, environmental hazards and enemies if present the player might face.
+- Include the focus of the narrative e.g. "erotic descriptions", "romantic interests", "character development" or "action scenes"
+- 500 words at most
+
 ### author-style
 - A list of key traits the author should have to write such a story
 - 3 to 5 comma-separated adjectives
-
-### focus
-- Aspects a narrator should focus on when using the scenario 
-- e.g. "erotic descriptions", "romantic interests", "character development" or "action scenes"
-- 100 words at most
 
 ### protagonist
 - Short description of the main character of the narrative including visuals, personality, skills and background 

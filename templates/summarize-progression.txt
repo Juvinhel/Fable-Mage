@@ -1,13 +1,20 @@
-{{(turn, world)}}
+{{(previous_memory, turn, world)}}
 
-We are at turn {{= turn}}. 
-Produce a COMPRESSED SESSION MEMORY under 500 tokens.
-The player characters name is "{{= world.player.name}}".
+We are at turn {{= turn }}. 
+You are a precise memory compression engine. Review the conversation history below and produce an updated COMPRESSED SESSION MEMORY under 500 tokens.
+The player character's name is "{{= world.player.name}}".
 The narrator in the input refers to the player as "You".
+The "compressed_memory" block contains older turns content compressed into a short summary.
 
 Key facts to keep in memory are:
-- Do not track character status or inventory these are tracked separatle
-- key relationships
-- open plot threads
-- important world facts
-Cut anything already resolved or no longer relevant.
+- Do not track character status, stats, or inventory (these are tracked separately).
+- Active relationships, alliances, rivalries, and the current disposition of key characters toward the player.
+- Open plot threads, current active quests, missions, and immediate objectives or destinations.
+- Critical world lore, secrets, or vital discoveries recently uncovered.
+- Explicitly remove anything already resolved, failed, or no longer relevant.
+
+{{? memory}}
+<compressed_memory>
+{{= previous_memory }}
+</compressed_memory>
+{{?}}

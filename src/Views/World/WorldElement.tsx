@@ -15,7 +15,7 @@ namespace Views.World
         private coverImage: HTMLImageElement;
         private authorStyleInput: HTMLTextAreaElement;
         private scenarioInput: HTMLTextAreaElement;
-        private focusInput: HTMLTextAreaElement;
+        private rulesInput: HTMLTextAreaElement;
         private tagsInput: HTMLMultiSelect;
         private statList: HTMLDivElement;
         private playerCharacterCard: CharacterCardElement;
@@ -45,8 +45,8 @@ namespace Views.World
                             { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                         </div>
                         <div>
-                            <label>Focus:</label>
-                            { this.focusInput = <textarea class="focus-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                            <label>Rules:</label>
+                            { this.rulesInput = <textarea class="rules-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
                         </div>
                         <div>
                             <label>Tags:</label>
@@ -120,6 +120,8 @@ namespace Views.World
         private previousGenerateCoverPrompt: string;
         private async onGenerateCover()
         {
+            if (this.coverImage.classList.contains("disabled")) return;
+
             const result = await Dialogs.ImageEdit(this.coverImage.src, this.previousGenerateCoverPrompt, "Describe the cover image of your world.");
             if (!result) return;
 
@@ -268,11 +270,12 @@ namespace Views.World
                 this.titleInput.value = output.title;
                 this.authorStyleInput.value = output["author-style"];
                 this.scenarioInput.value = output.scenario;
-                this.focusInput.value = output.focus;
+                this.rulesInput.value = output.rules;
 
                 await Promise.all([
-                    this.createPlayerUsingAI(output.protagonist),
-                    this.createCoverImage()]);
+                    this.createCoverImage(),
+                    this.extractTags(),
+                    this.createPlayerUsingAI(output.protagonist)]);
             }
             catch (error)
             {
@@ -284,8 +287,6 @@ namespace Views.World
 
         private async createCoverImage()
         {
-            if (this.coverImage.classList.contains("disabled")) return;
-
             try
             {
                 const world = this.export();
@@ -293,6 +294,20 @@ namespace Views.World
                 this.previousGenerateCoverPrompt = prompt;
                 const image = await AI.Client.getImage(prompt);
                 this.coverImage.setAttribute("src", image);
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private async extractTags()
+        {
+            try
+            {
+                const world = this.export();
+                const tags = await AI.Client.extractTags(Data.knownTags.map(x => x.value), world);
+                this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => tags.includes(x.value));
             }
             catch (error)
             {
@@ -364,7 +379,7 @@ namespace Views.World
 
         public clearWorld(): void
         {
-            this.import({ title: "", cover: "", "author-style": "", scenario: "", focus: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.import({ title: "", cover: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public export(): Data.World
@@ -374,7 +389,7 @@ namespace Views.World
                 "cover": this.coverImage.getAttribute("src"),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
-                "focus": this.focusInput.value.trim().trimRight("."),
+                "rules": this.rulesInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.export(),
             };
 
@@ -408,7 +423,7 @@ namespace Views.World
             world.cover ? this.coverImage.setAttribute("src", world.cover) : this.coverImage.removeAttribute("src");
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
-            this.focusInput.value = world.focus;
+            this.rulesInput.value = world.rules;
 
             if (world.tags)
                 this.tagsInput.checkedOptions = world.tags.map(x => this.tagsInput.options.first(t => t.value == x));

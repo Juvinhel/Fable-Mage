@@ -9,7 +9,7 @@ namespace AI.Gemini
 
         private config: Data.GeminiEndpoint;
 
-        public async generateText(prompt: string, schema?: any): Promise<string>
+        public async generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>
         {
             const url = "https://generativelanguage.googleapis.com/v1beta/interactions";
             const p = prompt.trim();
@@ -19,6 +19,7 @@ namespace AI.Gemini
                 input: p,
                 model: "gemini-3.8-flash",
                 store: false,
+                generationConfig: { temperature: temperature }
             };
             if (schema)
             {
@@ -51,7 +52,7 @@ namespace AI.Gemini
             return text;
         }
 
-        public async generateInteractions(messages: Message[], schema?): Promise<string>
+        public async generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const url = "https://generativelanguage.googleapis.com/v1beta/interactions";
             const m = messages.map(x =>
@@ -68,6 +69,7 @@ namespace AI.Gemini
                 input: m,
                 model: "gemini-3.8-flash",
                 store: false,
+                generationConfig: { temperature: temperature }
             };
             if (schema)
             {

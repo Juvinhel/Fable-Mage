@@ -6,7 +6,7 @@ namespace Data
             cover: string;
             "author-style": string;
             scenario: string;
-            focus: string;
+            rules: string;
             stats?: Stat[];
             player: Character;
             npcs?: Character[];

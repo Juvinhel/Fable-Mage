@@ -93,8 +93,6 @@ namespace Views.Story
         private summaryInterval = 3;
         private async onSubmit()
         {
-            if (this.submitButton.disabled) return;
-
             App.beginThinking();
 
             try
@@ -102,13 +100,13 @@ namespace Views.Story
                 const input = this.userInput.value.trim();
                 const story = this.export();
                 story.player = this.calculateCharacter(story.player.name);
-                for (let i = 0; i < story.npcs.length; ++i) story.npcs[i] = this.calculateCharacter(story.npcs[i].name);
+                for (let i = 0; i < story.npcs?.length; ++i) story.npcs[i] = this.calculateCharacter(story.npcs[i].name);
 
                 const plot = story.plot;
-                let plotPointsToSubmit = story.plot.length % this.summaryInterval;
+                let plotPointsToSubmit = plot.length % this.summaryInterval;
                 if (!plotPointsToSubmit) plotPointsToSubmit = this.summaryInterval;
 
-                const result = await AI.Client.advancePlot(input, this.summaryElement.value, story.plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
+                const result = await AI.Client.advancePlot(input, this.summaryElement.value, plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;

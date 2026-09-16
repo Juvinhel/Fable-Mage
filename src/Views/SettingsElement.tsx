@@ -102,10 +102,6 @@ namespace Views
                     <label>Password:</label>
                     <input name="password" type="password" value={ config.password ?? "" } />
                 </div>
-                <div>
-                    <label>Temperature:</label>
-                    <input name="temperature" type="number" min="0" max="2" step="0.1" value={ config.temperature ?? "0.7" } />
-                </div>
             </div>;
         }
 

@@ -26,8 +26,8 @@ namespace AI
 
     export interface TextAPI
     {
-        generateText(prompt: string, schema?: any): Promise<string>;
-        generateInteractions(messages: Message[], schema?: any): Promise<string>;
+        generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>;
+        generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>;
         check(): Promise<void>;
     }
 

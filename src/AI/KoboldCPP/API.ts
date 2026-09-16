@@ -34,7 +34,7 @@ namespace AI.KoboldCPP
             return output.result;
         }
 
-        public async generateText(prompt: string, schema?: any): Promise<string>
+        public async generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>
         {
             const url = this.config.url + "/api/v1/generate";
             const grammar = schema ? await this.generateGrammar(schema) : null;
@@ -42,8 +42,7 @@ namespace AI.KoboldCPP
 
             console.log("generateText (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: AI.KoboldCPP.GenerationInput = { prompt: p, max_length: this.max_length, max_context_length: this.max_context_length };
-            if (this.config.temperature) body.temperature = this.config.temperature;
+            const body: AI.KoboldCPP.GenerationInput = { prompt: p, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
             if (grammar) body.grammar = grammar;
 
             const headers: HeadersInit = {};
@@ -66,7 +65,7 @@ namespace AI.KoboldCPP
             return result.text;
         }
 
-        public async generateInteractions(messages: Message[], schema?): Promise<string>
+        public async generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const url = this.config.url + "/v1/chat/completions";
             const grammar = schema ? await this.generateGrammar(schema) : null;
@@ -74,8 +73,7 @@ namespace AI.KoboldCPP
 
             console.log("generateInteractions (messages)", m);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: any = { messages: m, max_length: this.max_length, max_context_length: this.max_context_length };
-            if (this.config.temperature) body.temperature = this.config.temperature;
+            const body: any = { messages: m, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
             if (grammar) body.grammar = grammar;
 
             const headers: HeadersInit = {};

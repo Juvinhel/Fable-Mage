@@ -17,6 +17,9 @@ Character Stat Rules:
 {{~}}
 {{?}}
 
+World Rules to follow:
+{{= world.rules }}
+
 Output valid json and strictly adhere to the following property rules:
 ### plot
 - [200 to 400 words, divided into sensible paragraphs]
@@ -40,10 +43,6 @@ Output valid json and strictly adhere to the following property rules:
 <scenario>
 {{= world.scenario }}.
 </scenario>
-
-<focus>
-{{= world.focus }}.
-</focus>
 
 {{? world.stats && world.stats.length > 0}}
 Character Stat Rules:

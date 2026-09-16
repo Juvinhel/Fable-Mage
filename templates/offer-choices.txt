@@ -27,6 +27,9 @@ Character Stat Rules:
 {{~}}
 {{?}}
 
+World Rules to follow:
+{{= world.rules }}
+
 Output valid json and strictly adhere to the following property rules:
 ### first-choice
 - First suggested choice the player can take

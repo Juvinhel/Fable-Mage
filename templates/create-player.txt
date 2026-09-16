@@ -5,6 +5,9 @@ Remember the character lives in world provided in the 'scenario' block.
 When the world referes to as "I" it addresses the player character you are creating.
 Use the information provided by the user.
 
+World Rules to follow:
+{{= world.rules }}
+
 Output valid json and strictly adhere to the following property rules:
 ### name
 - Name of the character

@@ -12,7 +12,6 @@ namespace Data
         url: string;
         username?: string;
         password?: string;
-        temperature?: number;
     }
 
     export interface GeminiEndpoint
@@ -32,8 +31,7 @@ namespace Data
     const defaultConfig: Config = {
         textAPI: {
             name: "KoboldCPP",
-            url: "https://ai.coffinprincess.de",
-            temperature: 0.7
+            url: "https://ai.coffinprincess.de"
         },
         imageAPI: {
             name: "Stable Diffusion",

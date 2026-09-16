@@ -4,8 +4,8 @@
     "required": [
         "title",
         "scenario",
+        "rules",
         "author-style",
-        "focus",
         "protagonist"
     ],
     "properties": {
@@ -17,11 +17,11 @@
             "type": "string",
             "description": ""
         },
-        "author-style": {
+        "rules": {
             "type": "string",
             "description": ""
         },
-        "focus": {
+        "author-style": {
             "type": "string",
             "description": ""
         },

@@ -96,6 +96,8 @@ namespace Views.World
         public previousGeneratePortraitPrompt: string;
         private async onGeneratePortrait()
         {
+            if (this.portraitImage.classList.contains("disabled")) return;
+
             if (!this.previousGeneratePortraitPrompt)
                 this.previousGeneratePortraitPrompt = this.appearanceProperty.value;
 
