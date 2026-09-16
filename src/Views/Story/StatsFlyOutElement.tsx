@@ -10,25 +10,30 @@ namespace Views.Story
         }
 
         private storyElement: StoryElement;
+        private contentContainer: HTMLElement;
 
         private build()
         {
-            return <>
-            </>;
+            return this.contentContainer = <div /> as HTMLElement;
         }
 
         private buildCharacterCard(character: Data.Character)
         {
             return <div data-name={ character.name }>
-                <h3>{ character.name }</h3>
                 <img class="portrait" src={ character.portrait } />
+                <h3>{ character.name }</h3>
                 {
                     ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
-                        <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }</label>,
+                        <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
                         <span>{ value }</span>
                     ])
                 }
             </div>;
+        }
+
+        private connectedCallback()
+        {
+            this.storyElement = this.closest("my-story");
         }
 
         private updateOrCreateCharacterCard(character: Data.Character)
@@ -54,17 +59,12 @@ namespace Views.Story
                     }
             }
             else
-                this.append(this.buildCharacterCard(character));
-        }
-
-        private connectedCallback()
-        {
-            this.storyElement = this.closest("my-story");
+                this.contentContainer.append(this.buildCharacterCard(character));
         }
 
         public reset()
         {
-            this.clearChildren();
+            this.contentContainer.clearChildren();
         }
 
         public updateCharacters(player: Data.Character, npcs: Data.Character[])

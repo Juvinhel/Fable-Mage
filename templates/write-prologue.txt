@@ -34,6 +34,7 @@ Output valid json and strictly adhere to the following property rules:
 
 ### internal
 - [Sandbox for your GM tracking: hidden motivations, secret NPC thoughts, out-of-sight environmental changes, internal body changes the player is unaware of and progression clocks]
+- [include plot hints (npc actions they are about to take, environmental changes foreshadowing)]
 - [100 to 200 words, concise and direct language]
 
 <scenario>
