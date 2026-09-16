@@ -66,7 +66,7 @@ namespace Views.World
                     <div>
                         <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
                         <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
-                        <button onclick={ () => this.onStartStory() }><span>Start Story</span></button>
+                        <button onclick={ () => this.startStory() }><span>Start Story</span></button>
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
@@ -336,7 +336,7 @@ namespace Views.World
             this.clearWorld();
         }
 
-        private async onStartStory()
+        public async startStory()
         {
             Views.navigate("Story");
             Views.storyElement.startStory(this.export());

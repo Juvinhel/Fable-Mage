@@ -20,7 +20,8 @@ namespace Views
                 <div>
                     <button onclick={ () => this.onCreateNewWorld() }><span>Create new World</span></button>
                     <button onclick={ () => this.onLoadWorld() }><span>Load World</span></button>
-                    <button onclick={ () => this.onLoadSavegame() }><span>Load Savegame</span></button>
+                    <button onclick={ () => this.onStartStory() }><span>Start Story</span></button>
+                    <button onclick={ () => this.onLoadStory() }><span>Load Story</span></button>
                 </div>
             </>;
         }
@@ -37,7 +38,13 @@ namespace Views
             await Views.worldElement.open();
         }
 
-        private async onLoadSavegame()
+        private async onStartStory()
+        {
+            await Views.worldElement.open();
+            await Views.worldElement.startStory();
+        }
+
+        private async onLoadStory()
         {
             Views.navigate("Story");
             await Views.storyElement.open();
