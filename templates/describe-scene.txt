@@ -9,6 +9,10 @@ Analyze the user input to determine the PRIMARY FOCUS:
 Rules:
 - Use comma-separated tags, NOT full sentences.
 - Character Presence Rule: Only include characters in the Stable Diffusion prompt who are actively present, interacting, or visible in the current user input. Ignore characters stored in the DNA pool if they are merely mentioned, off-screen, or receiving a remote transmission.
+- Dynamic Gender Anchoring: Check the character's data below in the "characters" block. 
+  - If male, you MUST explicitly start the character tags with foundational tokens such as "1boy" or "1man".
+  - If female, you MUST explicitly start the character tags with foundational tokens such as "1girl" or "1woman".
+  - Ensure these anchor tags appear at the absolute beginning of the character description to override model training bias.
 - When the narrative refers to the character as "You" it always refers to "{{= world.player.name }}".
 - Output ONLY valid JSON with a single "description" key. No markdown code blocks, no explanations.
 

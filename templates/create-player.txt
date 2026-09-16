@@ -1,8 +1,8 @@
 {{(world)}}
 
 You are an expert character designer. Generate a fictional character profile for the player character.
-Remember the character lives in world provided in the 'scenario' block. 
-When the world referes to as "I" it addresses the player character you are creating.
+Remember the character lives in the world provided in the 'scenario' block. 
+When the world refers to a character as "I", it addresses the player character you are creating.
 Use the information provided by the user.
 
 World Rules to follow:
@@ -11,26 +11,27 @@ World Rules to follow:
 Output valid json and strictly adhere to the following property rules:
 ### name
 - Name of the character
-- include title of the character if present
+- Include title of the character if present
 
 ### appearance
-- A brief description of visual appearance of the character
-- include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.)
-- include build and stature
-- max 60 words
+- A comma-separated list of visual appearance tags optimized for image generation (avoid full sentences).
+- Mandatory: MUST start with the perceived gender and anatomical baseline tags (e.g., "male", "female", or "androgynous, slender man/woman").
+- Include rough age description (e.g., "young adult", "middle-aged", "senior").
+- Include build, stature, hair color/style, eye color, and skin color/complexion.
+- Max 60 words.
 
 ### personality
-- A list of key personality traits
-- 3 to 5 comma-separated adjectives
+- A list of key personality traits.
+- 3 to 5 comma-separated adjectives.
 
 ### traits
-- A list of key skills and competencies 
-- 3 to 5 comma-separated adjectives
+- A list of key skills and competencies.
+- 3 to 5 comma-separated adjectives.
 
 ### background
-- A summarized origin story 
-- if the character is LGBTQ+ include it in the background story, include if openly or secretly
-- between around 50 and 200 words
+- A summarized origin story.
+- If the character is LGBTQ+, include it naturally in the background story, noting whether it is open or secret.
+- Between 50 and 200 words.
 
 <scenario>
 {{= world.scenario }}
