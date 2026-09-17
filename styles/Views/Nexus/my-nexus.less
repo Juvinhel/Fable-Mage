@@ -1,0 +1,70 @@
+my-nexus
+{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+
+    > .list
+    {
+        display: flex;
+        overflow-y: auto;
+        gap: 0.5em;
+
+        > *
+        {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-auto-rows: max-content;
+            width: 18em;
+            height: 24em;
+            padding: 0.5em;
+            gap: 0.25em;
+            border-radius: var(--corner-radius);
+            background-color: var(--background-color);
+            cursor: pointer;
+
+            > h3
+            {
+                width: calc(100% - 1em);
+                min-width: 0; // weird but needed
+                padding: 0 0.5em;
+                overflow: hidden;
+                font-size: 1.25em;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                user-select: text;
+            }
+
+            > img
+            {
+                aspect-ratio: 1;
+                width: 100%;
+                object-fit: cover;
+                border-radius: var(--corner-radius);
+            }
+
+            > .tag-list
+            {
+                display: flex;
+                flex-flow: wrap;
+                width: 100%;
+                overflow: hidden;
+                gap: 0.25em;
+                list-style: none;
+
+                > *
+                {
+                    padding: 0.25em 0.125em;
+                    border-radius: var(--corner-radius);
+                    background-color: var(--dark-background-color);
+                    user-select: text;
+                }
+            }
+
+            &:hover
+            {
+                background-color: var(--highlight-color);
+            }
+        }
+    }
+}

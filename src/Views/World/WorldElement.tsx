@@ -26,7 +26,7 @@ namespace Views.World
         private build()
         {
             return this.tabControl = <tab-control>
-                <div title="World" class="world-tab">
+                <div tab-header="World" class="world-tab">
                     <div>
                         <div>
                             <label>Title:</label>
@@ -70,7 +70,7 @@ namespace Views.World
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div title="Characters" class="characters-tab">
+                <div tab-header="Characters" class="characters-tab">
                     <div>
                         <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
                             <label>Player:</label>
@@ -94,7 +94,7 @@ namespace Views.World
 
                     <div />
                 </div>
-                <div title="Prologue" class="prologue-tab">
+                <div tab-header="Prologue" class="prologue-tab">
                     { this.prologueContainer = <div /> as HTMLDivElement }
 
                     <div class="anchor" />
@@ -104,7 +104,7 @@ namespace Views.World
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div title="Import / Export" class="import-export-tab">
+                <div tab-header="Import / Export" class="import-export-tab">
                     <div />
 
                     <div class="anchor" />

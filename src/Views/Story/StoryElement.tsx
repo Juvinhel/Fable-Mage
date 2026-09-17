@@ -24,7 +24,7 @@ namespace Views.Story
         {
             return <>
                 { this.tabControl = <tab-control>
-                    { this.plotTab = <div class="plot-tab" title="Plot">
+                    { this.plotTab = <div class="plot-tab" tab-header="Plot">
                         { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input"
@@ -37,7 +37,7 @@ namespace Views.Story
                         <button class="fly-out-toggle icon-button" onclick={ () => this.statsFlyOut.classList.toggle("maximized") }><color-icon src="img/icons/stat.svg" /></button>
                         { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
-                    <div class="summary" title="Summary">
+                    <div class="summary" tab-header="Summary">
                         <div>
                             <label>Summary</label>
                             { this.summaryElement = <textarea></textarea> as HTMLTextAreaElement }
@@ -47,7 +47,7 @@ namespace Views.Story
 
                         <div />
                     </div>
-                    <div class="save-load" title="Save / Load">
+                    <div class="save-load" tab-header="Save / Load">
                         <div />
 
                         <div class="anchor" />

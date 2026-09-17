@@ -10,11 +10,13 @@ namespace Views
         storyElement = new Story.StoryElement();
         worldElement = new World.WorldElement();
         settingsElement = new SettingsElement();
+        nexusElement = new Nexus.NexusElement();
 
         return <nav>
             <button title="Home" onclick={ () => navigate("Home") }>Home</button>
             <button title="Story" onclick={ () => navigate("Story") }>Story</button>
             <button title="World" onclick={ () => navigate("World") }>World</button>
+            <button title="Nexus" onclick={ (e) => navigate("Nexus") }>Nexus</button>
             <button title="Settings" onclick={ (e) => navigate("Settings") }>Settings</button>
             <button class="icon" onclick={ (e: Event) => toggleDropDown(e) }>
                 <color-icon src="img/icons/menu.svg" />
@@ -26,6 +28,7 @@ namespace Views
     export let storyElement: Story.StoryElement;
     export let worldElement: World.WorldElement;
     export let settingsElement: SettingsElement;
+    export let nexusElement: Nexus.NexusElement;
 
     function toggleDropDown(e: Event)
     {
@@ -34,7 +37,7 @@ namespace Views
         nav.classList.toggle("responsive");
     }
 
-    export function navigate(target: "Home" | "Story" | "World" | "Settings")
+    export function navigate(target: "Home" | "Story" | "World" | "Settings" | "Nexus")
     {
         const nav = document.querySelector("nav");
         let button = nav.querySelector("button[title=\"" + target + "\"]") as HTMLButtonElement;
@@ -45,6 +48,7 @@ namespace Views
             case "Story": element = storyElement; break;
             case "World": element = worldElement; break;
             case "Settings": element = settingsElement; break;
+            case "Nexus": element = nexusElement; break;
         }
 
         doNavigate(button, element);

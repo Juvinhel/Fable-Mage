@@ -2,6 +2,8 @@ namespace Data
 {
     export interface Config
     {
+        nexusURL: string;
+        nexusToken: string;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint;
         imageAPI: KoboldCPPEndpoint | StableDiffusionEndpoint;
     }
@@ -29,6 +31,8 @@ namespace Data
     }
 
     const defaultConfig: Config = {
+        nexusURL: "https://database.coffinprincess.de/api/v3/data/pe577zan7ugfn6t/m6a7odt9dx2qkn8/records",
+        nexusToken: "",
         textAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de"
