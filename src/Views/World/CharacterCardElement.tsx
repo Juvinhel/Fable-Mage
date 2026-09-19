@@ -9,12 +9,12 @@ namespace Views.World
             this.append(this.build());
         }
 
-        private nameProperty: HTMLTextAreaElement;
+        private nameProperty: HTMLAutoCorrectTextArea;
         private portraitImage: HTMLImageElement;
-        private appearanceProperty: HTMLTextAreaElement;
-        private personalityProperty: HTMLTextAreaElement;
-        private traitsProperty: HTMLTextAreaElement;
-        private backgroundProperty: HTMLTextAreaElement;
+        private appearanceProperty: HTMLAutoCorrectTextArea;
+        private personalityProperty: HTMLAutoCorrectTextArea;
+        private traitsProperty: HTMLAutoCorrectTextArea;
+        private backgroundProperty: HTMLAutoCorrectTextArea;
 
         private additionalPropertiesList: HTMLDivElement;
 
@@ -25,23 +25,23 @@ namespace Views.World
                 <div class="base-property-list">
                     <div>
                         <label>Name:</label>
-                        { this.nameProperty = <textarea class="single-line" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Appearance:</label>
-                        { this.appearanceProperty = <textarea class="single-line" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Personality:</label>
-                        { this.personalityProperty = <textarea class="single-line" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label for="traits">Traits:</label>
-                        { this.traitsProperty = <textarea class="single-line" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        { this.traitsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf skills and competencies" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Background:</label>
-                        { this.backgroundProperty = <textarea class="single-line" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                        { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" /> as HTMLAutoCorrectTextArea }
                     </div>
                 </div>
                 { this.additionalPropertiesList = <div class="additional-property-list" /> as HTMLDivElement }
@@ -86,7 +86,7 @@ namespace Views.World
             {
                 this.additionalPropertiesList.append(<div>
                     <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>
-                    <textarea class="single-line" ontouchend={ TextEditTouch } />
+                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } />
                 </div>);
             }
 
@@ -120,7 +120,7 @@ namespace Views.World
 
             for (const label of this.additionalPropertiesList.querySelectorAll("label"))
             {
-                const nextInput = label.nextElementSibling as HTMLTextAreaElement;
+                const nextInput = label.nextElementSibling as HTMLAutoCorrectTextArea;
                 const key = label.getAttribute("for");
                 const value = nextInput.value.trim();
                 ret[key] = value;
@@ -148,7 +148,7 @@ namespace Views.World
                 const label = this.additionalPropertiesList.querySelector("label[for=\"" + key + "\"]");
                 if (label)
                 {
-                    const input = label.nextElementSibling as HTMLTextAreaElement;
+                    const input = label.nextElementSibling as HTMLAutoCorrectTextArea;
                     input.value = value;
                 }
             }

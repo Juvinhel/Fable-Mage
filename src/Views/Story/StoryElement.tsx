@@ -14,7 +14,7 @@ namespace Views.Story
         private plotTab: HTMLElement;
         private heading: HTMLHeadingElement;
         private plotList: HTMLDivElement;
-        public userInput: HTMLTextAreaElement;
+        public userInput: HTMLAutoCorrectTextArea;
         public submitButton: HTMLButtonElement;
         private statsFlyOut: StatsFlyOutElement;
 
@@ -30,7 +30,7 @@ namespace Views.Story
                         <div class="input"
                             // fix for bottom-anchor not working
                             onsizechanged={ (e: UI.Events.SizeChangedEvent) => { this.statsFlyOut.style.bottom = e.newSize.height + "px"; } }>
-                            { this.userInput = <textarea class="user-input" value="" ontouchend={ TextEditTouch } onkeydown={ (event: KeyboardEvent): void => { if (event.key === "Enter" && !event.shiftKey) this.onSubmit(); } }></textarea> as HTMLTextAreaElement }
+                            { this.userInput = <auto-correct-text-area class="user-input" lang="en-US" ontouchend={ TextEditTouch } placeholder="Write what your character should do. Use [Square Brackets] for Game Master instructions." /> as HTMLAutoCorrectTextArea }
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
@@ -248,7 +248,7 @@ namespace Views.Story
                     console.log("record", record);
                 }
             }
-            catch { }
+            catch {}
         }
 
         public async startStory(world: Data.World)

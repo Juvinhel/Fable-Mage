@@ -11,11 +11,11 @@ namespace Views.World
 
         private tabControl: HTMLTabControl;
 
-        private titleInput: HTMLTextAreaElement;
+        private titleInput: HTMLAutoCorrectTextArea;
         private coverImage: HTMLImageElement;
-        private authorStyleInput: HTMLTextAreaElement;
-        private scenarioInput: HTMLTextAreaElement;
-        private rulesInput: HTMLTextAreaElement;
+        private authorStyleInput: HTMLAutoCorrectTextArea;
+        private scenarioInput: HTMLAutoCorrectTextArea;
+        private rulesInput: HTMLAutoCorrectTextArea;
         private tagsInput: HTMLMultiSelect;
         private statList: HTMLDivElement;
         private playerCharacterCard: CharacterCardElement;
@@ -30,7 +30,7 @@ namespace Views.World
                     <div>
                         <div>
                             <label>Title:</label>
-                            { this.titleInput = <textarea class="title-input single-line" value="" /> as HTMLTextAreaElement }
+                            { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Cover:</label>
@@ -38,15 +38,15 @@ namespace Views.World
                         </div>
                         <div>
                             <label>Author style:</label>
-                            { this.authorStyleInput = <textarea class="author-style-input single-line" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                            { this.authorStyleInput = <auto-correct-text-area lang="en-US" class="author-style-input single-line" value="" ontouchend={ TextEditTouch } placeholder="How the ai should style their narrative" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Scenario:</label>
-                            { this.scenarioInput = <textarea class="scenario-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Rules:</label>
-                            { this.rulesInput = <textarea class="rules-input" value="" ontouchend={ TextEditTouch } /> as HTMLTextAreaElement }
+                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Tags:</label>

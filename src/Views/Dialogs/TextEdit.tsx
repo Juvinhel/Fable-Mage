@@ -8,7 +8,7 @@ namespace Views.Dialogs
         const ok = textEditDialog.classList.contains("ok");
         if (ok)
         {
-            const textArea: HTMLTextAreaElement = [...textEditDialog.children].first(x => x instanceof HTMLTextAreaElement) as HTMLTextAreaElement;
+            const textArea: HTMLAutoCorrectTextArea = [...textEditDialog.children].first(x => x instanceof UI.Elements.AutoCorrectTextArea) as HTMLAutoCorrectTextArea;
             return textArea.value;
         }
         return null;
@@ -17,7 +17,7 @@ namespace Views.Dialogs
     function buildTextEditDialog(text: string, placeholder?: string)
     {
         return <div class="text-edit">
-            <textarea class="text-input" placeholder={ placeholder ?? "input text" }>{ text }</textarea>
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ placeholder ?? "input text" }>{ text }</auto-correct-text-area>
             <button class="ok-button" onclick={ okClick }>OK</button>
             <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
         </div>;

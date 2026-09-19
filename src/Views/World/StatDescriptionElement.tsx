@@ -11,13 +11,13 @@ namespace Views.World
         }
 
         private nameInput: HTMLInputElement;
-        private descriptionInput: HTMLTextAreaElement;
+        private descriptionInput: HTMLAutoCorrectTextArea;
 
         private build()
         {
             return <>
                 { this.nameInput = <input class="stat-name" type="text" placeholder="Name" onblur={ () => this.onBlur() } /> as HTMLInputElement }
-                { this.descriptionInput = <textarea class="stat-description single-line" type="text" placeholder="Description, include range and impact on the character." /> as HTMLTextAreaElement }
+                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder="Description, include range and impact on the character." lang="en-US" /> as HTMLAutoCorrectTextArea }
                 <div class="functions">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>

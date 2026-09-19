@@ -8,7 +8,7 @@ namespace Views.Dialogs
         const ok = dialog.classList.contains("ok");
         if (ok)
         {
-            const textArea: HTMLTextAreaElement = [...dialog.children].first(x => x instanceof HTMLTextAreaElement) as HTMLTextAreaElement;
+            const textArea: HTMLAutoCorrectTextArea = [...dialog.children].first(x => x instanceof UI.Elements.AutoCorrectTextArea) as HTMLAutoCorrectTextArea;
             const img: HTMLImageElement = [...dialog.children].first(x => x instanceof HTMLImageElement) as HTMLImageElement;
             return { image: img.src, prompt: textArea.value };
         }
@@ -18,11 +18,11 @@ namespace Views.Dialogs
     function buildImageEditDialog(image: string, prompt: string, placeholder?: string)
     {
         return <div class="image-edit">
-            <img class="image" src={ image } />
-            <textarea class="text-input" placeholder={ placeholder ?? "input text" }>{ prompt }</textarea>
-            <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>Generate</button>
-            <button class="ok-button" onclick={ okClick }>OK</button>
-            <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
+            <img class="image" src={image} />
+            <auto-correct-text-area class="text-input" placeholder={placeholder ?? "input text"} lang="en-US">{prompt}</auto-correct-text-area>
+            <button class="generate-button" onclick={(e: Event) => onGenerateImage(e)}>Generate</button>
+            <button class="ok-button" onclick={okClick}>OK</button>
+            <button class="cancel-button" onclick={cancelClick}>Cancel</button>
         </div>;
     }
 
@@ -30,7 +30,7 @@ namespace Views.Dialogs
     {
         const button = e.currentTarget as HTMLButtonElement;
         const container = button.closest(".image-edit") as HTMLDivElement;
-        const textInput = container.querySelector(".text-input") as HTMLTextAreaElement;
+        const textInput = container.querySelector(".text-input") as HTMLAutoCorrectTextArea;
         const image = container.querySelector(".image") as HTMLImageElement;
 
         beginThinking(container);
