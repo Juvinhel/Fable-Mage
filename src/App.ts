@@ -82,9 +82,9 @@ class App
         {
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
-            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, auto-correct-text-area, combo-select") as NodeListOf<any>)
                 button.disabled = true;
-            for (const button of element.querySelectorAll("img, auto-correct-text-area") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("img") as NodeListOf<any>)
                 button.classList.toggle("disabled", true);
         }
     }
@@ -95,9 +95,9 @@ class App
         {
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
-            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, img") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area") as NodeListOf<any>)
                 button.disabled = false;
-            for (const button of element.querySelectorAll("img, auto-correct-text-area") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("img") as NodeListOf<any>)
                 button.classList.toggle("disabled", false);
         }
     }
