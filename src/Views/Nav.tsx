@@ -40,6 +40,7 @@ namespace Views
     export function navigate(target: "Home" | "Story" | "World" | "Settings" | "Nexus")
     {
         const nav = document.querySelector("nav");
+        nav.classList.remove("responsive");
         let button = nav.querySelector("button[title=\"" + target + "\"]") as HTMLButtonElement;
         let element;
         switch (target)

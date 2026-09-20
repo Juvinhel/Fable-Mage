@@ -13,12 +13,28 @@ namespace Views.Nexus
         private previousButton: HTMLButtonElement;
         private nextButton: HTMLButtonElement;
         private pageLabel: HTMLSpanElement;
+        private titleInput: HTMLInputElement;
+        private tagsInput: HTMLMultiSelect;
         private page = 0;
         private pageSize = 10;
 
         private build()
         {
             return <>
+                <details class="filters">
+                    <summary>Search</summary>
+                    <div class="filter-controls">
+                        <div class="filter-field">
+                            <label>Title:</label>
+                            { this.titleInput = <input type="search" placeholder="Search by title" /> as HTMLInputElement }
+                        </div>
+                        <div class="filter-field">
+                            <label>Tags:</label>
+                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
+                        </div>
+                        <button title="Search" onclick={ () => this.load() }>Search</button>
+                    </div>
+                </details>
                 { this.listElement = <div class="list" /> as HTMLDivElement }
                 <div class="pagination">
                     { this.previousButton = <button title="Previous page" onclick={ () => this.load(this.page - 1) }>Previous</button> as HTMLButtonElement }
@@ -37,6 +53,8 @@ namespace Views.Nexus
         {
             const api = new Data.Nexus.API(App.config);
             const result = await api.getWorlds({
+                title: this.titleInput.value,
+                tags: this.tagsInput.checkedOptions.map(x => x.value),
                 limit: this.pageSize,
                 offset: page * this.pageSize
             });

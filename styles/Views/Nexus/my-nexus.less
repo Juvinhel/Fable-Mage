@@ -1,8 +1,62 @@
 my-nexus
 {
     display: grid;
-    grid-template-rows: 1fr max-content;
+    grid-template-rows: max-content 1fr max-content;
     grid-template-columns: 1fr;
+
+    > .filters
+    {
+        padding: 0.5em;
+
+        > summary
+        {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        > .filter-controls
+        {
+            display: grid;
+            grid-template-rows: max-content;
+            grid-template-columns: max-content 1fr;
+            padding-top: 0.5em;
+            gap: 0.25em;
+
+            > *
+            {
+                grid-column: 1 / -1;
+            }
+
+            > .filter-field
+            {
+                display: grid;
+                grid-template-rows: max-content;
+                grid-template-columns: subgrid;
+                justify-items: stretch;
+                gap: 0.25em;
+                gap: 0.25em;
+
+                > label
+                {
+                    grid-column: 1;
+                    align-self: center;
+                }
+
+                > input,
+                > multi-select
+                {
+                    grid-column: 2;
+                    width: 100%;
+                    min-width: 12;
+                }
+            }
+
+            > button
+            {
+                padding: 0.5em 0.75em;
+            }
+        }
+    }
 
     > .list
     {
