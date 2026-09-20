@@ -1,4 +1,5 @@
 /// <reference path="KoboldCPP/API.ts" />
+/// <reference path="Gemini/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
 
 namespace AI
@@ -20,6 +21,7 @@ namespace AI
         switch (config.name)
         {
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
+            case "Gemini": return new AI.Gemini.API(config);
             case "Stable Diffusion": return new AI.StableDiffusion.API(config);
         }
     }

@@ -30,6 +30,7 @@ namespace Views
                         <label>ImageAPI:</label>
                         { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                             <option value="KoboldCPP">KoboldCPP</option>
+                            <option value="Gemini">Gemini</option>
                             <option value="Stable Diffusion">Stable Diffusion</option>
                         </select> as HTMLSelectElement }
                     </div>
@@ -81,6 +82,9 @@ namespace Views
                 case "KoboldCPP":
                     this.imageAPISelect.after(this.koboldCPPImageAPI(App.config.imageAPI as any));
                     break;
+                case "Gemini":
+                    this.imageAPISelect.after(this.geminiImageAPI(App.config.imageAPI as any));
+                    break;
                 case "Stable Diffusion":
                     this.imageAPISelect.after(this.stableDiffusionAPI(App.config.imageAPI as any));
                     break;
@@ -111,6 +115,32 @@ namespace Views
                 <div>
                     <label>API Key:</label>
                     <input name="api_key" type="text" value={ config.api_key ?? "" } />
+                </div>
+                <div>
+                    <label>Model:</label>
+                    <select name="model" value={ config.model ?? "gemini-3.8-flash" }>
+                        <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+                        <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
+                        <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    </select>
+                </div>
+            </div>;
+        }
+
+        private geminiImageAPI(config: Partial<Data.GeminiEndpoint>)
+        {
+            return <div class="gemini-api">
+                <div>
+                    <label>API Key:</label>
+                    <input name="api_key" type="text" value={ config.api_key ?? "" } />
+                </div>
+                <div>
+                    <label>Model:</label>
+                    <select name="model" value={ config.model ?? "gemini-3.1-flash-image" }>
+                        <option value="gemini-3.1-flash-image">Gemini 3.1 Flash Image</option>
+                        <option value="gemini-3-pro-image">Gemini 3 Pro Image</option>
+                    </select>
                 </div>
             </div>;
         }

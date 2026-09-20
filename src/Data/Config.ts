@@ -5,7 +5,7 @@ namespace Data
         nexusURL: string;
         nexusToken: string;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint;
-        imageAPI: KoboldCPPEndpoint | StableDiffusionEndpoint;
+        imageAPI: KoboldCPPEndpoint | GeminiEndpoint | StableDiffusionEndpoint;
     }
 
     export interface KoboldCPPEndpoint
@@ -20,6 +20,7 @@ namespace Data
     {
         name: "Gemini",
         api_key: string;
+        model?: string;
     }
 
     export interface StableDiffusionEndpoint

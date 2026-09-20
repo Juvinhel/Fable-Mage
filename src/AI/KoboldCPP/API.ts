@@ -28,8 +28,9 @@ namespace AI.KoboldCPP
                     headers
                 });
 
-            const output: { result: string, success: boolean; } = await response.json();
-            if (!output.success) throw new Error("Could not convert JSON Schema to BNF Grammar!");
+            const output: { result?: string, success?: boolean, error?: string; } = await this.parseOutput(response);
+            if (output.success !== true || typeof output.result != "string")
+                throw new Error(output.error ?? "Could not convert JSON Schema to BNF Grammar!");
 
             return output.result;
         }
@@ -55,11 +56,13 @@ namespace AI.KoboldCPP
                     headers
                 });
 
-            const output: AI.KoboldCPP.GenerationOutput = await response.json();
+            const output: AI.KoboldCPP.GenerationOutput = await this.parseOutput(response);
+            if (!output.results?.length || typeof output.results[0].text != "string")
+                throw new Error("KoboldCPP returned an invalid generation response.");
+
             let result = output.results[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
-            //TODO: remove
-            if (result.finish_reason != "stop") console.log("invalid result", result);
+            if (result.finish_reason != "stop") console.log("AI stopped early", result);
             console.log("generateText (result)", result.text);
 
             return result.text;
@@ -86,11 +89,13 @@ namespace AI.KoboldCPP
                     headers
                 });
 
-            const output: any = await response.json();
+            const output: AI.KoboldCPP.ChatCompletionOutput = await this.parseOutput(response);
+            if (!output.choices?.length || typeof output.choices[0].message?.content != "string")
+                throw new Error("KoboldCPP returned an invalid chat response.");
+
             let result = output.choices[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
-            //TODO: remove
-            if (result.finish_reason != "stop") console.log("invalid result", result);
+            if (result.finish_reason != "stop") console.log("AI stopped early", result);
             console.log("generateInteractions (result)", result.message.content);
 
             const text: string = result.message.content;
@@ -124,10 +129,36 @@ namespace AI.KoboldCPP
                     headers
                 });
 
-            const output: AI.KoboldCPP.TXT2ImgOutput = await response.json();
+            const output: AI.KoboldCPP.TXT2ImgOutput = await this.parseOutput(response);
+            if (!output.images?.length || typeof output.images[0] != "string")
+                throw new Error("KoboldCPP returned an invalid image response.");
             console.log("generateImage (output)", output);
 
             return "data:image/png;base64," + output.images[0];
+        }
+
+        private async parseOutput<T extends AI.KoboldCPP.APIErrorResponse>(response: Response): Promise<T>
+        {
+            let output: T;
+            try
+            {
+                output = await response.json();
+            }
+            catch
+            {
+                throw new Error("KoboldCPP returned invalid JSON.");
+            }
+
+            if (!response.ok || output.error !== undefined || output.detail !== undefined)
+            {
+                const error = output.error;
+                const message = typeof error == "string"
+                    ? error
+                    : error?.message ?? error?.msg ?? output.detail ?? output.message ?? output.msg;
+                throw new Error(message ?? "KoboldCPP request failed.");
+            }
+
+            return output;
         }
 
         public async check(): Promise<void>

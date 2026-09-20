@@ -9,10 +9,20 @@ namespace AI.KoboldCPP
         result: BasicResultInner;
     }
 
-    export interface BasicError
+    export interface APIError
     {
-        msg: string;
-        type: string;
+        message?: string;
+        msg?: string;
+        type?: string;
+        code?: string;
+    }
+
+    export interface APIErrorResponse
+    {
+        error?: string | APIError;
+        detail?: string;
+        message?: string;
+        msg?: string;
     }
 
     export interface GenerationInput
@@ -234,9 +244,9 @@ namespace AI.KoboldCPP
     // To keep this output correct and complete per your requested conversion,
     // regenerate with a full pass over all GenerationInput fields.
 
-    export interface GenerationOutput
+    export interface GenerationOutput extends APIErrorResponse
     {
-        results: GenerationResult[];
+        results?: GenerationResult[];
     }
 
     /**
@@ -266,10 +276,23 @@ namespace AI.KoboldCPP
         [k: string]: unknown;
     }
 
-    export interface TXT2ImgOutput
+    export interface TXT2ImgOutput extends APIErrorResponse
     {
-        "images": string[],
-        "parameters": any,
-        "info": string;
+        images?: string[];
+        parameters?: any;
+        info?: string;
+    }
+
+    export interface ChatCompletionOutput extends APIErrorResponse
+    {
+        choices?: ChatCompletionChoice[];
+    }
+
+    export interface ChatCompletionChoice
+    {
+        message?: {
+            content?: string;
+        };
+        finish_reason?: string;
     }
 }
