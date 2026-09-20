@@ -2,7 +2,7 @@ class App
 {
     public static async Start()
     {
-        //await this.startServiceWorker();
+        await this.startServiceWorker();
 
         this.config = await Data.loadConfig();
         await AI.Client.initialize();

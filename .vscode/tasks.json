@@ -137,16 +137,6 @@
             "hide": true,
         },
         {
-            "label": "Build ServiceWorker",
-            "command": "workbox generateSW workbox-config.js",
-            "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "hide": true,
-        },
-        {
             "label": "Build",
             "dependsOrder": "sequence",
             "dependsOn": [
@@ -159,7 +149,6 @@
                 "Copy Images",
                 "Copy Templates",
                 "Generate Version",
-                "Build ServiceWorker",
             ],
             "group": {
                 "kind": "build",
@@ -194,14 +183,51 @@
             "hide": true,
         },
         {
+            "label": "Copy dist to publish",
+            "command": "Copy-Item",
+            "type": "shell",
+            "args": [
+                "-Path",
+                "dist/*",
+                "-Destination",
+                "publish",
+                "-Force",
+                "-Recurse"
+            ],
+            "hide": true,
+        },
+        {
+            "label": "Build ServiceWorker",
+            "command": "workbox generateSW workbox-config.js",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "hide": true,
+        },
+        {
             "label": "Zip publish",
             "type": "shell",
             "command": "Compress-Archive",
             "args": [
                 "-Path",
-                "dist/*",
+                "publish/*",
                 "-DestinationPath",
                 "publish/web.zip"
+            ],
+            "hide": true,
+        },
+        {
+            "label": "Clean publish folder",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "Get-ChildItem -Path 'publish' -File | Where-Object Name -ne \\\"web.zip\\\" | Remove-Item -Force; Get-ChildItem -Path 'publish' -Directory | Remove-Item -Recurse -Force"
             ],
             "hide": true,
         },
@@ -211,7 +237,10 @@
             "dependsOn": [
                 "Build",
                 "Init publish",
-                "Zip publish"
+                "Copy dist to publish",
+                "Build ServiceWorker",
+                "Zip publish",
+                "Clean publish folder"
             ],
             "group": {
                 "kind": "build",
