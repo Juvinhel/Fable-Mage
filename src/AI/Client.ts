@@ -119,7 +119,7 @@ namespace AI
                 { role: "user", content: input }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.worldSchema);
+            const result = await textAPI.generateInteractions(messages, 0.5, this.worldSchema);
             const obj = this.parseJSON(result);
 
             return obj;

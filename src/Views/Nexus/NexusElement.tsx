@@ -56,36 +56,43 @@ namespace Views.Nexus
 
         private async load(page = 0)
         {
-            const api = new Data.Nexus.API(App.config);
-            const result = await api.getWorlds({
-                title: this.titleInput.value,
-                tags: this.tagsInput.checkedOptions.map(x => x.value),
-                mature: this.matureFilterInput.checked,
-                limit: this.pageSize,
-                offset: page * this.pageSize
-            });
-            this.page = Math.max(0, page);
-
-            this.listElement.clearChildren();
-            for (const item of result.worlds)
+            try
             {
-                this.listElement.append(<div class="world" onclick={ async () =>
-                {
-                    const json = await api.getWorldFile(item);
-                    navigate("World");
-                    worldElement.import(json);
-                } }>
-                    <h3 title={ item.title }>{ item.title }</h3>
-                    <img src={ item.cover?.[0]?.signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
-                    <ul class="tag-list" title={ item.tags.join("; ") }>{ item.tags.map(x => <li>{ x.trim() }</li>) }</ul>
-                    <div class="username">{ item.username }</div>
-                    <div class="description">{ item.description }</div>
-                </div>);
-            }
+                const api = new Data.Nexus.API(App.config);
+                const result = await api.getWorlds({
+                    title: this.titleInput.value,
+                    tags: this.tagsInput.checkedOptions.map(x => x.value),
+                    mature: this.matureFilterInput.checked,
+                    limit: this.pageSize,
+                    offset: page * this.pageSize
+                });
+                this.page = Math.max(0, page);
 
-            this.pageLabel.textContent = "Page " + (this.page + 1);
-            this.previousButton.disabled = this.page <= 0;
-            this.nextButton.disabled = !result.next;
+                this.listElement.clearChildren();
+                for (const item of result.worlds)
+                {
+                    this.listElement.append(<div class="world" onclick={ async () =>
+                    {
+                        const json = await api.getWorldFile(item);
+                        navigate("World");
+                        worldElement.import(json);
+                    } }>
+                        <h3 title={ item.title }>{ item.title }</h3>
+                        <img src={ item.cover?.[0]?.signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
+                        <ul class="tag-list" title={ item.tags.join("; ") }>{ item.tags.map(x => <li>{ x.trim() }</li>) }</ul>
+                        <div class="username">{ item.username }</div>
+                        <div class="description">{ item.description }</div>
+                    </div>);
+                }
+
+                this.pageLabel.textContent = "Page " + (this.page + 1);
+                this.previousButton.disabled = this.page <= 0;
+                this.nextButton.disabled = !result.next;
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
         }
     }
 

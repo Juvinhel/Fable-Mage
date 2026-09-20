@@ -19,10 +19,10 @@ namespace Data.Nexus
 
             const tags = filters.tags?.map(x => x.trim()).filter(Boolean) ?? [];
             if (tags.length)
-                conditions.push("(" + tags.map(x => "(tags,like,%" + x + "%)").join("~or") + ")");
+                conditions.push("(tags,allof," + tags.map(x => "\"" + x + "\"").join(",") + ")");
 
-            if (filters.mature !== undefined)
-                conditions.push("(mature,eq," + String(filters.mature) + ")");
+            if (filters.mature != true)
+                conditions.push("(mature,is,false)");
 
             if (conditions.length)
                 url.searchParams.set("where", conditions.join("~and"));

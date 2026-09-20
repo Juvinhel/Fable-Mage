@@ -42,10 +42,14 @@ my-nexus
                     align-self: center;
                 }
 
-                > input,
-                > multi-select
+                > *:not(label)
                 {
                     grid-column: 2;
+                }
+
+                > input:not([type="checkbox"]),
+                > multi-select
+                {
                     width: 100%;
                     min-width: 12;
                 }
@@ -61,6 +65,7 @@ my-nexus
     > .list
     {
         display: flex;
+        flex-flow: wrap;
         overflow-y: auto;
         gap: 0.5em;
 

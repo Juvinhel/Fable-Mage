@@ -15,22 +15,25 @@ class App
 
     private static async startServiceWorker()
     {
-        if ("serviceWorker" in navigator)
+        try
         {
-            const registration = await navigator.serviceWorker.register("sw.js");
-            let refreshing = false;
+            if ("serviceWorker" in navigator)
+            {
+                const registration = await navigator.serviceWorker.register("sw.js");
+                let refreshing = false;
 
-            navigator.serviceWorker.addEventListener("controllerchange", () =>
-            {   // new server worker was installed and activated
-                if (!refreshing && confirm("A new version of the app is available. Do you want to reload?\nMake sure to save your story or world to the disk first!"))
-                {
-                    window.location.reload();
-                    refreshing = true;
-                }
-            });
+                navigator.serviceWorker.addEventListener("controllerchange", () =>
+                {   // new server worker was installed and activated
+                    if (!refreshing && confirm("A new version of the app is available. Do you want to reload?\nMake sure to save your story or world to the disk first!"))
+                    {
+                        window.location.reload();
+                        refreshing = true;
+                    }
+                });
 
-            await registration.update();
-        }
+                await registration.update();
+            }
+        } catch { }
     }
 
     public static config: Data.Config;
