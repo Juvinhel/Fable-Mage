@@ -28,8 +28,9 @@ Output valid json and strictly adhere to the following property rules:
 - [Include internal thoughts, psychological dissonance, and physical sensations of the player BUT not of any other character]
 
 ### time
-- [Current timeframe of the scene]
+- [Invent a reasonable start date and time for the scene based on the world setting and scenario]
 - [formatted strictly as: dd.MM.yyyy hh:mm - dd.MM.yyyy hh:mm]
+- [Use a natural, believable range that fits the world, era, and current events; do not leave it blank]
 
 ### location
 - [Name of the current location]

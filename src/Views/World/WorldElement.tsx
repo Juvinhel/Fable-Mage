@@ -13,6 +13,8 @@ namespace Views.World
 
         private titleInput: HTMLAutoCorrectTextArea;
         private coverImage: HTMLImageElement;
+        private versionInput: UI.Elements.SemanticVersionInput;
+        private matureContentInput: HTMLInputElement;
         private descriptionInput: HTMLAutoCorrectTextArea;
         private authorStyleInput: HTMLAutoCorrectTextArea;
         private scenarioInput: HTMLAutoCorrectTextArea;
@@ -36,6 +38,14 @@ namespace Views.World
                         <div>
                             <label>Cover:</label>
                             { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
+                        </div>
+                        <div>
+                            <label>Version:</label>
+                            { this.versionInput = <semantic-version-input placeholder="1.0.0" value="1.0" /> as UI.Elements.SemanticVersionInput }
+                        </div>
+                        <div>
+                            <label>Mature content:</label>
+                            { this.matureContentInput = <input type="checkbox" /> as HTMLInputElement }
                         </div>
                         <div>
                             <label>Description:</label>
@@ -331,7 +341,8 @@ namespace Views.World
                 username: "",
                 userid: "",
                 tags: world.tags ?? [],
-                version: "",
+                version: world.version ?? "",
+                mature: !!world.mature,
                 cover: this.dataUriToBlob(cover),
                 file: new Blob([JSON.stringify(world)], { type: "application/json" })
             };
@@ -365,6 +376,7 @@ namespace Views.World
                 const world = this.export();
                 const result = await AI.Client.extractOverview(Data.knownTags.map(x => x.value), world);
                 this.descriptionInput.value = result.description;
+                this.matureContentInput.checked = !!result.mature;
                 this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => result.selected_tags.includes(x.value));
             }
             catch (error)
@@ -409,6 +421,11 @@ namespace Views.World
             this.clearWorld();
         }
 
+        public clearWorld(): void
+        {
+            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+        }
+
         public async startStory()
         {
             Views.navigate("Story");
@@ -435,16 +452,13 @@ namespace Views.World
             this.tabControl.select("Overview");
         }
 
-        public clearWorld(): void
-        {
-            this.import({ title: "", cover: "", description: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
-        }
-
         public export(): Data.World
         {
             const world: Data.World = {
                 "title": this.titleInput.value.trim(),
                 "cover": this.coverImage.getAttribute("src"),
+                "version": this.versionInput.value.trim(),
+                "mature": this.matureContentInput.checked,
                 "description": this.descriptionInput.value.trim(),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
@@ -480,13 +494,15 @@ namespace Views.World
 
             this.titleInput.value = world.title;
             world.cover ? this.coverImage.setAttribute("src", world.cover) : this.coverImage.removeAttribute("src");
+            this.versionInput.value = world.version ?? "1.0";
+            this.matureContentInput.checked = world.mature ?? false;
             this.descriptionInput.value = world.description ?? "";
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.rulesInput.value = world.rules;
 
-            if (world.tags)
-                this.tagsInput.checkedOptions = world.tags.map(x => this.tagsInput.options.first(t => t.value == x));
+            if (world.tags) this.tagsInput.checkedOptions = world.tags.map(x => this.tagsInput.options.first(t => t.value == x));
+            else this.tagsInput.checkedOptions = [];
 
             this.statList.clearChildren();
             if (world.stats)

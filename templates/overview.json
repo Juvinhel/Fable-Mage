@@ -5,21 +5,26 @@
             "type": "string",
             "description": "The title of the world scenario."
         },
-        "description": {
-            "type": "string",
-            "description": "An end-user-facing blurb of one or two short sentences highlighting the world's setting, premise, and central appeal without major spoilers."
-        },
         "selected_tags": {
             "type": "array",
             "items": {
                 "type": "string"
             },
             "description": "Zero to eight exact strings copied from the provided allowed-tags pool. Include only direct, core components of the world's scenario or rules; do not invent, paraphrase, or explain tags."
+        },
+        "mature": {
+            "type": "boolean",
+            "description": "Whether the world contains explicit or otherwise mature content. Use true only for overt adult or explicit material; otherwise false."
+        },
+        "description": {
+            "type": "string",
+            "description": "An end-user-facing blurb of one or two short sentences highlighting the world's setting, premise, and central appeal without major spoilers."
         }
     },
     "required": [
         "world_title",
-        "description",
-        "selected_tags"
+        "selected_tags",
+        "mature",
+        "description"
     ]
 }

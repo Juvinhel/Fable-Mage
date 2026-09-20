@@ -140,7 +140,7 @@ namespace AI
             return obj.description;
         }
 
-        public async extractOverview(allowedTags: string[], world: Data.World): Promise<{ description: string, selected_tags: string[]; }>
+        public async extractOverview(allowedTags: string[], world: Data.World): Promise<{ description: string, selected_tags: string[], mature: boolean; }>
         {
             const prompt: string = await this.extractOverviewTemplate(allowedTags, world);
 
@@ -217,24 +217,6 @@ namespace AI
             const obj = this.parseJSON(result);
 
             return obj.description;
-        }
-
-        public async archiveMemory(
-            plotPoint: Data.PlotPoint): Promise<{ category: string; summary: string; keywords: string; internal: boolean; content: string; }[]>
-        {
-            const prompt: string = await this.archiveMemoryTemplate();
-
-            let content = "";
-            content += "Narrative: " + plotPoint.text + "\n";
-            content += "Internal: " + plotPoint.internal;
-            const messages: Message[] = [
-                { role: "system", content: prompt },
-                { role: "user", content }
-            ];
-
-            const result = await textAPI.generateInteractions(messages, 0.3, this.memorySchema);
-            const arr = this.parseJSON(result);
-            return arr;
         }
 
         public async getImage(description: string): Promise<string>

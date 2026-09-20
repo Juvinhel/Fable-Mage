@@ -21,6 +21,9 @@ namespace Data.Nexus
             if (tags.length)
                 conditions.push("(" + tags.map(x => "(tags,like,%" + x + "%)").join("~or") + ")");
 
+            if (filters.mature !== undefined)
+                conditions.push("(mature,eq," + String(filters.mature) + ")");
+
             if (conditions.length)
                 url.searchParams.set("where", conditions.join("~and"));
 
@@ -58,11 +61,11 @@ namespace Data.Nexus
             });
             const record = result.records[0];
 
-            await this.uploadAttachment(record.id, "cover", world.cover, "cover");
-            await this.uploadAttachment(record.id, "file", world.file, "world.json");
+            await this.uploadAttachment(record.id, "c7o4i45wibadxdg", world.cover, "cover");
+            await this.uploadAttachment(record.id, "c2zx3rla28z968w", world.file, "world.json");
         }
 
-        private async uploadAttachment(recordId: number, field: string, content: Blob, filename: string): Promise<void>
+        private async uploadAttachment(recordId: number, fieldID: string, content: Blob, filename: string): Promise<void>
         {   // not working currently (v3 api unclear)
             const body = JSON.stringify({
                 contentType: content.type,
@@ -71,7 +74,7 @@ namespace Data.Nexus
             });
 
             const url = new URL(this.config.nexusURL);
-            url.pathname += "/" + recordId + "/fields/" + encodeURIComponent(field) + "/upload";
+            url.pathname += "/" + recordId + "/fields/" + encodeURIComponent(fieldID) + "/upload";
             await this.request(url.toString(), {
                 method: "POST",
                 headers: {

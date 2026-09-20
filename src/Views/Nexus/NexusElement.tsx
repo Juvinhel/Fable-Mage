@@ -15,6 +15,7 @@ namespace Views.Nexus
         private pageLabel: HTMLSpanElement;
         private titleInput: HTMLInputElement;
         private tagsInput: HTMLMultiSelect;
+        private matureFilterInput: HTMLInputElement;
         private page = 0;
         private pageSize = 10;
 
@@ -31,6 +32,10 @@ namespace Views.Nexus
                         <div class="filter-field">
                             <label>Tags:</label>
                             { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
+                        </div>
+                        <div class="filter-field">
+                            <label>Mature:</label>
+                            { this.matureFilterInput = <input type="checkbox" /> as HTMLInputElement }
                         </div>
                         <button title="Search" onclick={ () => this.load() }>Search</button>
                     </div>
@@ -55,6 +60,7 @@ namespace Views.Nexus
             const result = await api.getWorlds({
                 title: this.titleInput.value,
                 tags: this.tagsInput.checkedOptions.map(x => x.value),
+                mature: this.matureFilterInput.checked,
                 limit: this.pageSize,
                 offset: page * this.pageSize
             });
@@ -70,7 +76,7 @@ namespace Views.Nexus
                     worldElement.import(json);
                 } }>
                     <h3 title={ item.title }>{ item.title }</h3>
-                    <img src={ item.cover[0].signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
+                    <img src={ item.cover?.[0]?.signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
                     <ul class="tag-list" title={ item.tags.join("; ") }>{ item.tags.map(x => <li>{ x.trim() }</li>) }</ul>
                     <div class="username">{ item.username }</div>
                     <div class="description">{ item.description }</div>

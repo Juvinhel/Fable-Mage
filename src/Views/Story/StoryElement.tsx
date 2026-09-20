@@ -220,37 +220,6 @@ namespace Views.Story
             this.statsFlyOut.updateCharacters(this.calculateCharacter(player.name), this.world.npcs ?? []);
         }
 
-        private async archiveMemory(turn: number, plotPoint: Data.PlotPoint)
-        {
-            try
-            {
-                const memories = await AI.Client.archiveMemory(plotPoint) as Data.Memory[];
-                for (const memory of memories)
-                {
-                    memory.turn = turn;
-                    memory.location = plotPoint.location;
-                    memory.time = plotPoint.time;
-                }
-
-                console.log("memories: ", memories);
-                for (const memory of memories)
-                {
-                    const output = await App.extractor(memory.content, {
-                        pooling: 'mean',
-                        normalize: true,
-                    });
-                    const vectorEmbedding = Array.from(output.data);
-                    const record = {
-                        id: `memory_${ Date.now() }`,
-                        vector: vectorEmbedding, // This is your array of floats (e.g., [0.023, -0.045, ...])
-                        metadata: memory
-                    };
-                    console.log("record", record);
-                }
-            }
-            catch {}
-        }
-
         public async startStory(world: Data.World)
         {
             const story = JSON.clone(world) as Data.Story;

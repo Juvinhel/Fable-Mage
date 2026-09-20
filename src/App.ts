@@ -7,9 +7,6 @@ class App
         this.config = await Data.loadConfig();
         await AI.Client.initialize();
 
-        ///@ts-ignore
-        //this.extractor = await window.pipeline('feature-extraction', 'Xenova/bge-small-en-v1.5');
-
         document.body.prepend(Views.Nav());
         Views.navigate("Home");
 
@@ -82,7 +79,7 @@ class App
         {
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
-            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, auto-correct-text-area, combo-select") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area, semantic-version-input") as NodeListOf<any>)
                 button.disabled = true;
             for (const button of element.querySelectorAll("img") as NodeListOf<any>)
                 button.classList.toggle("disabled", true);
@@ -95,7 +92,7 @@ class App
         {
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
-            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area") as NodeListOf<any>)
+            for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area, semantic-version-input") as NodeListOf<any>)
                 button.disabled = false;
             for (const button of element.querySelectorAll("img") as NodeListOf<any>)
                 button.classList.toggle("disabled", false);

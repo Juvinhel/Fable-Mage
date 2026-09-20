@@ -4,6 +4,8 @@ namespace Data
         {
             title: string;
             cover: string;
+            version: string;
+            mature: boolean;
             description: string;
             "author-style": string;
             scenario: string;

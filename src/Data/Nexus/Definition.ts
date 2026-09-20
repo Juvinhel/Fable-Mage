@@ -28,6 +28,7 @@ namespace Data.Nexus
         userid: string;
         tags: string[];
         version: string;
+        mature: boolean;
         cover: File[];
         file: File[];
     };
@@ -39,6 +40,7 @@ namespace Data.Nexus
         userid: string;
         tags: string[];
         version: string;
+        mature: boolean;
         cover: Blob;
         file: Blob;
     };
@@ -46,6 +48,7 @@ namespace Data.Nexus
     export type WorldFilters = {
         title?: string;
         tags?: string[];
+        mature?: boolean;
         limit?: number;
         offset?: number;
     };

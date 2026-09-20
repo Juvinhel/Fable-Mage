@@ -25,6 +25,12 @@ selected_tags:
 - Do not invent tags, paraphrase tags, add explanations, or include weak associations.
 - Prefer fewer highly relevant tags over filling all eight slots.
 
+mature:
+- A boolean value of true or false.
+- Set to true only when the world clearly includes overtly adult, sexual, explicit, or otherwise mature content.
+- Set to false for non-explicit, family-friendly, or generally non-mature content.
+- Do not guess based on isolated keywords; use the full present context.
+
 description:
 - A single string of one or two short sentences written for the end user.
 - Make it enticing by highlighting the world's setting, premise, and central appeal.
@@ -32,4 +38,4 @@ description:
 - Do not mention tags, this task, the AI, the rules, or the output format.
 - Do not write a world-building analysis, a list, or generic promotional filler.
 
-Return valid JSON matching the requested schema. Put only the title in world_title, only the exact matching tag strings in selected_tags, and only the end-user-facing blurb in description.
+Return valid JSON matching the requested schema. Put only the title in world_title, only the exact matching tag strings in selected_tags, only the boolean maturity flag in mature, and only the end-user-facing blurb in description.
