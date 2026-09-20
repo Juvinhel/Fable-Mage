@@ -1,0 +1,35 @@
+{{(allowed_tags_list, world)}}
+
+Act as a world-indexing and editorial assistant for a text adventure database.
+Analyze the world context and return the three requested JSON fields. Each field has a different purpose; do not mix their contents.
+
+[ALLOWED TAGS POOL]
+{{= allowed_tags_list.join(", ")}}
+
+[WORLD LORE & RULES CONTEXT]
+{{= world.scenario}}
+{{= world.rules}}
+
+[WORLD TITLE]
+{{= world.title }}
+
+[OUTPUT FIELD RULES]
+
+world_title:
+- A string containing the world's title exactly as provided.
+
+selected_tags:
+- A JSON array containing zero to eight strings.
+- Every string must be copied exactly from the ALLOWED TAGS POOL, including spelling and capitalization.
+- Include a tag only when it is a direct, core, and undeniable component of the world's scenario or rules.
+- Do not invent tags, paraphrase tags, add explanations, or include weak associations.
+- Prefer fewer highly relevant tags over filling all eight slots.
+
+description:
+- A single string of one or two short sentences written for the end user.
+- Make it enticing by highlighting the world's setting, premise, and central appeal.
+- Use concrete details from the world context, but do not reveal major twists or spoilers.
+- Do not mention tags, this task, the AI, the rules, or the output format.
+- Do not write a world-building analysis, a list, or generic promotional filler.
+
+Return valid JSON matching the requested schema. Put only the title in world_title, only the exact matching tag strings in selected_tags, and only the end-user-facing blurb in description.

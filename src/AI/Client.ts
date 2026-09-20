@@ -140,17 +140,17 @@ namespace AI
             return obj.description;
         }
 
-        public async extractTags(allowedTags: string[], world: Data.World): Promise<string[]>
+        public async extractOverview(allowedTags: string[], world: Data.World): Promise<{ description: string, selected_tags: string[]; }>
         {
-            const prompt: string = await this.extractTagsTemplate(allowedTags, world);
+            const prompt: string = await this.extractOverviewTemplate(allowedTags, world);
 
             const messages: Message[] = [
                 { role: "system", content: prompt }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.3, this.tagsSchema);
+            const result = await textAPI.generateInteractions(messages, 0.3, this.overviewSchema);
             const obj = this.parseJSON(result);
-            return obj.selected_tags;
+            return obj;
         }
 
         public async createPlayer(

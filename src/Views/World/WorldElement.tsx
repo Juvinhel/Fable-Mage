@@ -13,6 +13,7 @@ namespace Views.World
 
         private titleInput: HTMLAutoCorrectTextArea;
         private coverImage: HTMLImageElement;
+        private descriptionInput: HTMLAutoCorrectTextArea;
         private authorStyleInput: HTMLAutoCorrectTextArea;
         private scenarioInput: HTMLAutoCorrectTextArea;
         private rulesInput: HTMLAutoCorrectTextArea;
@@ -26,7 +27,7 @@ namespace Views.World
         private build()
         {
             return this.tabControl = <tab-control>
-                <div tab-header="World" class="world-tab">
+                <div tab-header="Overview" class="world-tab overview-tab">
                     <div>
                         <div>
                             <label>Title:</label>
@@ -36,6 +37,27 @@ namespace Views.World
                             <label>Cover:</label>
                             { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
                         </div>
+                        <div>
+                            <label>Description:</label>
+                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" /> as HTMLAutoCorrectTextArea }
+                        </div>
+                        <div>
+                            <label>Tags:</label>
+                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
+                        </div>
+                    </div>
+
+                    <div class="anchor" />
+
+                    <div>
+                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
+                        <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
+                        <button onclick={ () => this.startStory() }><span>Start Story</span></button>
+                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                    </div>
+                </div>
+                <div tab-header="Details" class="world-tab details-tab">
+                    <div>
                         <div>
                             <label>Author style:</label>
                             { this.authorStyleInput = <auto-correct-text-area lang="en-US" class="author-style-input single-line" value="" ontouchend={ TextEditTouch } placeholder="How the ai should style their narrative" /> as HTMLAutoCorrectTextArea }
@@ -49,10 +71,6 @@ namespace Views.World
                             { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
-                            <label>Tags:</label>
-                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
-                        </div>
-                        <div>
                             <label>Tracked Stats:</label>
                             <div class="functions horizontal">
                                 <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
@@ -63,12 +81,7 @@ namespace Views.World
 
                     <div class="anchor" />
 
-                    <div>
-                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
-                        <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
-                        <button onclick={ () => this.startStory() }><span>Start Story</span></button>
-                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
-                    </div>
+                    <div />
                 </div>
                 <div tab-header="Characters" class="characters-tab">
                     <div>
@@ -274,7 +287,7 @@ namespace Views.World
 
                 await Promise.all([
                     this.createCoverImage(),
-                    this.extractTags(),
+                    this.extractOverview(),
                     this.createPlayerUsingAI(output.protagonist)]);
             }
             catch (error)
@@ -301,13 +314,14 @@ namespace Views.World
             }
         }
 
-        private async extractTags()
+        private async extractOverview()
         {
             try
             {
                 const world = this.export();
-                const tags = await AI.Client.extractTags(Data.knownTags.map(x => x.value), world);
-                this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => tags.includes(x.value));
+                const result = await AI.Client.extractOverview(Data.knownTags.map(x => x.value), world);
+                this.descriptionInput.value = result.description;
+                this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => result.selected_tags.includes(x.value));
             }
             catch (error)
             {
@@ -374,12 +388,12 @@ namespace Views.World
                 const world = JSON.parse(text);
                 this.import(world);
             }
-            this.tabControl.select("World");
+            this.tabControl.select("Overview");
         }
 
         public clearWorld(): void
         {
-            this.import({ title: "", cover: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.import({ title: "", cover: "", description: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public export(): Data.World
@@ -387,6 +401,7 @@ namespace Views.World
             const world: Data.World = {
                 "title": this.titleInput.value.trim(),
                 "cover": this.coverImage.getAttribute("src"),
+                "description": this.descriptionInput.value.trim(),
                 "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "rules": this.rulesInput.value.trim().trimRight("."),
@@ -421,6 +436,7 @@ namespace Views.World
 
             this.titleInput.value = world.title;
             world.cover ? this.coverImage.setAttribute("src", world.cover) : this.coverImage.removeAttribute("src");
+            this.descriptionInput.value = world.description ?? "";
             this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.rulesInput.value = world.rules;

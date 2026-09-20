@@ -8,7 +8,7 @@ namespace AI
             this.choicesSchema = await this.getSchema("choices");
             this.imagePromptSchema = await this.getSchema("image-prompt");
             this.worldSchema = await this.getSchema("world");
-            this.tagsSchema = await this.getSchema("tags");
+            this.overviewSchema = await this.getSchema("overview");
             this.characterSchema = await this.getSchema("character");
             this.characterUpdateSchema = await this.getSchema("character-update");
             this.memorySchema = await this.getSchema("memory");
@@ -21,7 +21,7 @@ namespace AI
             this.getImageTemplate = await this.getTemplate("get-image");
             this.createWorldTemplate = await this.getTemplate("create-world");
             this.describeWorldTemplate = await this.getTemplate("describe-world");
-            this.extractTagsTemplate = await this.getTemplate("extract-tags");
+            this.extractOverviewTemplate = await this.getTemplate("extract-overview");
             this.createPlayerTemplate = await this.getTemplate("create-player");
             this.createNPCTemplate = await this.getTemplate("create-npc");
             this.updateCharacterTemplate = await this.getTemplate("update-character");
@@ -87,8 +87,8 @@ namespace AI
         public worldSchema: Schema;
         public createWorldTemplate: (...params: any[]) => Promise<string>;
         public describeWorldTemplate: (...params: any[]) => Promise<string>;
-        public tagsSchema: Schema;
-        public extractTagsTemplate: (...params: any[]) => Promise<string>;
+        public overviewSchema: Schema;
+        public extractOverviewTemplate: (...params: any[]) => Promise<string>;
 
         public characterSchema: Schema;
         public createPlayerTemplate: (...params: any[]) => Promise<string>;
