@@ -10,11 +10,21 @@ namespace Views.Nexus
         }
 
         private listElement: HTMLDivElement;
+        private previousButton: HTMLButtonElement;
+        private nextButton: HTMLButtonElement;
+        private pageLabel: HTMLSpanElement;
+        private page = 0;
+        private pageSize = 10;
 
         private build()
         {
             return <>
                 { this.listElement = <div class="list" /> as HTMLDivElement }
+                <div class="pagination">
+                    { this.previousButton = <button title="Previous page" onclick={ () => this.load(this.page - 1) }>Previous</button> as HTMLButtonElement }
+                    { this.pageLabel = <span /> as HTMLSpanElement }
+                    { this.nextButton = <button title="Next page" onclick={ () => this.load(this.page + 1) }>Next</button> as HTMLButtonElement }
+                </div>
             </>;
         }
 
@@ -23,52 +33,37 @@ namespace Views.Nexus
             this.load();
         }
 
-        private async load()
+        private async load(page = 0)
         {
-            const response = await fetch(App.config.nexusURL, {
-                headers: {
-                    "xc-token": App.config.nexusToken
-                }
+            const api = new Data.Nexus.API(App.config);
+            const result = await api.getWorlds({
+                limit: this.pageSize,
+                offset: page * this.pageSize
             });
-            const result: QueryResult<WorldRecord> = await response.json();
+            this.page = Math.max(0, page);
 
             this.listElement.clearChildren();
-            for (const item of result.records.map(x => x.fields))
+            for (const item of result.worlds)
             {
                 this.listElement.append(<div class="world" onclick={ async () =>
                 {
-                    const url = new URL("/" + item.file[0].path.replace("\\\\", "/"), App.config.nexusURL).toString();
-                    const response = await fetch(url, {
-                        headers: {
-                            "xc-token": App.config.nexusToken
-                        }
-                    });
-                    const json = await response.json();
+                    const json = await api.getWorldFile(item);
                     navigate("World");
                     worldElement.import(json);
                 } }>
                     <h3 title={ item.title }>{ item.title }</h3>
                     <img src={ item.cover[0].signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
                     <ul class="tag-list" title={ item.tags.join("; ") }>{ item.tags.map(x => <li>{ x.trim() }</li>) }</ul>
+                    <div class="username">{ item.username }</div>
+                    <div class="description">{ item.description }</div>
                 </div>);
             }
+
+            this.pageLabel.textContent = "Page " + (this.page + 1);
+            this.previousButton.disabled = this.page <= 0;
+            this.nextButton.disabled = !result.next;
         }
     }
-
-    type QueryResult<T> = {
-        "records": [
-            {
-                "id": number,
-                "fields": T;
-            }];
-        "nestedNext": any;
-    };
-
-    type WorldRecord = {
-        title: string; tags: string[]; version: string;
-        cover: [{ path: string; signedPath: string; }];
-        file: [{ path: string; signedPath: string; }];
-    };
 
     customElements.define("my-nexus", NexusElement);
 }

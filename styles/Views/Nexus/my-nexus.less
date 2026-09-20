@@ -1,7 +1,7 @@
 my-nexus
 {
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1fr max-content;
     grid-template-columns: 1fr;
 
     > .list
@@ -61,10 +61,40 @@ my-nexus
                 }
             }
 
+            > .username
+            {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                user-select: text;
+            }
+
+            > .description
+            {
+                max-height: 3em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                user-select: text;
+            }
+
             &:hover
             {
                 background-color: var(--highlight-color);
             }
+        }
+    }
+
+    > .pagination
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5em;
+        gap: 0.75em;
+
+        > button
+        {
+            padding: 0.25em 0.75em;
         }
     }
 }

@@ -53,6 +53,7 @@ namespace Views.World
                         <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
                         <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                         <button onclick={ () => this.startStory() }><span>Start Story</span></button>
+                        <button class="upload-world" title="Upload world to Nexus" onclick={ () => this.uploadToNexus() }><span>Upload to Nexus</span></button>
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
@@ -312,6 +313,49 @@ namespace Views.World
             {
                 UI.Dialog.error(error);
             }
+        }
+
+        private async uploadToNexus()
+        {
+            const cover = this.coverImage.getAttribute("src");
+            if (!cover?.startsWith("data:"))
+            {
+                UI.Dialog.error(new Error("A cover image is required before uploading to Nexus."));
+                return;
+            }
+
+            const world = this.export();
+            const upload: Data.Nexus.WorldUpload = {
+                title: world.title,
+                description: world.description,
+                username: "",
+                userid: "",
+                tags: world.tags ?? [],
+                version: "",
+                cover: this.dataUriToBlob(cover),
+                file: new Blob([JSON.stringify(world)], { type: "application/json" })
+            };
+
+            try
+            {
+                await new Data.Nexus.API(App.config).createWorld(upload);
+                UI.Dialog.message({ title: "Uploaded", text: "Sucessfully uploaded to Nexus." });
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private dataUriToBlob(dataUri: string): Blob
+        {
+            const [header, data] = dataUri.split(",", 2);
+            const mime = header.match(/^data:([^;]+)/)?.[1] ?? "application/octet-stream";
+            const binary = atob(data);
+            const bytes = new Uint8Array(binary.length);
+            for (let index = 0; index < binary.length; index++)
+                bytes[index] = binary.charCodeAt(index);
+            return new Blob([bytes], { type: mime });
         }
 
         private async extractOverview()
