@@ -1,6 +1,6 @@
 ///<reference path="Story/StoryElement.tsx" />
 ///<reference path="World/WorldElement.tsx" />
-///<reference path="SettingsElement.tsx" />
+///<reference path="Settings/SettingsElement.tsx" />
 
 namespace Views
 {
@@ -9,7 +9,7 @@ namespace Views
         homeElement = new HomeElement();
         storyElement = new Story.StoryElement();
         worldElement = new World.WorldElement();
-        settingsElement = new SettingsElement();
+        settingsElement = new Settings.SettingsElement();
         nexusElement = new Nexus.NexusElement();
 
         return <nav>
@@ -27,7 +27,7 @@ namespace Views
     export let homeElement: HomeElement;
     export let storyElement: Story.StoryElement;
     export let worldElement: World.WorldElement;
-    export let settingsElement: SettingsElement;
+    export let settingsElement: Settings.SettingsElement;
     export let nexusElement: Nexus.NexusElement;
 
     function toggleDropDown(e: Event)

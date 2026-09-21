@@ -1,4 +1,4 @@
-namespace Views
+namespace Views.Settings
 {
     export class SettingsElement extends HTMLElement
     {
@@ -11,37 +11,41 @@ namespace Views
             this.load();
         }
 
-        private languageComboSelect: HTMLComboSelect;
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
 
         private build()
         {
             return <>
-                <div>
-                    <div>
-                        <label>TextAPI:</label>
-                        { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
-                            <option value="KoboldCPP">KoboldCPP</option>
-                            <option value="Gemini">Gemini</option>
-                        </select> as HTMLSelectElement }
-                    </div>
-                    <div>
-                        <label>ImageAPI:</label>
-                        { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
-                            <option value="KoboldCPP">KoboldCPP</option>
-                            <option value="Gemini">Gemini</option>
-                            <option value="Stable Diffusion">Stable Diffusion</option>
-                        </select> as HTMLSelectElement }
-                    </div>
-                </div>
+                <tab-control>
+                    <div class="ai-tab" tab-header="AI">
+                        <div>
+                            <div>
+                                <label>TextAPI:</label>
+                                { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
+                                    <option value="KoboldCPP">KoboldCPP</option>
+                                    <option value="Gemini">Gemini</option>
+                                </select> as HTMLSelectElement }
+                            </div>
+                            <div>
+                                <label>ImageAPI:</label>
+                                { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
+                                    <option value="KoboldCPP">KoboldCPP</option>
+                                    <option value="Gemini">Gemini</option>
+                                    <option value="Stable Diffusion">Stable Diffusion</option>
+                                </select> as HTMLSelectElement }
+                            </div>
+                        </div>
 
-                <div class="anchor" />
+                        <div class="anchor" />
 
-                <div>
-                    <button title="Cancel" onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>Cancel</span></button>
-                    <button title="Save" onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>Save</span></button>
-                </div>
+                        <div>
+                            <button title="Cancel" onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>Cancel</span></button>
+                            <button title="Save" onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>Save</span></button>
+                        </div>
+                    </div>
+                    { new NexusSettingsElement() }
+                </tab-control>
             </>;
         }
 
@@ -54,6 +58,7 @@ namespace Views
             for (const option of this.imageAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.imageAPI.name;
             this.imageAPIChange();
+
         }
 
         private textAPIChange()

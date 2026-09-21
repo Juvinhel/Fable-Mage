@@ -327,6 +327,14 @@ namespace Views.World
 
         private async uploadToNexus()
         {
+            const nexusAccount = App.config.nexusAccount;
+            if (!nexusAccount?.email)
+            {
+                Views.navigate("Settings");
+                UI.Dialog.error(new Error("Please log in with Google before uploading a world to Nexus."));
+                return;
+            }
+
             const cover = this.coverImage.getAttribute("src");
             if (!cover?.startsWith("data:"))
             {
@@ -338,8 +346,8 @@ namespace Views.World
             const upload: Data.Nexus.WorldUpload = {
                 title: world.title,
                 description: world.description,
-                username: "",
-                userid: "",
+                username: nexusAccount.username,
+                userid: nexusAccount.email,
                 tags: world.tags ?? [],
                 version: world.version ?? "",
                 mature: !!world.mature,

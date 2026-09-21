@@ -1,9 +1,17 @@
 namespace Data
 {
+    export interface NexusAccount
+    {
+        provider: string;
+        email: string;
+        username: string;
+    }
+
     export interface Config
     {
         nexusURL: string;
         nexusToken: string;
+        nexusAccount?: NexusAccount;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | StableDiffusionEndpoint;
     }
@@ -46,14 +54,26 @@ namespace Data
 
     export async function loadConfig(): Promise<Config>
     {
-        let ret: Config = localStorage.get("config");
+        let ret: Partial<Config> & { nexusEmail?: string; nexusUsername?: string; } = localStorage.get("config");
         if (!ret) return defaultConfig;
+
+        if (!("nexusAccount" in ret) && (ret.nexusEmail !== undefined || ret.nexusUsername !== undefined))
+        {
+            ret.nexusAccount = {
+                provider: "Google",
+                email: ret.nexusEmail ?? "",
+                username: ret.nexusUsername ?? ""
+            };
+        }
+
+        delete ret.nexusEmail;
+        delete ret.nexusUsername;
 
         for (const entry of Object.entries(defaultConfig))
             if (!(entry[0] in ret))
-                ret[entry[0]] = entry[1];
+                (ret as any)[entry[0]] = entry[1];
 
-        return ret;
+        return ret as Config;
     }
 
     export async function saveConfig(config: Config): Promise<void>
