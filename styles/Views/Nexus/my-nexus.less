@@ -96,10 +96,17 @@ my-nexus
 
             > img
             {
+                display: block;
                 aspect-ratio: 1;
                 width: 100%;
                 object-fit: cover;
                 border-radius: var(--corner-radius);
+            }
+
+            > img:not([src])
+            {
+                background-image: url("img/default-world.png");
+                background-size: contain;
             }
 
             > .tag-list

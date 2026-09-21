@@ -69,19 +69,17 @@ namespace Views.Nexus
                 this.page = Math.max(0, page);
 
                 this.listElement.clearChildren();
-                for (const item of result.worlds)
+                for (const world of result.worlds)
                 {
                     this.listElement.append(<div class="world" onclick={ async () =>
                     {
-                        const json = await api.getWorldFile(item);
-                        navigate("World");
-                        worldElement.import(json);
+                        OpenWorldDialog(world);
                     } }>
-                        <h3 title={ item.title }>{ item.title }</h3>
-                        <img src={ item.cover?.[0]?.signedPath ? new URL("/" + item.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
-                        <ul class="tag-list" title={ item.tags.join("; ") }>{ item.tags.map(x => <li>{ x.trim() }</li>) }</ul>
-                        <div class="username">{ item.username }</div>
-                        <div class="description">{ item.description }</div>
+                        <h3 title={ world.title }>{ world.title }</h3>
+                        <img src={ world.cover?.[0]?.signedPath ? new URL("/" + world.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
+                        <ul class="tag-list" title={ world.tags.join("; ") }>{ world.tags.map(x => <li>{ x.trim() }</li>) }</ul>
+                        <div class="username">{ world.username }</div>
+                        <div class="description">{ world.description }</div>
                     </div>);
                 }
 
