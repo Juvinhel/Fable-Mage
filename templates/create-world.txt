@@ -15,7 +15,7 @@ Output valid json and strictly adhere to the following property rules:
 - 200 to 600 words
 - Do not write narrative prose, scene openings, or character monologues
 - Include only facts, structures, and background relevant to play
-- Mention major historical events or prior context only if they matter to current gameplay
+- Include background information giving the story a starting point (what led to this story)
 
 ### rules
 - Operational rules, pacing guidance, and behavioral directives for the AI narrator
