@@ -7,6 +7,7 @@ namespace Views.World
             super();
 
             this.append(this.build());
+            console.log("I", this.titleInput);
         }
 
         private tabControl: HTMLTabControl;
@@ -450,7 +451,7 @@ namespace Views.World
         public async open()
         {
             const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
-            if (result.length > 0)
+            if (result?.length > 0)
             {
                 const file = result.item(0);
                 const text = await file.text();
@@ -473,6 +474,7 @@ namespace Views.World
                 "rules": this.rulesInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.export(),
             };
+            console.log("export", this, this.titleInput.value, world);
 
             if (this.tagsInput.checkedOptions.length > 0)
                 world.tags = this.tagsInput.checkedOptions.map(x => x.value);

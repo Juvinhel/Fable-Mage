@@ -12,7 +12,7 @@ Output valid json and strictly adhere to the following property rules:
 - Concise but informative world summary
 - Focus on key lore, world logic, social structure, tensions, and setting details
 - Prefer direct, usable facts over ornate prose
-- 200 to 600 words
+- 200 to 800 words
 - Do not write narrative prose, scene openings, or character monologues
 - Include only facts, structures, and background relevant to play
 - Include background information giving the story a starting point (what led to this story)

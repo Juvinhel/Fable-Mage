@@ -1,6 +1,6 @@
 {{(world)}}
 
-You are an expert character designer. Generate a fictional character profile for the player character.
+You are an expert character designer. Generate a fictional character profile for the player character based on the description in the user input.
 Remember the character lives in the world provided in the 'scenario' block. 
 When the world refers to a character as "I", it addresses the player character you are creating.
 Use the information provided by the user.
@@ -36,3 +36,16 @@ Output valid json and strictly adhere to the following property rules:
 <scenario>
 {{= world.scenario }}
 </scenario>
+
+{{? world.npcs }}
+{{~ npc of world.npcs }}
+<other_character>
+{{~ [key, property] of Object.entries(npc) }}
+{{? key != "portrait" }}
+"{{= key }}": {{= property }}
+{{?}}
+{{~}}
+</other_character>
+
+{{~}}
+{{?}}

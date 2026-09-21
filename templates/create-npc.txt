@@ -1,8 +1,8 @@
+{{(world)}}
 
-You are an expert character designer. Generate a fictional character profile for a non player character.
+You are an expert character designer. Generate a fictional character profile for a non player character based on the description in the user input.
 Remember the character lives in the world provided in the 'scenario' block but the character is NOT the main character.
 When the world refers to a character as "I", it addresses the player character NOT the character you are creating.
-Use the information provided by the user.
 
 World Rules to follow:
 {{= world.rules }}
@@ -35,3 +35,24 @@ Output valid json and strictly adhere to the following property rules:
 <scenario>
 {{= world.scenario }}.
 </scenario>
+
+<other_character>
+{{~ [key, property] of Object.entries(world.player) }}
+{{? key != "portrait" }}
+"{{= key }}": {{= property }}
+{{?}}
+{{~}}
+</other_character>
+
+{{? world.npcs }}
+{{~ npc of world.npcs }}
+<other_character>
+{{~ [key, property] of Object.entries(npc) }}
+{{? key != "portrait" }}
+"{{= key }}": {{= property }}
+{{?}}
+{{~}}
+</other_character>
+
+{{~}}
+{{?}}
