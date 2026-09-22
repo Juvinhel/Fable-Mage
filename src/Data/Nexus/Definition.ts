@@ -16,11 +16,6 @@ namespace Data.Nexus
         }[];
     };
 
-    export type File = {
-        path: string;
-        signedPath?: string;
-    };
-
     export type WorldRecord = {
         title: string;
         description: string;
@@ -29,8 +24,8 @@ namespace Data.Nexus
         tags: string[];
         version: string;
         mature: boolean;
-        cover: File[];
-        file: File[];
+        coverUrl?: string;
+        fileUrl?: string;
     };
 
     export type WorldUpload = {

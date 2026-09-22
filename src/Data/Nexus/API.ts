@@ -1,103 +1,100 @@
 namespace Data.Nexus
 {
-    export class API
+    const worldTable = 1213471;
+    const nexusURL = "https://api.baserow.io";
+    const nexusToken = "Cuqsu96IEclKoIBt7kL3oD2BGxPxqkeb";
+
+    export const API = new class
     {
-        constructor (config: Data.Config)
-        {
-            this.config = config;
-        }
-
-        private config: Data.Config;
-
         public async getWorlds(filters: WorldFilters = {}): Promise<WorldResult>
         {
-            const url = new URL(this.config.nexusURL);
-            const conditions: string[] = [];
+            const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
+            url.searchParams.set("user_field_names", "true");
 
-            if (filters.title?.trim())
-                conditions.push("(title,like,%" + filters.title.trim() + "%)");
+            //if (filters.title?.trim())
+            //    url.searchParams.set("filter__title__contains", filters.title.trim());
+            //
+            //const tags = filters.tags?.map(x => x.trim()).filter(Boolean) ?? [];
+            //for (const tag of tags)
+            //    url.searchParams.append("filter__tags__contains", tag);
+            //
+            //if (filters.mature != true)
+            //    url.searchParams.set("filter__mature__equals", "false");
+            //
+            //if (filters.limit !== undefined)
+            //    url.searchParams.set("size", String(filters.limit));
+            //if (filters.offset !== undefined && filters.limit)
+            //    url.searchParams.set("page", String(Math.floor(filters.offset / filters.limit) + 1));
 
-            const tags = filters.tags?.map(x => x.trim()).filter(Boolean) ?? [];
-            if (tags.length)
-                conditions.push("(tags,allof," + tags.map(x => "\"" + x + "\"").join(",") + ")");
-
-            if (filters.mature != true)
-                conditions.push("(mature,is,false)");
-
-            if (conditions.length)
-                url.searchParams.set("where", conditions.join("~and"));
-
-            if (filters.limit !== undefined)
-                url.searchParams.set("limit", String(filters.limit));
-            if (filters.offset !== undefined)
-                url.searchParams.set("offset", String(filters.offset));
-
-            const result: QueryResult<WorldRecord> = await this.request(url.toString());
+            const result: BaserowListResult = await this.request(url.toString());
             return {
-                worlds: result.records.map(x => x.fields),
+                worlds: result.results.map(x => this.toWorldRecord(x)),
                 next: result.next
             };
         }
 
         public async getWorldFile(world: WorldRecord): Promise<Data.World>
         {
-            const path = world.file[0].path.replace("\\\\", "/");
-            return await this.request(new URL("/" + path, this.config.nexusURL).toString());
+            if (!world.fileUrl)
+                throw new Error("World does not contain a world file.");
+
+            return await this.request(world.fileUrl);
         }
 
         public async createWorld(world: WorldUpload): Promise<void>
         {
+            //const cover = await this.uploadFile(world.cover, "cover");
+            //const file = await this.uploadFile(world.file, "world.json");
             const fields = {
                 ...world,
-                cover: [],
-                file: []
+                cover: null,// [{ name: cover.name }],
+                file: null// [{ name: file.name }]
             };
-            const result: RecordResult<WorldRecord> = await this.request(this.config.nexusURL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify([{ fields }])
-            });
-            const record = result.records[0];
-
-            await this.uploadAttachment(record.id, "c7o4i45wibadxdg", world.cover, "cover");
-            await this.uploadAttachment(record.id, "c2zx3rla28z968w", world.file, "world.json");
-        }
-
-        private async uploadAttachment(recordId: number, fieldID: string, content: Blob, filename: string): Promise<void>
-        {   // not working currently (v3 api unclear)
-            const body = JSON.stringify({
-                contentType: content.type,
-                file: await this.blobToBase64(content),
-                filename
-            });
-
-            const url = new URL(this.config.nexusURL);
-            url.pathname += "/" + recordId + "/fields/" + encodeURIComponent(fieldID) + "/upload";
+            const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
+            url.searchParams.set("user_field_names", "true");
             await this.request(url.toString(), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
+                body: JSON.stringify(fields)
+            });
+        }
+
+        private async uploadFile(content: Blob, filename: string): Promise<BaserowFile>
+        {
+            const body = new FormData();
+            body.append("file", content, filename);
+            return await this.request(new URL("/api/user-files/upload/", nexusURL).toString(), {
+                method: "POST",
                 body
             });
         }
 
-        private blobToBase64(blob: Blob): Promise<string>
+        private toWorldRecord(row: BaserowWorldRow): WorldRecord
         {
-            return new Promise((resolve, reject) =>
-            {
-                const reader = new FileReader();
-                reader.onloadend = () =>
-                {
-                    // Entfernt das "data:[mime-type];base64," Präfix
-                    resolve((reader.result as string).split(",")[1]);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        };
+            const { cover, file, ...fields } = row;
+            return {
+                ...fields,
+                tags: this.toTags(fields.tags),
+                coverUrl: this.toFileUrl(cover),
+                fileUrl: this.toFileUrl(file)
+            };
+        }
+
+        private toTags(tags: any): string[]
+        {
+            if (Array.isArray(tags))
+                return tags.map(x => typeof x === "string" ? x : x.value ?? x.name).filter(Boolean);
+            return typeof tags === "string" ? tags.split(",").map(x => x.trim()).filter(Boolean) : [];
+        }
+
+        private toFileUrl(files: any): string | undefined
+        {
+            if (!Array.isArray(files) || !files.length)
+                return undefined;
+            return files[0].url ?? files[0].name;
+        }
 
         private async request<T>(url: string, options?: RequestInit): Promise<T>
         {
@@ -105,10 +102,28 @@ namespace Data.Nexus
                 ...options,
                 headers: {
                     ...options?.headers,
-                    "xc-token": this.config.nexusToken
+                    "Authorization": "Token " + nexusToken
                 }
             });
+            if (!response.ok)
+                throw new Error("Baserow request failed (" + response.status + ")");
             return await response.json();
         }
-    }
+    }();
+
+    type BaserowFile = {
+        name: string;
+        url: string;
+    };
+
+    type BaserowWorldRow = Omit<WorldRecord, "tags" | "coverUrl" | "fileUrl"> & {
+        tags: any;
+        cover: any;
+        file: any;
+    };
+
+    type BaserowListResult = {
+        results: BaserowWorldRow[];
+        next: string | null;
+    };
 }

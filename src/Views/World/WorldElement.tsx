@@ -358,7 +358,7 @@ namespace Views.World
 
             try
             {
-                await new Data.Nexus.API(App.config).createWorld(upload);
+                await Data.Nexus.API.createWorld(upload);
                 UI.Dialog.message({ title: "Uploaded", text: "Sucessfully uploaded to Nexus." });
             }
             catch (error)

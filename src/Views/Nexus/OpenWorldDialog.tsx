@@ -8,8 +8,7 @@ namespace Views.Nexus
 
     function buildOpenWorldDialog(world: Data.Nexus.WorldRecord)
     {
-        const cover = world.cover?.[0]?.signedPath;
-        const coverUrl = cover ? new URL("/" + cover.replace("\\\\", "/"), App.config.nexusURL).toString() : null;
+        const coverUrl = world.coverUrl ?? null;
 
         return <div class="open-world-dialog">
             { coverUrl ? <img class="cover" src={ coverUrl } /> : <div class="cover missing-cover">No cover</div> }
@@ -33,7 +32,7 @@ namespace Views.Nexus
     {
         try
         {
-            const loadedWorld = await new Data.Nexus.API(App.config).getWorldFile(world);
+            const loadedWorld = await Data.Nexus.API.getWorldFile(world);
             UI.Dialog.close(document.querySelector(".open-world-dialog"));
 
             if (action == "edit")

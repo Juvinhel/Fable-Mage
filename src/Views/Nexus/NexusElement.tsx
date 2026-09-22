@@ -58,8 +58,7 @@ namespace Views.Nexus
         {
             try
             {
-                const api = new Data.Nexus.API(App.config);
-                const result = await api.getWorlds({
+                const result = await Data.Nexus.API.getWorlds({
                     title: this.titleInput.value,
                     tags: this.tagsInput.checkedOptions.map(x => x.value),
                     mature: this.matureFilterInput.checked,
@@ -76,7 +75,7 @@ namespace Views.Nexus
                         OpenWorldDialog(world);
                     } }>
                         <h3 title={ world.title }>{ world.title }</h3>
-                        <img src={ world.cover?.[0]?.signedPath ? new URL("/" + world.cover[0].signedPath.replace("\\\\", "/").toString(), App.config.nexusURL) : null } />
+                        <img src={ world.coverUrl ?? null } />
                         <ul class="tag-list" title={ world.tags.join("; ") }>{ world.tags.map(x => <li>{ x.trim() }</li>) }</ul>
                         <div class="username">{ world.username }</div>
                         <div class="description">{ world.description }</div>
