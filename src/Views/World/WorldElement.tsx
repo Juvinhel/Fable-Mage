@@ -253,6 +253,7 @@ namespace Views.World
                 const npccard = new CharacterCardElement();
                 npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
+                App.beginThinking();
 
                 await this.createPortrait(npc, npccard);
             }
@@ -343,6 +344,8 @@ namespace Views.World
                 return;
             }
 
+            App.beginThinking();
+
             const world = this.export();
             const upload: Data.Nexus.WorldUpload = {
                 title: world.title,
@@ -365,6 +368,8 @@ namespace Views.World
             {
                 UI.Dialog.error(error);
             }
+
+            App.stopThinking();
         }
 
         private dataUriToBlob(dataUri: string): Blob

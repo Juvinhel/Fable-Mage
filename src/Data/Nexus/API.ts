@@ -11,20 +11,24 @@ namespace Data.Nexus
             const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
             url.searchParams.set("user_field_names", "true");
 
-            //if (filters.title?.trim())
-            //    url.searchParams.set("filter__title__contains", filters.title.trim());
-            //
-            //const tags = filters.tags?.map(x => x.trim()).filter(Boolean) ?? [];
-            //for (const tag of tags)
-            //    url.searchParams.append("filter__tags__contains", tag);
-            //
-            //if (filters.mature != true)
-            //    url.searchParams.set("filter__mature__equals", "false");
-            //
-            //if (filters.limit !== undefined)
-            //    url.searchParams.set("size", String(filters.limit));
-            //if (filters.offset !== undefined && filters.limit)
-            //    url.searchParams.set("page", String(Math.floor(filters.offset / filters.limit) + 1));
+            const filtersJSON: BaserowFilter[] = [];
+            if (filters.title?.trim())
+                filtersJSON.push({ field: "title", type: "contains", value: filters.title.trim() });
+
+            const tags = filters.tags?.map(x => x.trim()).filter(Boolean) ?? [];
+            for (const tag of tags)
+                filtersJSON.push({ field: "tags", type: "contains", value: tag });
+
+            if (filters.mature != true)
+                filtersJSON.push({ field: "mature", type: "equal", value: "0" });
+
+            if (filtersJSON.length)
+                url.searchParams.set("filters", JSON.stringify({ filter_type: "AND", filters: filtersJSON }));
+
+            if (filters.limit !== undefined)
+                url.searchParams.set("size", String(filters.limit));
+            if (filters.offset !== undefined && filters.limit)
+                url.searchParams.set("page", String(Math.floor(filters.offset / filters.limit) + 1));
 
             const result: BaserowListResult = await this.request(url.toString());
             return {
@@ -43,12 +47,12 @@ namespace Data.Nexus
 
         public async createWorld(world: WorldUpload): Promise<void>
         {
-            //const cover = await this.uploadFile(world.cover, "cover");
-            //const file = await this.uploadFile(world.file, "world.json");
+            const cover = await this.uploadFile(world.cover, "cover.png");
+            const file = await this.uploadFile(world.file, "world.json");
             const fields = {
                 ...world,
-                cover: null,// [{ name: cover.name }],
-                file: null// [{ name: file.name }]
+                cover: [{ name: cover.name }],
+                file: [{ name: file.name }]
             };
             const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
             url.searchParams.set("user_field_names", "true");
@@ -65,7 +69,7 @@ namespace Data.Nexus
         {
             const body = new FormData();
             body.append("file", content, filename);
-            return await this.request(new URL("/api/user-files/upload/", nexusURL).toString(), {
+            return await this.request(new URL("/api/user-files/upload-file/", nexusURL).toString(), {
                 method: "POST",
                 body
             });
@@ -125,5 +129,11 @@ namespace Data.Nexus
     type BaserowListResult = {
         results: BaserowWorldRow[];
         next: string | null;
+    };
+
+    type BaserowFilter = {
+        field: string;
+        type: string;
+        value: string | boolean;
     };
 }

@@ -24,6 +24,7 @@ namespace Views.Nexus
             <div class="actions">
                 <button class="edit-button" onclick={ () => openWorld(world, "edit") }>Edit</button>
                 <button class="play-button" onclick={ () => openWorld(world, "play") }>Play</button>
+                <a target="_blank" href={ world.fileUrl } download={ world.title + ".json" }>Download</a>
             </div>
         </div>;
     }
@@ -32,18 +33,19 @@ namespace Views.Nexus
     {
         try
         {
-            const loadedWorld = await Data.Nexus.API.getWorldFile(world);
+            const reponse = await fetch(world.fileUrl);
+            const file = await reponse.json();
             UI.Dialog.close(document.querySelector(".open-world-dialog"));
 
             if (action == "edit")
             {
                 Views.navigate("World");
-                Views.worldElement.import(loadedWorld);
+                Views.worldElement.import(file);
             }
             else
             {
                 Views.navigate("Story");
-                await Views.storyElement.startStory(loadedWorld);
+                await Views.storyElement.startStory(file);
             }
         }
         catch (error)
