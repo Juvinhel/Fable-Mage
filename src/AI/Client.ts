@@ -1,9 +1,44 @@
 ///<reference path="TemplatingBase.ts" />
+///<reference path="Logger.ts" />
 
 namespace AI
 {
     export const Client = new class extends TemplatingBase
     {
+        private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
+        {
+            const startedAt = Date.now();
+            try
+            {
+                const result = await textAPI.generateInteractions(messages, temperature, schema);
+                Logger.logRequest(methodName, messages, result, startedAt);
+                return result;
+            }
+            catch (error)
+            {
+                const message = error instanceof Error ? error.message : String(error);
+                Logger.logRequest(methodName, messages, "ERROR: " + message, startedAt);
+                throw error;
+            }
+        }
+
+        private async runImageRequest(methodName: string, prompt: string): Promise<string>
+        {
+            const startedAt = Date.now();
+            try
+            {
+                const result = await imageAPI.generateImage(prompt);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], result, startedAt);
+                return result;
+            }
+            catch (error)
+            {
+                const message = error instanceof Error ? error.message : String(error);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], "ERROR: " + message, startedAt);
+                throw error;
+            }
+        }
+
         public async advancePlot(
             input: string,
             summary: string,
@@ -25,7 +60,7 @@ namespace AI
             }
             messages.push({ role: "user", content: input });
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.plotSchema);
+            const result = await this.runTextRequest("advancePlot", messages, 0.8, this.plotSchema);
             const obj = this.parseJSON(result);
             return obj;
         }
@@ -39,7 +74,7 @@ namespace AI
                 { role: "system", content: prompt },
                 { role: "user", content: input }];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.plotSchema);
+            const result = await this.runTextRequest("writePrologue", messages, 0.8, this.plotSchema);
             const obj = this.parseJSON(result);
 
             return obj;
@@ -63,7 +98,7 @@ namespace AI
                 messages.push({ role: "assistant", content });
             }
 
-            const result = await textAPI.generateInteractions(messages, 0.7, this.choicesSchema);
+            const result = await this.runTextRequest("offerChoices", messages, 0.7, this.choicesSchema);
             const obj = this.parseJSON(result);
 
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
@@ -84,8 +119,7 @@ namespace AI
                 messages.push({ role: "assistant", content });
             }
 
-            const result = await textAPI.generateInteractions(messages, 0.3);
-            return result;
+            return await this.runTextRequest("summarizeProgression", messages, 0.3);
         }
 
         public async describeScene(
@@ -99,7 +133,7 @@ namespace AI
                 { role: "user", content: scene }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.imagePromptSchema);
+            const result = await this.runTextRequest("describeScene", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
             return obj.description;
@@ -119,7 +153,7 @@ namespace AI
                 { role: "user", content: input }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.5, this.worldSchema);
+            const result = await this.runTextRequest("createWorld", messages, 0.5, this.worldSchema);
             const obj = this.parseJSON(result);
 
             return obj;
@@ -134,7 +168,7 @@ namespace AI
                 { role: "user", content: world.scenario }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.imagePromptSchema);
+            const result = await this.runTextRequest("describeWorld", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
             return obj.description;
@@ -148,7 +182,7 @@ namespace AI
                 { role: "system", content: prompt }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.3, this.overviewSchema);
+            const result = await this.runTextRequest("extractOverview", messages, 0.3, this.overviewSchema);
             const obj = this.parseJSON(result);
             return obj;
         }
@@ -163,7 +197,7 @@ namespace AI
                 { role: "user", content: input }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.characterSchema);
+            const result = await this.runTextRequest("createPlayer", messages, 0.8, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.Character;
         }
@@ -178,7 +212,7 @@ namespace AI
                 { role: "user", content: input }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.characterSchema);
+            const result = await this.runTextRequest("createNPC", messages, 0.8, this.characterSchema);
             const obj = this.parseJSON(result);
             return obj as Data.Character;
         }
@@ -198,7 +232,7 @@ namespace AI
                 messages.push({ role: "assistant", content });
             }
 
-            const result = await textAPI.generateInteractions(messages, 0.5, this.characterUpdateSchema);
+            const result = await this.runTextRequest("updateCharacter", messages, 0.5, this.characterUpdateSchema);
             const obj = this.parseJSON(result) as Partial<Data.Character>;
 
             return Object.fromEntries(Object.entries(obj).map(([key, value]) => [Helper.convertPascalCaseToKebabCase(key), value]));
@@ -213,7 +247,7 @@ namespace AI
                 { role: "user", content: character.appearance }
             ];
 
-            const result = await textAPI.generateInteractions(messages, 0.8, this.imagePromptSchema);
+            const result = await this.runTextRequest("describeCharacter", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
             return obj.description;
@@ -222,8 +256,7 @@ namespace AI
         public async getImage(description: string): Promise<string>
         {
             const prompt = await this.getImageTemplate(description);
-            const result = await imageAPI.generateImage(prompt);
-            return result;
+            return await this.runImageRequest("getImage", prompt);
         }
     }();
 }

@@ -39,7 +39,6 @@ namespace AI
             {
                 text = await (await fetch("templates/" + name + ".txt")).text();
                 template = this.compiler.build(text);
-                console.log(name + ":", template.code);
                 const f = this.compiler.compile(template) as AsyncFunction;
                 return async (...params: any[]) => this.sanitizePrompt(await f(...params));
             }

@@ -78,8 +78,11 @@ class App
 
     public static beginThinking()
     {
-        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement, Views.diagnosticsElement])
         {
+            if (!element)
+                continue;
+
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", true);
             for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area, semantic-version-input") as NodeListOf<any>)
@@ -91,8 +94,11 @@ class App
 
     public static stopThinking()
     {
-        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement, Views.diagnosticsElement])
         {
+            if (!element)
+                continue;
+
             for (const indicator of element.querySelectorAll(".thinking-indicator"))
                 indicator.classList.toggle("show", false);
             for (const button of element.querySelectorAll("button, input, select, textarea, multi-select, combo-select, auto-correct-text-area, semantic-version-input") as NodeListOf<any>)
