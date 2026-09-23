@@ -44,8 +44,18 @@ my-diagnostics
         padding: 0.5em;
         gap: 0.5em;
         border-radius: var(--corner-radius);
-    }
 
+        &:empty::before
+        {
+            display: grid;
+            place-items: center;
+            min-height: 5em;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--corner-radius);
+            content: "No API requests logged yet.";
+            color: rgba(255, 255, 255, 0.7);
+        }
+    }
 
     .log-entry
     {
@@ -121,7 +131,6 @@ my-diagnostics
     {
         display: grid;
         grid-auto-rows: max-content;
-        overflow-y: auto;
         gap: 0.5em;
     }
 
@@ -129,11 +138,18 @@ my-diagnostics
     {
         box-sizing: border-box;
         display: grid;
-        grid-template-columns: auto 1fr;
+        grid-template-columns: auto 1fr max-content;
         margin-right: 2em;
         padding: 0.5em;
         gap: 0.5em;
         border-radius: 1em;
+
+        > .icon-button
+        {
+            align-self: start;
+            --button-text-color: white;
+            font-size: 1.25em;
+        }
 
         > label
         {
@@ -173,18 +189,20 @@ my-diagnostics
             border-left: 3px solid rgba(106, 219, 178, 0.9);
             background: rgba(44, 166, 124, 0.18);
         }
-    }
 
-    .response-body pre
-    {
-        margin-right: 2em;
-        padding: 0.5em;
-        border-left: 3px solid rgba(255, 255, 255, 0.08);
-        border-radius: 1em;
-        background: rgba(255, 255, 255, 0.03);
-        font-family: inherit;
-        white-space: pre-wrap;
-        word-break: break-word;
+        &.response
+        {
+            align-self: flex-start;
+            border-left: 3px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        &.error
+        {
+            align-self: flex-start;
+            border-left: 3px solid rgba(219, 106, 106, 0.9);
+            background: rgba(166, 44, 44, 0.18);
+        }
     }
 
     pre

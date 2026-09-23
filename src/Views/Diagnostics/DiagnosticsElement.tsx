@@ -11,13 +11,14 @@ namespace Views.Diagnostics
         }
 
         private logList: HTMLDivElement;
+        private loggingEnabledToggleButton: HTMLButtonElement;
 
         private build()
         {
             return <>
                 <div class="header">
                     <div class="diagnostic-toolbar">
-                        <button onclick={ () => this.toggleLogging() }>{ AI.Logger.loggingEnabled ? "Stop" : "Start" }</button>
+                        { this.loggingEnabledToggleButton = <button onclick={ () => this.toggleLogging() }>{ AI.Logger.loggingEnabled ? "Stop" : "Start" }</button> as HTMLButtonElement }
                         <button onclick={ () => this.clearLogList() }>Clear</button>
                     </div>
                 </div>
@@ -29,6 +30,7 @@ namespace Views.Diagnostics
         private toggleLogging()
         {
             AI.Logger.loggingEnabled = !AI.Logger.loggingEnabled;
+            this.loggingEnabledToggleButton.textContent = AI.Logger.loggingEnabled ? "Stop" : "Start";
         }
 
         private clearLogList()
@@ -36,14 +38,19 @@ namespace Views.Diagnostics
             this.logList.clearChildren();
         }
 
+        private async copyText(text: string)
+        {
+            await navigator.clipboard.writeText(text);
+        }
+
         private addEntry(entry: AI.RequestLogEntry)
         {
-            console.log("L", entry);
             const request = <div class="chat-thread" /> as HTMLDivElement;
             for (const message of entry.request)
                 request.appendChild(<div class={ ["chat-message", message.role] } >
                     <label>{ message.role }</label>
                     <pre>{ message.content }</pre>
+                    <button class="icon-button" title="Copy message" onclick={ () => this.copyText(message.content) }><color-icon src="img/icons/clipboard.svg" /></button>
                 </div>);
 
             const item = <details class="log-entry" open={ false }>
@@ -52,9 +59,17 @@ namespace Views.Diagnostics
                     <span>{ entry.time }</span>
                 </summary>
                 <div class="log-body">
-                    <div class="meta"><span>{ entry.durationMs } ms</span></div>
+                    <div class="meta"><span>{ entry.duration } ms</span></div>
                     <div class="request-body"><label>Request</label>{ request }</div>
-                    <div class="response-body"><label>Response</label><pre>{ entry.response }</pre></div>
+                    <div class="response-body"><label>Response</label>
+                        <div class="chat-thread" >
+                            <div class={ ["chat-message", entry.type == "error" ? "error" : "response"] }>
+                                <label>{ entry.type == "error" ? "error" : "response" }</label>
+                                <pre>{ entry.response }</pre>
+                                <button class="icon-button" title={ "Copy " + (entry.type == "error" ? "error" : "response") } onclick={ () => this.copyText(entry.response) }><color-icon src="img/icons/clipboard.svg" /></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </details> as HTMLDetailsElement;
 

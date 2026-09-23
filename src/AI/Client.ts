@@ -11,13 +11,13 @@ namespace AI
             try
             {
                 const result = await textAPI.generateInteractions(messages, temperature, schema);
-                Logger.logRequest(methodName, messages, result, startedAt);
+                Logger.logRequest(methodName, messages, result, "message", startedAt);
                 return result;
             }
             catch (error)
             {
                 const message = error instanceof Error ? error.message : String(error);
-                Logger.logRequest(methodName, messages, "ERROR: " + message, startedAt);
+                Logger.logRequest(methodName, messages, message, "error", startedAt);
                 throw error;
             }
         }
@@ -28,13 +28,13 @@ namespace AI
             try
             {
                 const result = await imageAPI.generateImage(prompt);
-                Logger.logRequest(methodName, [{ role: "user", content: prompt }], result, startedAt);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], result, "message", startedAt);
                 return result;
             }
             catch (error)
             {
                 const message = error instanceof Error ? error.message : String(error);
-                Logger.logRequest(methodName, [{ role: "user", content: prompt }], "ERROR: " + message, startedAt);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], message, "error", startedAt);
                 throw error;
             }
         }

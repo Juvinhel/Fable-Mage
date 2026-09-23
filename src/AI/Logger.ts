@@ -3,17 +3,18 @@ namespace AI
     export const Logger = new class
     {
         public requestLog: RequestLogEntry[] = [];
-        public loggingEnabled = false;
+        public loggingEnabled = true;
         public onRequestLogged: ((entry: RequestLogEntry) => void) | null = null;
 
-        public logRequest(methodName: string, request: Message[], response: string, startedAt: number)
+        public logRequest(methodName: string, request: Message[], response: string, type: "message" | "error", startedAt: number)
         {
             const entry: RequestLogEntry = {
                 methodName,
                 time: new Date().toISOString(),
-                durationMs: Date.now() - startedAt,
+                duration: Date.now() - startedAt,
                 request,
-                response
+                response,
+                type
             };
 
             this.requestLog.unshift(entry);
@@ -23,12 +24,12 @@ namespace AI
             if (this.loggingEnabled)
             {
                 // CONSOLE
-                console.groupCollapsed("[AI] " + methodName + " (" + entry.durationMs + "ms)");
+                console.groupCollapsed("[AI] " + methodName + " (" + entry.duration + "ms)");
                 console.log("time:", entry.time);
                 console.log("request:");
                 for (const message of entry.request)
                     console.log("[" + message.role + "]", message.content);
-                console.log("response:", entry.response);
+                console.log(entry.type == "error" ? "error:" : "response:", entry.response);
                 console.groupEnd();
 
                 // UI
@@ -40,8 +41,9 @@ namespace AI
     export type RequestLogEntry = {
         methodName: string;
         time: string;
-        durationMs: number;
+        duration: number;
         request: Message[];
         response: string;
+        type: "message" | "error";
     };
 }

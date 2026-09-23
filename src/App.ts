@@ -78,7 +78,7 @@ class App
 
     public static beginThinking()
     {
-        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement, Views.diagnosticsElement])
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
         {
             if (!element)
                 continue;
@@ -94,7 +94,7 @@ class App
 
     public static stopThinking()
     {
-        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement, Views.diagnosticsElement])
+        for (const element of [Views.homeElement, Views.storyElement, Views.worldElement, Views.settingsElement])
         {
             if (!element)
                 continue;

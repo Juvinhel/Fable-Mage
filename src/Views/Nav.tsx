@@ -11,16 +11,16 @@ namespace Views
         storyElement = new Story.StoryElement();
         worldElement = new World.WorldElement();
         nexusElement = new Nexus.NexusElement();
-        diagnosticsElement = new Diagnostics.DiagnosticsElement();
         settingsElement = new Settings.SettingsElement();
+        diagnosticsElement = new Diagnostics.DiagnosticsElement();
 
         return <nav>
             <button title="Home" onclick={ () => navigate("Home") }>Home</button>
             <button title="Story" onclick={ () => navigate("Story") }>Story</button>
             <button title="World" onclick={ () => navigate("World") }>World</button>
             <button title="Nexus" onclick={ (e) => navigate("Nexus") }>Nexus</button>
-            <button title="Diagnostics" onclick={ (e) => navigate("Diagnostics") }>Diagnostics</button>
             <button title="Settings" onclick={ (e) => navigate("Settings") }>Settings</button>
+            <button title="Diagnostics" onclick={ (e) => navigate("Diagnostics") }>Diagnostics</button>
             <button class="icon" onclick={ (e: Event) => toggleDropDown(e) }>
                 <color-icon src="img/icons/menu.svg" />
             </button>
@@ -31,8 +31,8 @@ namespace Views
     export let storyElement: Story.StoryElement;
     export let worldElement: World.WorldElement;
     export let nexusElement: Nexus.NexusElement;
-    export let diagnosticsElement: Diagnostics.DiagnosticsElement;
     export let settingsElement: Settings.SettingsElement;
+    export let diagnosticsElement: Diagnostics.DiagnosticsElement;
 
     function toggleDropDown(e: Event)
     {
