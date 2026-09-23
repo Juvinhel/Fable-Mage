@@ -41,7 +41,6 @@ namespace AI.KoboldCPP
             const grammar = schema ? await this.generateGrammar(schema) : null;
             const p = prompt.trim();
 
-            console.log("generateText (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.GenerationInput = { prompt: p, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
             if (grammar) body.grammar = grammar;
@@ -63,7 +62,6 @@ namespace AI.KoboldCPP
             let result = output.results[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
             if (result.finish_reason != "stop") console.log("AI stopped early", result);
-            console.log("generateText (result)", result.text);
 
             return result.text;
         }
@@ -74,7 +72,6 @@ namespace AI.KoboldCPP
             const grammar = schema ? await this.generateGrammar(schema) : null;
             const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
 
-            console.log("generateInteractions (messages)", m);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: any = { messages: m, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
             if (grammar) body.grammar = grammar;
@@ -96,10 +93,8 @@ namespace AI.KoboldCPP
             let result = output.choices[0];
             if (result.finish_reason == "length") throw new Error("The max_length of request was to low!");
             if (result.finish_reason != "stop") console.log("AI stopped early", result);
-            console.log("generateInteractions (result)", result.message.content);
 
-            const text: string = result.message.content;
-            return text;
+            return result.message.content;
         }
 
         public async generateImage(prompt: string): Promise<string>
@@ -107,7 +102,6 @@ namespace AI.KoboldCPP
             const url = this.config.url + "/sdapi/v1/txt2img";
             const p = prompt.trim();
 
-            console.log("generateImage (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
@@ -132,7 +126,6 @@ namespace AI.KoboldCPP
             const output: AI.KoboldCPP.TXT2ImgOutput = await this.parseOutput(response);
             if (!output.images?.length || typeof output.images[0] != "string")
                 throw new Error("KoboldCPP returned an invalid image response.");
-            console.log("generateImage (output)", output);
 
             return "data:image/png;base64," + output.images[0];
         }
@@ -188,7 +181,7 @@ namespace AI.KoboldCPP
             }
 
             //TODO: remove
-            this.max_length = 4096;
+            this.max_length = 12288;
         }
     };
 }

@@ -14,7 +14,6 @@ namespace AI.StableDiffusion
             const url = this.config.url + "/sdapi/v1/txt2img";
             const p = prompt.trim();
 
-            console.log("generateImage (prompt)", prompt);
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
@@ -37,7 +36,6 @@ namespace AI.StableDiffusion
                 case "text/json":
                 case "application/json":
                     const output: AI.KoboldCPP.TXT2ImgOutput = await response.json();
-                    console.log("generateImage (output)", output);
                     dataURI = "data:image/png;base64," + output.images[0];
                     break;
                 case "application/octet-stream":

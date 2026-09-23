@@ -15,7 +15,6 @@ namespace AI.Gemini
             const p = prompt.trim();
             const model = this.config.model ?? "gemini-3.8-flash";
 
-            console.log("generateText (prompt)", prompt);
             const body: any = {
                 input: p,
                 model,
@@ -44,9 +43,7 @@ namespace AI.Gemini
             const output = await response.json();
             if (!response.ok || output.error) throw new Error(output.error?.message ?? "Gemini request failed.");
 
-            const text = this.extractText(output);
-            console.log("generateText (result)", text);
-            return text;
+            return this.extractText(output);
         }
 
         public async generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>
@@ -65,7 +62,6 @@ namespace AI.Gemini
                 return { type, content: x.content };
             });
 
-            console.log("generateInteractions (messages)", m);
             const body: any = {
                 input: m,
                 model,
@@ -96,9 +92,7 @@ namespace AI.Gemini
             const output: any = await response.json();
             if (!response.ok || output.error) throw new Error(output.error?.message ?? "Gemini request failed.");
             
-            const text = this.extractText(output);
-            console.log("generateInteractions (result)", text);
-            return text;
+            return this.extractText(output);
         }
 
         private extractText(output: any): string
@@ -134,7 +128,6 @@ namespace AI.Gemini
                 generationConfig: { responseModalities: ["IMAGE"] }
             };
 
-            console.log("generateImage (prompt)", prompt);
             const response = await fetch(url,
                 {
                     method: "POST",
@@ -149,7 +142,6 @@ namespace AI.Gemini
             const image = parts.find((part: any) => part.inlineData);
             if (!image) throw new Error("Gemini did not return an image.");
 
-            console.log("generateImage (output)", output);
             return "data:" + image.inlineData.mimeType + ";base64," + image.inlineData.data;
         }
 

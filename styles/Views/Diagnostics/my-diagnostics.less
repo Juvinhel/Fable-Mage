@@ -1,0 +1,195 @@
+my-diagnostics
+{
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    gap: 0.5em;
+
+    > .header
+    {
+        display: grid;
+        z-index: 100;
+        position: sticky;
+        top: 0;
+        height: max-content;
+        margin: 0;
+        background-color: var(--page-background-color);
+
+        > .diagnostic-toolbar
+        {
+            display: grid;
+            position: sticky;
+            grid-template-columns: repeat(2, max-content);
+            justify-content: end;
+            padding: 0.5em;
+            gap: 0.5em;
+
+            > button
+            {
+                min-width: 6em;
+            }
+        }
+
+    }
+
+    > .log-list
+    {
+        display: grid;
+        grid-auto-rows: max-content;
+        height: max-content;
+        min-height: 0;
+        padding: 0.5em;
+        gap: 0.5em;
+        border-radius: var(--corner-radius);
+    }
+
+
+    .log-entry
+    {
+        display: block;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1em;
+        background: var(--dark-background-color);
+
+        > summary
+        {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5em;
+            gap: 1em;
+            list-style: none;
+            cursor: pointer;
+            user-select: text;
+
+            &::-webkit-details-marker
+            {
+                display: none;
+            }
+
+            > strong
+            {
+                letter-spacing: 0.05em;
+            }
+
+            > span
+            {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.75em;
+            }
+        }
+    }
+
+    .log-body
+    {
+        display: grid;
+        grid-template-rows: auto;
+        padding: 0.5em;
+        gap: 0.5em;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+        > .meta
+        {
+            display: flex;
+            justify-content: flex-end;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75em;
+        }
+
+        > .request-body,
+        > .response-body
+        {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 0.5em;
+        }
+
+        label
+        {
+            color: rgba(255, 255, 255, 0.68);
+            font-size: 0.75em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+    }
+
+    .chat-thread
+    {
+        display: grid;
+        grid-auto-rows: max-content;
+        overflow-y: auto;
+        gap: 0.5em;
+    }
+
+    .chat-message
+    {
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        margin-right: 2em;
+        padding: 0.5em;
+        gap: 0.5em;
+        border-radius: 1em;
+
+        > label
+        {
+            font-size: 0.75em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.75;
+        }
+
+        > pre
+        {
+            margin: 0;
+            font-size: 0.85em;
+            line-height: 1.45;
+            font-family: inherit;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        &.system
+        {
+            align-self: stretch;
+            border-left: 3px solid rgba(185, 163, 255, 0.9);
+            background: rgba(128, 90, 213, 0.18);
+        }
+
+        &.user
+        {
+            align-self: flex-end;
+            border-left: 3px solid rgba(102, 181, 255, 0.9);
+            background: rgba(28, 118, 194, 0.18);
+        }
+
+        &.assistant
+        {
+            align-self: flex-start;
+            border-left: 3px solid rgba(106, 219, 178, 0.9);
+            background: rgba(44, 166, 124, 0.18);
+        }
+    }
+
+    .response-body pre
+    {
+        margin-right: 2em;
+        padding: 0.5em;
+        border-left: 3px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1em;
+        background: rgba(255, 255, 255, 0.03);
+        font-family: inherit;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    pre
+    {
+        margin: 0;
+        user-select: text;
+    }
+}
