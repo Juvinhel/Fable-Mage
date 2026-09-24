@@ -85,6 +85,8 @@ namespace Views.Story
 
         // summary of previous turns
         public summary: string;
+        // user provided context
+        public context: string;
 
         public playerChanges: Partial<Data.Character>;
         public npcChanges: Partial<Data.Character>[];
@@ -135,8 +137,8 @@ namespace Views.Story
             if (this.input) plotPoint.input = this.input;
             if (this.image) plotPoint.image = this.image;
             if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;
-
             if (this.summary) plotPoint.summary = this.summary;
+            if (this.context) plotPoint.context = this.context;
             if (this.playerChanges) plotPoint.playerChanges = this.playerChanges;
             if (this.npcChanges && this.npcChanges.length > 0) plotPoint.npcChanges = this.npcChanges;
 
@@ -153,8 +155,8 @@ namespace Views.Story
             this.scenery = plotPoint.scenery;
             this.image = plotPoint.image;
             this.choices = plotPoint.choices;
-
             this.summary = plotPoint.summary;
+            this.context = plotPoint.context;
             this.playerChanges = plotPoint.playerChanges;
             this.npcChanges = plotPoint.npcChanges;
         }

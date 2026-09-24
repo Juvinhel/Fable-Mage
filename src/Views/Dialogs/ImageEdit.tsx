@@ -18,11 +18,11 @@ namespace Views.Dialogs
     function buildImageEditDialog(image: string, prompt: string, placeholder?: string)
     {
         return <div class="image-edit">
-            <img class="image" src={image} />
-            <auto-correct-text-area class="text-input" placeholder={placeholder ?? "input text"} lang="en-US">{prompt}</auto-correct-text-area>
-            <button class="generate-button" onclick={(e: Event) => onGenerateImage(e)}>Generate</button>
-            <button class="ok-button" onclick={okClick}>OK</button>
-            <button class="cancel-button" onclick={cancelClick}>Cancel</button>
+            <img class="image" src={ image } />
+            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? "input text" } lang="en-US" value={ prompt } />
+            <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>Generate</button>
+            <button class="ok-button" onclick={ okClick }>OK</button>
+            <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
         </div>;
     }
 

@@ -42,10 +42,11 @@ namespace AI
         public async advancePlot(
             input: string,
             summary: string,
+            context: string,
             plot: Data.Plot,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(summary, plot, world);
+            const prompt: string = await this.advancePlotTemplate(summary, context, plot, world);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)

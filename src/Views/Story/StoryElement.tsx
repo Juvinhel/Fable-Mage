@@ -18,6 +18,7 @@ namespace Views.Story
         public submitButton: HTMLButtonElement;
         private statsFlyOut: StatsFlyOutElement;
 
+        private contextElement: HTMLTextAreaElement;
         private summaryElement: HTMLTextAreaElement;
 
         private build()
@@ -25,18 +26,32 @@ namespace Views.Story
             return <>
                 { this.tabControl = <tab-control>
                     { this.plotTab = <div class="plot-tab" tab-header="Plot">
-                        { this.heading = <h1 class="title"></h1> as HTMLHeadingElement }
+                        { this.heading = <h1 class="title" /> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input"
                             // fix for bottom-anchor not working
                             onsizechanged={ (e: UI.Events.SizeChangedEvent) => { this.statsFlyOut.style.bottom = e.newSize.height + "px"; } }>
-                            { this.userInput = <auto-correct-text-area class="user-input" lang="en-US" ontouchend={ TextEditTouch } placeholder="Write what your character should do. Use [Square Brackets] for Game Master instructions." /> as HTMLAutoCorrectTextArea }
+                            { this.userInput = <auto-correct-text-area
+                                class="user-input"
+                                lang="en-US"
+                                ontouchend={ TextEditTouch }
+                                onkeydown={ (e: KeyboardEvent) => { if (e.key == "Enter" && !e.shiftKey) { e.preventDefault(); this.onSubmit(); } } }
+                                placeholder="Write what your character should do. Use [Square Brackets] for Game Master instructions." /> as HTMLAutoCorrectTextArea }
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
                             <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                         </div>
                         <button class="fly-out-toggle icon-button" onclick={ () => this.statsFlyOut.classList.toggle("maximized") }><color-icon src="img/icons/stat.svg" /></button>
                         { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
+                    <div class="context-tab" tab-header="Context">
+                        <div>
+                            <label>Context</label>
+                            { this.contextElement = <textarea /> as HTMLTextAreaElement }
+                        </div>
+
+                        <div class="anchor" />
+
+                        <div /></div>
                     <div class="summary" tab-header="Summary">
                         <div>
                             <label>Summary</label>
@@ -76,16 +91,16 @@ namespace Views.Story
                 return;
 
             const input = returnalElement.input;
-            const plot: Data.Plot = [];
+            const context = returnalElement.context;
             let remove = false;
             for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
             {
                 if (plotPointElement == returnalElement) remove = true;
                 if (remove) plotPointElement.remove();
-                else plot.push(plotPointElement.export());
             }
 
             this.userInput.value = input ?? "";
+            this.contextElement.value = context ?? "";
 
             this.statsFlyOut.updateCharacters(this.calculateCharacter(this.world.player.name), this.world.npcs ?? []);
         }
@@ -106,7 +121,11 @@ namespace Views.Story
                 let plotPointsToSubmit = plot.length % this.summaryInterval;
                 if (!plotPointsToSubmit) plotPointsToSubmit = this.summaryInterval;
 
-                const result = await AI.Client.advancePlot(input, this.summaryElement.value, plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
+                const result = await AI.Client.advancePlot(
+                    input,
+                    this.summaryElement.value.trim(),
+                    this.contextElement.value.trim(),
+                    plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -115,6 +134,7 @@ namespace Views.Story
                 plotPointElement.text = result.plot;
                 plotPointElement.internal = result.internal;
                 plotPointElement.scenery = "generating image ...";
+                plotPointElement.context = this.contextElement.value.trim() ? this.contextElement.value : null;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
                 //deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea, img") as NodeListOf<any>)
@@ -254,14 +274,15 @@ namespace Views.Story
 
             // plot
             this.plotList.clearChildren();
+            let plotPointElement: PlotPointElement;
             for (const plotPoint of story.plot)
             {
-                const plotPointElement = new PlotPointElement();
+                plotPointElement = new PlotPointElement();
                 plotPointElement.import(plotPoint);
                 this.plotList.appendChild(plotPointElement);
             }
+            this.contextElement.value = plotPointElement?.context ?? "";
 
-            //this.plotTab.append(this.statsFlyOut = new StatsFlyOuttElement());
             this.statsFlyOut.reset();
             this.statsFlyOut.updateCharacters(this.calculateCharacter(world.player.name), this.world.npcs ?? []);
         }

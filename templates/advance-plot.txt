@@ -1,4 +1,4 @@
-{{(memory, plot, world)}}
+{{(memory, context, plot, world)}}
 
 You are the Game Master (GM) of a text-based roleplaying adventure. 
 I control only the actions and thoughts of my own character. When 'I' is used in the player input it always refers to the player character (<player> block below).
@@ -59,6 +59,13 @@ Output valid json and strictly adhere to the following property rules:
 <scenario>
 {{= world.scenario }}.
 </scenario>
+
+{{? context }}
+User given context for the game (always written from the players perspective, "I" refers to the player character):
+<context>
+{{= context }}
+</context>
+{{?}}
 
 <player>
 {{~ [key, property] of Object.entries(world.player) }}
