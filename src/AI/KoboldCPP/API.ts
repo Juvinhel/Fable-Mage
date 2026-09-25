@@ -9,24 +9,11 @@ namespace AI.KoboldCPP
 
         private config: Data.KoboldCPPEndpoint;
 
-        public max_length: number;
-        public max_context_length: number;
+        public true_max_context_length: number;
 
         public async generateGrammar(schema: any): Promise<string>
         {
-            const url = this.config.url + "/api/extra/json_to_grammar";
-
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body = schema;
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
-
-            const response = await fetch(url,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    headers
-                });
+            const response = await this.fetch("/api/extra/json_to_grammar", schema);
 
             const output: { result?: string, success?: boolean, error?: string; } = await this.parseOutput(response);
             if (output.success !== true || typeof output.result != "string")
@@ -37,23 +24,12 @@ namespace AI.KoboldCPP
 
         public async generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>
         {
-            const url = this.config.url + "/api/v1/generate";
             const grammar = schema ? await this.generateGrammar(schema) : null;
-            const p = prompt.trim();
-
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: AI.KoboldCPP.GenerationInput = { prompt: p, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
+            const safeMaxLength = await this.calculateSafeMaxLength(prompt);
+            const body: AI.KoboldCPP.GenerationInput = { prompt: prompt, temperature, max_length: safeMaxLength };
             if (grammar) body.grammar = grammar;
 
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
-
-            const response = await fetch(url,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    headers
-                });
+            const response = await this.fetch("/api/v1/generate", body);
 
             const output: AI.KoboldCPP.GenerationOutput = await this.parseOutput(response);
             if (!output.results?.length || typeof output.results[0].text != "string")
@@ -68,23 +44,13 @@ namespace AI.KoboldCPP
 
         public async generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
-            const url = this.config.url + "/v1/chat/completions";
             const grammar = schema ? await this.generateGrammar(schema) : null;
+            const safeMaxLength = await this.calculateSafeMaxLength(messages);
             const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
-
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: any = { messages: m, temperature, max_length: this.max_length, max_context_length: this.max_context_length };
+            const body: any = { messages: m, temperature, max_length: safeMaxLength };
             if (grammar) body.grammar = grammar;
 
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
-
-            const response = await fetch(url,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    headers
-                });
+            const response = await this.fetch("/v1/chat/completions", body);
 
             const output: AI.KoboldCPP.ChatCompletionOutput = await this.parseOutput(response);
             if (!output.choices?.length || typeof output.choices[0].message?.content != "string")
@@ -99,12 +65,8 @@ namespace AI.KoboldCPP
 
         public async generateImage(prompt: string): Promise<string>
         {
-            const url = this.config.url + "/sdapi/v1/txt2img";
-            const p = prompt.trim();
-
-            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
             const body: AI.KoboldCPP.TXT2ImgInput = {
-                prompt: p,
+                prompt: prompt.trim(),
                 negative_prompt: "",
                 steps: 20,
                 cfg_scale: 7.5,
@@ -113,15 +75,8 @@ namespace AI.KoboldCPP
                 sd_model_checkpoint: "",
                 sampler_name: "default",
             };
-            const headers: HeadersInit = {};
-            if (authorization) headers.authorization = "Basic " + authorization;
 
-            const response = await fetch(url,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    headers
-                });
+            const response = await this.fetch("/sdapi/v1/txt2img", body);
 
             const output: AI.KoboldCPP.TXT2ImgOutput = await this.parseOutput(response);
             if (!output.images?.length || typeof output.images[0] != "string")
@@ -154,34 +109,67 @@ namespace AI.KoboldCPP
             return output;
         }
 
+        private async fetch(path: string, body?: any): Promise<Response>
+        {
+            const url = this.config.url + "/" + path.trimStart("/");
+            const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
+            const headers: HeadersInit = {};
+            if (authorization) headers.authorization = "Basic " + authorization;
+
+            const request: RequestInit = { method: body ? "POST" : "GET", headers: headers };
+            if (body) request.body = typeof body === "string" ? body : JSON.stringify(body);
+            const response = await fetch(url, request);
+            return response;
+        }
+
         public async check(): Promise<void>
         {
             {
-                const url = this.config.url + "/api/v1/config/max_context_length";
-                const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-                const headers: HeadersInit = {};
-                if (authorization) headers.authorization = "Basic " + authorization;
-
-                const response = await fetch(url, { method: "GET", headers });
+                const response = await this.fetch("/api/extra/true_max_context_length");
                 if (!response.ok) throw new Error("Check failed!");
-                const output = await response.json();
-                this.max_context_length = output.value;
+                const data = await response.json();
+                // KoboldCPP typically returns an object like { value: 24576 } or a direct number depending on version
+                this.true_max_context_length = data.value || data.max_context || 24576;
             }
+        }
 
+        private async calculateSafeMaxLength(prompt: string | Message[], desiredMaxLength = 1024, safetyBuffer = 64)
+        {
+            const promptTokenCount = await this.fetchTokenCount(prompt);
+            // 1. Calculate the absolute remaining space in the context window
+            const availableSpace = this.true_max_context_length - promptTokenCount - safetyBuffer;
+
+            // 2. If the prompt is too large and leaves no room, fallback to a minimum safe token count (e.g., 64)
+            if (availableSpace <= 0)
+                throw new Error("Warning: Prompt is nearing or exceeding the context limit!");
+
+            // 3. Return the smaller of your desired length vs the actual available space
+            return Math.min(desiredMaxLength, availableSpace);
+        }
+
+        private async fetchTokenCount(prompt: string | Message[])
+        {
+            try
             {
-                const url = this.config.url + "/api/v1/config/max_length";
-                const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-                const headers: HeadersInit = {};
-                if (authorization) headers.authorization = "Basic " + authorization;
+                if (typeof prompt !== "string")
+                {
+                    prompt = prompt.map(msg =>
+                    {
+                        return `<|im_start|>${ msg.role }\n${ msg.content }<|im_end|>\n`;
+                    }).join("");
+                    prompt += "<|im_start|>assistant\n";
+                }
 
-                const response = await fetch(url, { method: "GET", headers });
-                if (!response.ok) throw new Error("Check failed!");
-                const output = await response.json();
-                this.max_length = output.value;
+                const response = await this.fetch("/api/extra/tokencount", { prompt });
+                if (!response.ok) throw new Error(`HTTP error! status: ${ response.status }`);
+                const data = await response.json();
+                return data.value || data.token_count || 0;
             }
-
-            //TODO: remove
-            this.max_length = 12288;
+            catch (error)
+            {
+                console.error("Failed to count tokens via API:", error);
+                throw error;
+            }
         }
     };
 }
