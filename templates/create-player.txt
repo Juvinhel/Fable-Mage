@@ -4,6 +4,7 @@ You are an expert character designer. Generate a fictional character profile for
 Remember the character lives in the world provided in the 'scenario' block. 
 When the world refers to a character as "I", it addresses the player character you are creating.
 Use the information provided by the user.
+Do not use markdown.
 
 World Rules to follow:
 {{= world.rules }}

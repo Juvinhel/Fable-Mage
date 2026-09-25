@@ -6,6 +6,7 @@ Your job is to analyze the latest game log and extract only the information that
 This will be stored in a vector database for future semantic retrieval.
 Discard trivial dialogue, flavor description, standard combat rounds, and temporary actions.
 Each object must represent a distinct, highly relevant memory worth storing.
+Do not use markdown.
 
 Format each memory object with these fields:
 1. "category": (Choose from: World, Character, Quest, Lore)

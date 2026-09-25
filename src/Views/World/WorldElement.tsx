@@ -16,7 +16,6 @@ namespace Views.World
         private versionInput: UI.Elements.SemanticVersionInput;
         private matureContentInput: HTMLInputElement;
         private descriptionInput: HTMLAutoCorrectTextArea;
-        private authorStyleInput: HTMLAutoCorrectTextArea;
         private scenarioInput: HTMLAutoCorrectTextArea;
         private rulesInput: HTMLAutoCorrectTextArea;
         private tagsInput: HTMLMultiSelect;
@@ -69,10 +68,6 @@ namespace Views.World
                 </div>
                 <div tab-header="Details" class="world-tab details-tab">
                     <div>
-                        <div>
-                            <label>Author style:</label>
-                            { this.authorStyleInput = <auto-correct-text-area lang="en-US" class="author-style-input single-line" value="" ontouchend={ TextEditTouch } placeholder="How the ai should style their narrative" /> as HTMLAutoCorrectTextArea }
-                        </div>
                         <div>
                             <label>Scenario:</label>
                             { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" /> as HTMLAutoCorrectTextArea }
@@ -291,16 +286,14 @@ namespace Views.World
 
             try
             {
-                const output = await AI.Client.createWorld(result);
-                this.titleInput.value = output.title;
-                this.authorStyleInput.value = output["author-style"];
-                this.scenarioInput.value = output.scenario;
-                this.rulesInput.value = output.rules;
+                this.scenarioInput.value = await AI.Client.createScenario(result);
+                const { rules, protagonist } = await AI.Client.createWorld(result, this.scenarioInput.value);
+                this.rulesInput.value = rules;
 
                 await Promise.all([
                     this.createCoverImage(),
-                    this.extractOverview(),
-                    this.createPlayerUsingAI(output.protagonist)]);
+                    this.createMetadata(),
+                    this.createPlayerUsingAI(protagonist)]);
             }
             catch (error)
             {
@@ -319,6 +312,23 @@ namespace Views.World
                 this.previousGenerateCoverPrompt = prompt;
                 const image = await AI.Client.getImage(prompt);
                 this.coverImage.setAttribute("src", image);
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+        }
+
+        private async createMetadata()
+        {
+            try
+            {
+                const world = this.export();
+                const result = await AI.Client.createMetadata(Data.knownTags.map(x => x.value), world);
+                this.titleInput.value = result.title;
+                this.descriptionInput.value = result.description;
+                this.matureContentInput.checked = !!result.mature;
+                this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => result.tags.includes(x.value));
             }
             catch (error)
             {
@@ -382,22 +392,6 @@ namespace Views.World
             return new Blob([bytes], { type: mime });
         }
 
-        private async extractOverview()
-        {
-            try
-            {
-                const world = this.export();
-                const result = await AI.Client.extractOverview(Data.knownTags.map(x => x.value), world);
-                this.descriptionInput.value = result.description;
-                this.matureContentInput.checked = !!result.mature;
-                this.tagsInput.checkedOptions = this.tagsInput.options.filter(x => result.selected_tags.includes(x.value));
-            }
-            catch (error)
-            {
-                UI.Dialog.error(error);
-            }
-        }
-
         private previousCreateProloguePrompt;
         private async onWritePrologueUsingAI()
         {
@@ -436,7 +430,7 @@ namespace Views.World
 
         public clearWorld(): void
         {
-            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", "author-style": "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
         }
 
         public async startStory()
@@ -473,7 +467,6 @@ namespace Views.World
                 "version": this.versionInput.value.trim(),
                 "mature": this.matureContentInput.checked,
                 "description": this.descriptionInput.value.trim(),
-                "author-style": this.authorStyleInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
                 "rules": this.rulesInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.export(),
@@ -510,7 +503,6 @@ namespace Views.World
             this.versionInput.value = world.version ?? "1.0";
             this.matureContentInput.checked = world.mature ?? false;
             this.descriptionInput.value = world.description ?? "";
-            this.authorStyleInput.value = world["author-style"];
             this.scenarioInput.value = world.scenario;
             this.rulesInput.value = world.rules;
 

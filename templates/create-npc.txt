@@ -3,6 +3,7 @@
 You are an expert character designer. Generate a fictional character profile for a non player character based on the description in the user input.
 Remember the character lives in the world provided in the 'scenario' block but the character is NOT the main character.
 When the world refers to a character as "I", it addresses the player character NOT the character you are creating.
+Do not use markdown.
 
 World Rules to follow:
 {{= world.rules }}

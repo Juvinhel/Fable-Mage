@@ -91,7 +91,7 @@ namespace AI.Gemini
 
             const output: any = await response.json();
             if (!response.ok || output.error) throw new Error(output.error?.message ?? "Gemini request failed.");
-            
+
             return this.extractText(output);
         }
 
@@ -135,6 +135,7 @@ namespace AI.Gemini
                     headers
                 });
 
+            if (!response.ok) throw new Error("Gemini request failed.");
             const output: any = await response.json();
             if (output.error) throw new Error(output.error.message);
 

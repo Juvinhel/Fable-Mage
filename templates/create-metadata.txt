@@ -2,6 +2,7 @@
 
 Act as a world-indexing and editorial assistant for a text adventure database.
 Analyze the world context and return the three requested JSON fields. Each field has a different purpose; do not mix their contents.
+Do not use markdown.
 
 [ALLOWED TAGS POOL]
 {{= allowed_tags_list.join(", ")}}
@@ -10,15 +11,12 @@ Analyze the world context and return the three requested JSON fields. Each field
 {{= world.scenario}}
 {{= world.rules}}
 
-[WORLD TITLE]
-{{= world.title }}
-
 [OUTPUT FIELD RULES]
+title:
+- Clear, evocative title of the narrative
+- Keep it short and memorable
 
-world_title:
-- A string containing the world's title exactly as provided.
-
-selected_tags:
+tags:
 - A JSON array containing zero to eight strings.
 - Every string must be copied exactly from the ALLOWED TAGS POOL, including spelling and capitalization.
 - Include a tag only when it is a direct, core, and undeniable component of the world's scenario or rules.

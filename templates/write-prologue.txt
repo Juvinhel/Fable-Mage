@@ -5,7 +5,7 @@ Write a prologue for this text-based adventure.
 Use the scenario described in the 'scenario' block and the player character described in the 'player' block. 
 When 'I' is used in the player input it always refers to the player character (<player> block below).
 Use the user input to determine what should happen in the prologue.
-Your writing style should be: {{= world["author-style"] }}.
+Do not use markdown.
 
 Character Stat Rules:
 "appearance": A brief description of visual appearance of the character. Include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.). Include build and stature

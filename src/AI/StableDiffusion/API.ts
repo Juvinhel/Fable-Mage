@@ -29,7 +29,8 @@ namespace AI.StableDiffusion
                     body: JSON.stringify(body),
                     headers
                 });
-            const contentType = response.headers.get('Content-Type');
+            if (!response.ok) throw new Error("Stable Diffusion request failed!");
+            const contentType = response.headers.get("Content-Type");
             let dataURI;
             switch (contentType.toLowerCase())
             {

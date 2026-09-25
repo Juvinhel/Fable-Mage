@@ -140,15 +140,25 @@ namespace AI
             return obj.description;
         }
 
-        public async createWorld(input: string): Promise<{
-            "title": string,
-            "scenario": string,
-            "author-style": string,
+        public async createScenario(input: string): Promise<string>
+        {
+            const prompt = await this.createScenarioTemplate();
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: input }
+            ];
+
+            const result = await this.runTextRequest("createScenario", messages, 0.7);
+
+            return result;
+        }
+
+        public async createWorld(input: string, scenario: string): Promise<{
             "rules": string,
             "protagonist": string;
         }>
         {
-            const prompt = await this.createWorldTemplate();
+            const prompt = await this.createWorldTemplate(scenario);
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
@@ -156,7 +166,6 @@ namespace AI
 
             const result = await this.runTextRequest("createWorld", messages, 0.5, this.worldSchema);
             const obj = this.parseJSON(result);
-
             return obj;
         }
 
@@ -175,17 +184,16 @@ namespace AI
             return obj.description;
         }
 
-        public async extractOverview(allowedTags: string[], world: Data.World): Promise<{ description: string, selected_tags: string[], mature: boolean; }>
+        public async createMetadata(allowedTags: string[], world: Data.World): Promise<{ title: string; description: string; tags: string[]; mature: boolean; }>
         {
-            const prompt: string = await this.extractOverviewTemplate(allowedTags, world);
+            const prompt: string = await this.createMetadataTemplate(allowedTags, world);
 
             const messages: Message[] = [
                 { role: "system", content: prompt }
             ];
 
-            const result = await this.runTextRequest("extractOverview", messages, 0.3, this.overviewSchema);
-            const obj = this.parseJSON(result);
-            return obj;
+            const result = await this.runTextRequest("createMetadata", messages, 0.3, this.metadataSchema);
+            return this.parseJSON(result);
         }
 
         public async createPlayer(
@@ -259,5 +267,31 @@ namespace AI
             const prompt = await this.getImageTemplate(description);
             return await this.runImageRequest("getImage", prompt);
         }
+
+        //public async createWorldRules(input: string): Promise<string>
+        //{
+        //    const prompt = await this.createWorldTemplate.createRulesTemplate();
+        //    const messages: Message[] = [
+        //        { role: "system", content: prompt },
+        //        { role: "user", content: input }
+        //    ];
+        //
+        //    const result = await this.runTextRequest("createWorldRules", messages, 0.3);
+        //
+        //    return result;
+        //}
+        //
+        //public async createWorldTitle(input: string): Promise<string>
+        //{
+        //    const prompt = await this.createWorldTemplate.createTitleTemplate();
+        //    const messages: Message[] = [
+        //        { role: "system", content: prompt },
+        //        { role: "user", content: input }
+        //    ];
+        //
+        //    const result = await this.runTextRequest("createWorldTitle", messages, 0.3);
+        //
+        //    return result;
+        //}
     }();
 }

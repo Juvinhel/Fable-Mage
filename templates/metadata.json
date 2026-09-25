@@ -1,11 +1,17 @@
 {
     "type": "object",
+    "required": [
+        "title",
+        "tags",
+        "mature",
+        "description"
+    ],
     "properties": {
-        "world_title": {
+        "title": {
             "type": "string",
             "description": "The title of the world scenario."
         },
-        "selected_tags": {
+        "tags": {
             "type": "array",
             "items": {
                 "type": "string"
@@ -20,11 +26,5 @@
             "type": "string",
             "description": "An end-user-facing blurb of one or two short sentences highlighting the world's setting, premise, and central appeal without major spoilers."
         }
-    },
-    "required": [
-        "world_title",
-        "selected_tags",
-        "mature",
-        "description"
-    ]
+    }
 }

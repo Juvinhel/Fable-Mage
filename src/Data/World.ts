@@ -7,7 +7,6 @@ namespace Data
             version: string;
             mature: boolean;
             description: string;
-            "author-style": string;
             scenario: string;
             rules: string;
             stats?: Stat[];
