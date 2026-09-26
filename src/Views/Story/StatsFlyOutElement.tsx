@@ -36,42 +36,55 @@ namespace Views.Story
             this.storyElement = this.closest("my-story");
         }
 
-        private updateOrCreateCharacterCard(character: Data.Character)
+        public get characters(): Data.Character[]
         {
-            let characterCard: HTMLElement;
-            for (const element of this.children)
-                if (element.getAttribute("data-name") == character.name)
-                {
-                    characterCard = element as HTMLElement;
-                    break;
-                }
-
-            if (characterCard)
+            const ret: Data.Character[] = [];
+            for (const characterCard of this.contentContainer.children)
             {
-                const img = characterCard.querySelector("img");
-                img.src = character.portrait;
-                for (const [key, value] of Object.entries(character))
-                    if (key != "name" && key != "portrait")
-                    {
-                        const label = characterCard.querySelector("label[for=\"" + key + "\"]");
-                        const span = label.nextElementSibling as HTMLSpanElement;
-                        span.textContent = value;
-                    }
+                const name = characterCard.querySelector("h3").textContent;
+                const portrait = characterCard.querySelector("img").getAttribute("src");
+
+                const character: Data.Character = { name, portrait } as any;
+                for (const label of characterCard.querySelectorAll("label"))
+                {
+                    const span = label.nextElementSibling as HTMLSpanElement;
+                    character[label.htmlFor] = span.textContent;
+                }
+                ret.push(character);
             }
-            else
-                this.contentContainer.append(this.buildCharacterCard(character));
+            return ret;
+        }
+
+        public set characters(list: Data.Character[])
+        {
+            while (list.length < this.contentContainer.children.length) this.contentContainer.lastChild.remove();
+
+            for (let i = 0; i < list.length; ++i)
+            {
+                let characterCard = this.contentContainer.children[i];
+                if (!characterCard)
+                {
+                    characterCard = this.buildCharacterCard(list[i]) as HTMLElement;
+                    this.contentContainer.append(characterCard);
+                }
+                else
+                {
+                    const heading = characterCard.querySelector("h3");
+                    heading.textContent = list[i].name;
+                    const img = characterCard.querySelector("img");
+                    img.src = list[i].portrait;
+                    for (const label of characterCard.querySelectorAll("label"))
+                    {
+                        const span = label.nextElementSibling as HTMLSpanElement;
+                        span.textContent = list[i][label.htmlFor];
+                    }
+                }
+            }
         }
 
         public reset()
         {
             this.contentContainer.clearChildren();
-        }
-
-        public updateCharacters(player: Data.Character, npcs: Data.Character[])
-        {
-            this.updateOrCreateCharacterCard(player);
-            for (const npc of npcs)
-                this.updateOrCreateCharacterCard(npc);
         }
     }
 

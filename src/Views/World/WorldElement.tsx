@@ -114,7 +114,7 @@ namespace Views.World
                     <div />
                 </div>
                 <div tab-header="Prologue" class="prologue-tab">
-                    { this.prologueContainer = <div /> as HTMLDivElement }
+                    { this.prologueContainer = <div>{ new PrologueElement() }</div> as HTMLDivElement }
 
                     <div class="anchor" />
 
@@ -370,8 +370,22 @@ namespace Views.World
 
             try
             {
-                await Data.Nexus.API.createWorld(upload);
-                UI.Dialog.message({ title: "Uploaded", text: "Sucessfully uploaded to Nexus." });
+                const matchingWorlds = await Data.Nexus.API.findWorldsByTitle(upload.title);
+                const accountId = upload.userid.trim().toLocaleLowerCase();
+                const ownedWorld = matchingWorlds.find(x => x.userid.trim().toLocaleLowerCase() == accountId);
+                if (matchingWorlds.some(x => x.userid.trim().toLocaleLowerCase() != accountId))
+                    throw new Error("Another user has already uploaded a world with this title.");
+
+                if (ownedWorld)
+                {
+                    await Data.Nexus.API.updateWorld(ownedWorld.id, upload);
+                    UI.Dialog.message({ title: "Updated", text: "Sucessfully updated your world on Nexus." });
+                }
+                else
+                {
+                    await Data.Nexus.API.createWorld(upload);
+                    UI.Dialog.message({ title: "Uploaded", text: "Sucessfully uploaded to Nexus." });
+                }
             }
             catch (error)
             {
@@ -414,6 +428,11 @@ namespace Views.World
                 prologueElement.text = prologue.plot;
                 prologueElement.internal = prologue.internal;
                 this.prologueContainer.appendChild(prologueElement); HTMLButtonElement;
+
+                //TODO: better typings
+                const plot = [{ text: prologue.plot, location: location, time: prologue.time, internal: prologue.internal }] as unknown as Data.Plot;
+                const choices = await AI.Client.offerChoices(plot, world as unknown as Data.Story);
+                prologueElement.choices = choices;
             }
             catch (error)
             {

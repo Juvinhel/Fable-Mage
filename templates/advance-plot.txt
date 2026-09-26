@@ -21,7 +21,7 @@ Strict Core Rules:
 11. Perspective & Attribution: Maintain strict perspective clarity. The narrator refers to the player as "You". NPCs speak in first-person ("I") or third-person when appropriate, but never confuse the player's internal thoughts and actions with the NPC's spoken dialogue.
 
 Character Stat Rules:
-"appearance": A brief description of visual appearance of the character. Include hair color and style, eye color, skin color and perceived gender (e.g. "male", "androgynous", ect.). Include build and stature
+"appearance": A brief description of visual appearance of the character. Including hair color and style, eye color, skin color and perceived gender.
 "personality": A list of key personality traits. Comma-separated adjectives.
 "traits": A list of key skills and competencies. Comma-separated adjectives.
 "background": A summarized origin story.
@@ -52,9 +52,12 @@ Output valid json and strictly adhere to the following property rules:
 - Do not write a description, sentence, atmospheric detail, landmarks, or actions here
 
 ### internal
-- Private continuity tracker for hidden motivations, active NPC goals and plans, out-of-sight changes, and progression clocks.
-- Update ongoing goals and clocks as events advance. Record what relevant NPCs are trying to do next and what concrete conditions could change their plans; carry these forward and let their consequences enter the plot when appropriate. Do not treat a hint as a substitute for an NPC actually acting.
-- Keep concise and direct, usually 50 to 120 words. Do not repeat public plot details unless needed to track their hidden implications.
+- Private, change-only continuity log for hidden motivations, NPC plans, out-of-sight environmental changes, events, and progression goals or clocks.
+- Put every entry on a separate line in exactly this format: `Subject: Changes`; never combine multiple entries on one line. Since `internal` is a JSON string, represent each line break as the escaped newline `\n` so the output remains valid JSON.
+- For a character's change, use that character's name as the subject. For environmental changes use `Environment`; for event changes use `Events`; for goal or progression-clock changes use `Goals`.
+- Under a character's name, record any change in their motives or intentions, bodily state (such as injury, illness, fatigue, or transformation), include changed physical appearance (such as straightened hair or new clothes) or planned actions. Include plans when newly formed, changed, begun, completed, or abandoned; do not repeat a plan that remains unchanged.
+- Record only changes that occur or become newly known this turn. Never restate unchanged facts, ongoing conditions, or plans merely because they remain true. If nothing relevant changes in a category, omit that entry.
+- Be concise and direct. When useful, include hidden implications, but do not repeat public plot details unless they changed something the player does not know.
 
 <scenario>
 {{= world.scenario }}.

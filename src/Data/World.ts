@@ -33,5 +33,6 @@ namespace Data
         time: string;
         text: string;
         internal: string;
+        choices: string[];
     };
 }

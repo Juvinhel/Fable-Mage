@@ -76,7 +76,9 @@ namespace Views.Story
             </>;
         }
 
-        private world: Data.World;
+        private scenario: string;
+        private rules: string;
+        private stats?: Data.Stat[];
 
         private refreshTurnCount()
         {
@@ -90,19 +92,22 @@ namespace Views.Story
             if (!await UI.Dialog.confirm({ title: "Load from here?", text: "Do you really want to load from this point?\nAll plot-points afterwards will be lost." }))
                 return;
 
-            const input = returnalElement.input;
-            const context = returnalElement.context;
+            const nextPlotElement = returnalElement.nextElementSibling as PlotPointElement;
+
+            const input = nextPlotElement?.input;
+            const context = nextPlotElement?.context ?? returnalElement.context;
+            const characters = [nextPlotElement.player, ...(nextPlotElement.npcs ?? [])];
+
             let remove = false;
             for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
             {
-                if (plotPointElement == returnalElement) remove = true;
+                if (plotPointElement == returnalElement) { remove = true; continue; }
                 if (remove) plotPointElement.remove();
             }
 
             this.userInput.value = input ?? "";
             this.contextElement.value = context ?? "";
-
-            this.statsFlyOut.updateCharacters(this.calculateCharacter(this.world.player.name), this.world.npcs ?? []);
+            this.statsFlyOut.characters = characters;
         }
 
         private summaryInterval = 3;
@@ -114,8 +119,6 @@ namespace Views.Story
             {
                 const input = this.userInput.value.trim();
                 const story = this.export();
-                story.player = this.calculateCharacter(story.player.name);
-                for (let i = 0; i < story.npcs?.length; ++i) story.npcs[i] = this.calculateCharacter(story.npcs[i].name);
 
                 const plot = story.plot;
                 let plotPointsToSubmit = plot.length % this.summaryInterval;
@@ -125,7 +128,8 @@ namespace Views.Story
                     input,
                     this.summaryElement.value.trim(),
                     this.contextElement.value.trim(),
-                    plot.slice((this.summaryInterval + plotPointsToSubmit) * -1), this.world);
+                    plot.slice((this.summaryInterval + plotPointsToSubmit) * -1),
+                    story);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -143,10 +147,10 @@ namespace Views.Story
                 this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
-                    this.updateSummary(),
-                    this.updatePlayer(plotPointElement),
-                    this.createAmbientImage(plotPointElement.text, this.world, plotPointElement),
-                    this.offerChoices(plot, plotPointElement, this.world)]);
+                    this.updateSummary(story),
+                    this.updateCharacters(story, plotPointElement),
+                    this.createAmbientImage(plotPointElement.text, story, plotPointElement),
+                    this.offerChoices(plot, plotPointElement, story)]);
 
                 this.userInput.value = "";
             }
@@ -158,11 +162,11 @@ namespace Views.Story
             App.stopThinking();
         }
 
-        private async createAmbientImage(scene: string, world: Data.World, plotPointElement: PlotPointElement)
+        private async createAmbientImage(scene: string, story: Data.Story, plotPointElement: PlotPointElement)
         {
             try
             {
-                const prompt = await AI.Client.describeScene(scene, world);
+                const prompt = await AI.Client.describeScene(scene, story);
                 plotPointElement.scenery = prompt;
                 const image = await AI.Client.getImage(prompt);
                 plotPointElement.image = image;
@@ -173,13 +177,13 @@ namespace Views.Story
             }
         }
 
-        private async offerChoices(plot: Data.Plot, plotPointElement: PlotPointElement, world: Data.World)
+        private async offerChoices(plot: Data.Plot, plotPointElement: PlotPointElement, story: Data.Story)
         {
             try
             {
                 plot = [...plot];
                 plot.push(plotPointElement.export());
-                const choices = await AI.Client.offerChoices(plot, world);
+                const choices = await AI.Client.offerChoices(plot, story);
                 plotPointElement.choices = choices;
                 // deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
@@ -191,7 +195,7 @@ namespace Views.Story
             }
         }
 
-        private async updateSummary()
+        private async updateSummary(story: Data.Story)
         {
             const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
 
@@ -204,53 +208,66 @@ namespace Views.Story
                 const turnsToSummarize = plotPointElementsSinceLastSummary.slice(0, -1 * this.summaryInterval);
 
                 this.summaryElement.value =
-                    turnsToSummarize.last().summary = await AI.Client.summarizeProgression(plotPointElements[lastSummaryIndex]?.summary ?? "", turnsToSummarize.map(x => x.export()), this.world);
+                    turnsToSummarize.last().summary = await AI.Client.summarizeProgression(plotPointElements[lastSummaryIndex]?.summary ?? "", turnsToSummarize.map(x => x.export()), story);
             }
         }
 
-        private calculateCharacter(name: string): Data.Character
+        private async updateCharacters(story: Data.Story, plotPointElement: PlotPointElement)
         {
-            let character = this.world.player.name == name ? this.world.player : this.world.npcs?.first(x => x.name == name);
-            if (!character) return;
-            character = JSON.clone(character);
-            for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
+            const characters = this.statsFlyOut.characters;
+
+            {   // update player
+                const player = characters[0];
+                const characterUpdate = await AI.Client.updateCharacter(player, story, [plotPointElement.export()]);
+
+                for (const [key, value] of Object.entries(characterUpdate))
+                    if (value)
+                    {
+                        // new properties are not allowed
+                        if (!(key in player)) { UI.Dialog.error({ title: "AI Error", text: "AI introduced new character property (" + key + ": \"" + value + "\")!" }); continue; }
+                        player[key] = value;
+                    }
+
+                plotPointElement.player = player;
+            }
+
             {
-                let diff: Partial<Data.Character>;
-                if (plotPointElement.playerChanges?.name == name)
-                    diff = plotPointElement.playerChanges;
-                if (plotPointElement.npcChanges)
-                    for (const npc of plotPointElement.npcChanges)
-                        if (npc.name == name)
-                            diff = npc;
-
-                if (diff) for (const [key, value] of Object.entries(diff))
-                    if (key != "name")
-                        character[key] = value;
+                //TODO: implement npc updates
+                plotPointElement.npcs = characters.slice(1);
+                if (plotPointElement.npcs.length == 0) plotPointElement.npcs = null;
             }
-            return character;
-        }
 
-        private async updatePlayer(plotPointElement: PlotPointElement)
-        {
-            const player = this.world.player;
-            const character = await AI.Client.updateCharacter(player, this.world, [plotPointElement.export()]);
-            if (Object.entries(character).length > 1)
-                plotPointElement.playerChanges = character;
-
-            this.statsFlyOut.updateCharacters(this.calculateCharacter(player.name), this.world.npcs ?? []);
+            this.statsFlyOut.characters = characters;
         }
 
         public async startStory(world: Data.World)
         {
-            const story = JSON.clone(world) as Data.Story;
-            story.plot = [];
-            if (story.prologue) story.plot.push(story.prologue);
-            this.import(story);
+            this.heading.textContent = world.title;
+            this.scenario = world.scenario;
+            this.rules = world.rules;
+            this.stats = world.stats;
+
+            if (world.prologue)
+            {
+                const plotPoint = JSON.clone(world.prologue) as Data.PlotPoint;
+                plotPoint.player = JSON.clone(world.player);
+                plotPoint.npcs = JSON.clone(world.npcs);
+                const plotPointElement = new PlotPointElement();
+                plotPointElement.import(plotPoint);
+                this.plotList.appendChild(plotPointElement);
+            }
+
+            this.statsFlyOut.reset();
+            this.statsFlyOut.characters = [world.player, ...(world.npcs ?? [])];
         }
 
         public export(): Data.Story
         {
-            const story = JSON.clone(this.world) as Data.Story;
+            const story = {} as Data.Story;
+            story.title = this.heading.textContent;
+            story.scenario = this.scenario;
+            story.rules = this.rules;
+            story.stats = this.stats;
 
             const plot: Data.Plot = [];
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
@@ -265,12 +282,11 @@ namespace Views.Story
 
         public import(story: Data.Story)
         {
-            const world = JSON.clone(story);
-            delete world.plot;
-
             // world
-            this.heading.textContent = world.title;
-            this.world = world;
+            this.heading.textContent = story.title;
+            this.scenario = story.scenario;
+            this.rules = story.rules;
+            this.stats = story.stats;
 
             // plot
             this.plotList.clearChildren();
@@ -284,7 +300,7 @@ namespace Views.Story
             this.contextElement.value = plotPointElement?.context ?? "";
 
             this.statsFlyOut.reset();
-            this.statsFlyOut.updateCharacters(this.calculateCharacter(world.player.name), this.world.npcs ?? []);
+            this.statsFlyOut.characters = [plotPointElement.player, ...(plotPointElement.npcs ?? [])];
         }
 
         public async save()

@@ -14,7 +14,7 @@ Key facts to keep in memory are:
 - Critical world lore, secrets, or vital discoveries recently uncovered.
 - Explicitly remove anything already resolved, failed, or no longer relevant.
 
-{{? memory}}
+{{? previous_memory }}
 <compressed_memory>
 {{= previous_memory }}
 </compressed_memory>

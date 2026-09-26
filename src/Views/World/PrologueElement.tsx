@@ -11,7 +11,8 @@ namespace Views.World
 
         private locationElement: HTMLSpanElement;
         private timeElement: HTMLSpanElement;
-        private textElement: HTMLSpanElement;
+        private textElement: HTMLAutoCorrectTextArea;
+        private choicesListElement: HTMLDivElement;
 
         private build()
         {
@@ -20,20 +21,23 @@ namespace Views.World
                     { this.locationElement = <span class="location" /> as HTMLSpanElement }
                     { this.timeElement = <span class="time" /> as HTMLSpanElement }
                 </div>
-                <div class="plot-text">
-                    <span class="turn">1</span>
-                    { this.textElement = <span class="text" /> as HTMLSpanElement }
-                </div>
+                <span>Text:</span>
+                { this.textElement = <auto-correct-text-area class="plot-text" /> as HTMLAutoCorrectTextArea }
+                <span>Choices:</span>
+                { this.choicesListElement = <div class="choices-list">
+                    <auto-correct-text-area class="choice single-line" />
+                    <auto-correct-text-area class="choice single-line" />
+                    <auto-correct-text-area class="choice single-line" />
+                </div> as HTMLDivElement }
                 <div class="actions">
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
-                    <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
                 </div>
             </>;
         }
         public input: string;
 
-        public get text(): string { return this.textElement.textContent; }
-        public set text(value: string) { this.textElement.textContent = value; }
+        public get text(): string { return this.textElement.value; }
+        public set text(value: string) { this.textElement.value = value; }
 
         public get location(): string { return this.locationElement.textContent; }
         public set location(value: string) { this.locationElement.textContent = value; }
@@ -43,10 +47,16 @@ namespace Views.World
 
         public internal: string;
 
-        private async onEdit()
+        public get choices(): string[] { return [...this.choicesListElement.querySelectorAll("auto-correct-text-area")].map(x => (x as HTMLAutoCorrectTextArea).value); }
+        public set choices(values: string[])
         {
-            const result = await Views.Dialogs.TextEdit("Edit Plot-Point", this.text);
-            if (result) this.text = result;
+            this.choicesListElement.clearChildren();
+            if (values)
+                for (const choice of values)
+                {
+                    const textArea = <auto-correct-text-area class="choice single-line" value={ choice } />;
+                    this.choicesListElement.append(textArea);
+                }
         }
 
         private async onShowInternal()
@@ -55,13 +65,14 @@ namespace Views.World
             if (result) this.internal = result;
         }
 
-        public export(): Data.PlotPoint
+        public export(): Data.Prologue
         {
             const prologue: Data.Prologue = {
                 location: this.location,
                 time: this.time,
                 text: this.text,
                 internal: this.internal,
+                choices: this.choices,
             };
             return prologue;
         }
@@ -72,6 +83,7 @@ namespace Views.World
             this.time = prologue.time;
             this.text = prologue.text;
             this.internal = prologue.internal;
+            this.choices = prologue.choices;
         }
     }
 

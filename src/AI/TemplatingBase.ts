@@ -11,7 +11,6 @@ namespace AI
             this.metadataSchema = await this.getSchema("metadata");
             this.characterSchema = await this.getSchema("character");
             this.characterUpdateSchema = await this.getSchema("character-update");
-            this.memorySchema = await this.getSchema("memory");
 
             this.advancePlotTemplate = await this.getTemplate("advance-plot");
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
@@ -29,7 +28,6 @@ namespace AI
             this.createNPCTemplate = await this.getTemplate("create-npc");
             this.updateCharacterTemplate = await this.getTemplate("update-character");
             this.describeCharacterTemplate = await this.getTemplate("describe-character");
-            this.archiveMemoryTemplate = await this.getTemplate("archive-memory");
         }
 
         private compiler = new Durian.Template.Compiler();
@@ -102,9 +100,6 @@ namespace AI
         public updateCharacterTemplate: (...params: any[]) => Promise<string>;
 
         public describeCharacterTemplate: (...params: any[]) => Promise<string>;
-
-        public memorySchema: Schema;
-        public archiveMemoryTemplate: (...params: any[]) => Promise<string>;
 
         public parseJSON(input: string): any
         {

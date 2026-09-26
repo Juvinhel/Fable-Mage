@@ -17,6 +17,7 @@ namespace Data.Nexus
     };
 
     export type WorldRecord = {
+        id: number;
         title: string;
         description: string;
         username: string;

@@ -44,9 +44,9 @@ namespace AI
             summary: string,
             context: string,
             plot: Data.Plot,
-            world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
+            story: Data.Story): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(summary, context, plot, world);
+            const prompt: string = await this.advancePlotTemplate(summary, context, plot, story);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -83,9 +83,9 @@ namespace AI
 
         public async offerChoices(
             plot: Data.Plot,
-            world: Data.World): Promise<string[]>
+            story: Data.Story): Promise<string[]>
         {
-            const prompt: string = await this.offerChoicesTemplate(plot, world);
+            const prompt: string = await this.offerChoicesTemplate(plot, story);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -105,9 +105,9 @@ namespace AI
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
         }
 
-        public async summarizeProgression(previousSummary: string, plot: Data.Plot, world: Data.World): Promise<string>
+        public async summarizeProgression(previousSummary: string, plot: Data.Plot, story: Data.Story): Promise<string>
         {
-            const prompt: string = await this.summarizeProgressionTemplate(previousSummary, plot.length + 1, world);
+            const prompt: string = await this.summarizeProgressionTemplate(previousSummary, plot.length + 1, story);
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
             {
@@ -125,9 +125,9 @@ namespace AI
 
         public async describeScene(
             scene: string,
-            world: Data.World): Promise<string>
+            story: Data.Story): Promise<string>
         {
-            const prompt: string = await this.describeSceneTemplate(world);
+            const prompt: string = await this.describeSceneTemplate(story);
 
             const messages: Message[] = [
                 { role: "system", content: prompt },
@@ -226,9 +226,9 @@ namespace AI
             return obj as Data.Character;
         }
 
-        public async updateCharacter(character: Data.Character, world: Data.World, plot: Data.Plot): Promise<Partial<Data.Character>>
+        public async updateCharacter(character: Data.Character, story: Data.Story, plot: Data.Plot): Promise<Partial<Data.Character>>
         {
-            const prompt = await this.updateCharacterTemplate(character, world);
+            const prompt = await this.updateCharacterTemplate(character, story);
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
             {

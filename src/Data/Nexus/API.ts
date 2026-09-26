@@ -37,6 +37,31 @@ namespace Data.Nexus
             };
         }
 
+        public async findWorldsByTitle(title: string): Promise<WorldRecord[]>
+        {
+            const normalizedTitle = title.trim().toLocaleLowerCase();
+            if (!normalizedTitle)
+                return [];
+
+            const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
+            url.searchParams.set("user_field_names", "true");
+            url.searchParams.set("filters", JSON.stringify({
+                filter_type: "AND",
+                filters: [{ field: "title", type: "contains", value: title.trim() }]
+            }));
+
+            const worlds: WorldRecord[] = [];
+            let next: string | null = url.toString();
+            while (next)
+            {
+                const result: BaserowListResult = await this.request(next);
+                worlds.push(...result.results.map(x => this.toWorldRecord(x)));
+                next = result.next;
+            }
+
+            return worlds.filter(x => x.title.trim().toLocaleLowerCase() == normalizedTitle);
+        }
+
         public async getWorldFile(world: WorldRecord): Promise<Data.World>
         {
             if (!world.fileUrl)
@@ -47,6 +72,16 @@ namespace Data.Nexus
 
         public async createWorld(world: WorldUpload): Promise<void>
         {
+            await this.saveWorld(world);
+        }
+
+        public async updateWorld(id: number, world: WorldUpload): Promise<void>
+        {
+            await this.saveWorld(world, id);
+        }
+
+        private async saveWorld(world: WorldUpload, id?: number): Promise<void>
+        {
             const cover = await this.uploadFile(world.cover, "cover.png");
             const file = await this.uploadFile(world.file, "world.json");
             const fields = {
@@ -54,10 +89,10 @@ namespace Data.Nexus
                 cover: [{ name: cover.name }],
                 file: [{ name: file.name }]
             };
-            const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
+            const url = new URL("/api/database/rows/table/" + worldTable + "/" + (id === undefined ? "" : id + "/"), nexusURL);
             url.searchParams.set("user_field_names", "true");
             await this.request(url.toString(), {
-                method: "POST",
+                method: id === undefined ? "POST" : "PATCH",
                 headers: {
                     "Content-Type": "application/json"
                 },

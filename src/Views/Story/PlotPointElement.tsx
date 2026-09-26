@@ -36,7 +36,7 @@ namespace Views.Story
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
                     <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
                 </div>
-                { this.choicesListElement = <div class="choices-list"></div> as HTMLDivElement }
+                { this.choicesListElement = <div class="choices-list" /> as HTMLDivElement }
             </>;
         }
 
@@ -88,8 +88,8 @@ namespace Views.Story
         // user provided context
         public context: string;
 
-        public playerChanges: Partial<Data.Character>;
-        public npcChanges: Partial<Data.Character>[];
+        public player: Data.Character;
+        public npcs?: Data.Character[];
 
         private async setChoice(choice: string)
         {
@@ -132,15 +132,15 @@ namespace Views.Story
                 time: this.time,
                 text: this.text,
                 internal: this.internal,
-            };
+            } as Data.PlotPoint;
             if (this.scenery) plotPoint.scenery = this.scenery;
             if (this.input) plotPoint.input = this.input;
             if (this.image) plotPoint.image = this.image;
             if (this.choices && this.choices.length > 0) plotPoint.choices = this.choices;
             if (this.summary) plotPoint.summary = this.summary;
             if (this.context) plotPoint.context = this.context;
-            if (this.playerChanges) plotPoint.playerChanges = this.playerChanges;
-            if (this.npcChanges && this.npcChanges.length > 0) plotPoint.npcChanges = this.npcChanges;
+            plotPoint.player = this.player;
+            if (this.npcs && this.npcs.length > 0) plotPoint.npcs = this.npcs;
 
             return plotPoint;
         }
@@ -157,8 +157,8 @@ namespace Views.Story
             this.choices = plotPoint.choices;
             this.summary = plotPoint.summary;
             this.context = plotPoint.context;
-            this.playerChanges = plotPoint.playerChanges;
-            this.npcChanges = plotPoint.npcChanges;
+            this.player = plotPoint.player;
+            this.npcs = plotPoint.npcs;
         }
     }
 
