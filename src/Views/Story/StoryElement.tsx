@@ -129,7 +129,9 @@ namespace Views.Story
                     this.summaryElement.value.trim(),
                     this.contextElement.value.trim(),
                     plot.slice((this.summaryInterval + plotPointsToSubmit) * -1),
-                    story);
+                    story,
+                    this.statsFlyOut.characters[0],
+                    this.statsFlyOut.characters.slice(1));
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -183,7 +185,11 @@ namespace Views.Story
             {
                 plot = [...plot];
                 plot.push(plotPointElement.export());
-                const choices = await AI.Client.offerChoices(plot, story);
+                const choices = await AI.Client.offerChoices(
+                    plot,
+                    this.contextElement.value.trim(),
+                    story,
+                    this.statsFlyOut.characters[0],);
                 plotPointElement.choices = choices;
                 // deactivate all inputs
                 for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
@@ -218,7 +224,7 @@ namespace Views.Story
 
             {   // update player
                 const player = characters[0];
-                const characterUpdate = await AI.Client.updateCharacter(player, story, [plotPointElement.export()]);
+                const characterUpdate = await AI.Client.updateCharacter(player, story, true, [plotPointElement.export()]);
 
                 for (const [key, value] of Object.entries(characterUpdate))
                     if (value)

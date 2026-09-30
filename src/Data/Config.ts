@@ -10,7 +10,7 @@ namespace Data
     export interface Config
     {
         nexusAccount?: NexusAccount;
-        textAPI: KoboldCPPEndpoint | GeminiEndpoint;
+        textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | StableDiffusionEndpoint;
     }
 
@@ -27,6 +27,14 @@ namespace Data
         name: "Gemini",
         api_key: string;
         model?: string;
+    }
+
+    export interface AnythingLLMEndpoint
+    {
+        name: "AnythingLLM";
+        url: string;
+        api_key: string;
+        workspace: string;
     }
 
     export interface StableDiffusionEndpoint

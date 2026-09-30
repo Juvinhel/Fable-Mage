@@ -1,11 +1,19 @@
 {{(previous_memory, turn, world)}}
+{{
+   function format(text) {
+      return text?.replace(">", "→").replace("<", "←") ?? "";
+   }
+}}
 
-We are at turn {{= turn }}. 
 You are a precise memory compression engine. Review the conversation history below and produce an updated COMPRESSED SESSION MEMORY under 500 tokens.
-The player character's name is "{{= world.player.name}}".
-The narrator in the input refers to the player as "You".
-The "compressed_memory" block contains older turns content compressed into a short summary.
-Do not use markdown.
+
+Constraints:
+- We are at turn {{= turn }}. 
+- The player character's name is "{{= world.player.name}}".
+- The narrator in the input refers to the player as "You".
+- Do not use markdown.
+- Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
+- Begin your response directly with the updated memory text. Do not include introductory phrases.
 
 Key facts to keep in memory are:
 - Do not track character status, stats, or inventory (these are tracked separately).
@@ -14,8 +22,9 @@ Key facts to keep in memory are:
 - Critical world lore, secrets, or vital discoveries recently uncovered.
 - Explicitly remove anything already resolved, failed, or no longer relevant.
 
-{{? previous_memory }}
-<compressed_memory>
-{{= previous_memory }}
+<compressed_memory description="Older turns content compressed into a short summary">
+{{= format(previous_memory) }}
 </compressed_memory>
-{{?}}
+
+Task:
+Synthesize the new conversation turns with the previous compressed memory, updating active plot lines and relationships while discarding resolved information.

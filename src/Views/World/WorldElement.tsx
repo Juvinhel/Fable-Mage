@@ -48,7 +48,7 @@ namespace Views.World
                         </div>
                         <div>
                             <label>Description:</label>
-                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" /> as HTMLAutoCorrectTextArea }
+                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Tags:</label>
@@ -70,11 +70,11 @@ namespace Views.World
                     <div>
                         <div>
                             <label>Scenario:</label>
-                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" /> as HTMLAutoCorrectTextArea }
+                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Rules:</label>
-                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" /> as HTMLAutoCorrectTextArea }
+                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Tracked Stats:</label>
@@ -214,7 +214,7 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const player = await AI.Client.createPlayer(prompt, world);
+                const player = await AI.Client.createPlayer(prompt, world, world.npcs);
                 this.playerCharacterCard.import(player);
                 await this.createPortrait(player, this.playerCharacterCard);
             }
@@ -242,7 +242,7 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const npc = await AI.Client.createNPC(result, world);
+                const npc = await AI.Client.createNPC(result, world, world.player, world.npcs);
 
                 const npccard = new CharacterCardElement();
                 npccard.import(npc);
@@ -431,7 +431,7 @@ namespace Views.World
 
                 //TODO: better typings
                 const plot = [{ text: prologue.plot, location: location, time: prologue.time, internal: prologue.internal }] as unknown as Data.Plot;
-                const choices = await AI.Client.offerChoices(plot, world as unknown as Data.Story);
+                const choices = await AI.Client.offerChoices(plot, "", world as unknown as Data.Story, world.player);
                 prologueElement.choices = choices;
             }
             catch (error)

@@ -25,6 +25,7 @@ namespace Views.Settings
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
                                     <option value="KoboldCPP">KoboldCPP</option>
                                     <option value="Gemini">Gemini</option>
+                                    <option value="AnythingLLM">AnythingLLM</option>
                                 </select> as HTMLSelectElement }
                             </div>
                             <div>
@@ -73,6 +74,9 @@ namespace Views.Settings
                     break;
                 case "Gemini":
                     this.textAPISelect.after(this.geminiTextAPI(App.config.textAPI as any));
+                    break;
+                case "AnythingLLM":
+                    this.textAPISelect.after(this.anythingLLMTextAPI(App.config.textAPI as any));
                     break;
             }
         }
@@ -129,6 +133,24 @@ namespace Views.Settings
                         <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
                         <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                     </select>
+                </div>
+            </div>;
+        }
+
+        private anythingLLMTextAPI(config: Partial<Data.AnythingLLMEndpoint>)
+        {
+            return <div class="anythingllm-api">
+                <div>
+                    <label>URL:</label>
+                    <input name="url" type="text" value={ config.url ?? "" } />
+                </div>
+                <div>
+                    <label>API Key:</label>
+                    <input name="api_key" type="password" value={ config.api_key ?? "" } />
+                </div>
+                <div>
+                    <label>Workspace:</label>
+                    <input name="workspace" type="text" value={ config.workspace ?? "" } />
                 </div>
             </div>;
         }

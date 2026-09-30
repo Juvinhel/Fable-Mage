@@ -22,7 +22,7 @@ namespace Views.World
                     { this.timeElement = <span class="time" /> as HTMLSpanElement }
                 </div>
                 <span>Text:</span>
-                { this.textElement = <auto-correct-text-area class="plot-text" /> as HTMLAutoCorrectTextArea }
+                { this.textElement = <auto-correct-text-area class="plot-text large" /> as HTMLAutoCorrectTextArea }
                 <span>Choices:</span>
                 { this.choicesListElement = <div class="choices-list">
                     <auto-correct-text-area class="choice single-line" />

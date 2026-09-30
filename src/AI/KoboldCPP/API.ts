@@ -63,6 +63,51 @@ namespace AI.KoboldCPP
             return result.message.content;
         }
 
+        public async generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>
+        {
+            const grammar = schema ? await this.generateGrammar(schema) : null;
+            const safeMaxLength = await this.calculateSafeMaxLength(messages);
+            const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
+            const body: any = { messages: m, temperature, max_length: safeMaxLength, stream: true };
+            if (grammar) body.grammar = grammar;
+
+            const response = await this.fetch("/v1/chat/completions", body);
+            if (!response.ok) await this.parseOutput(response);
+
+            let result = "";
+            let finishReason: string | null = null;
+            await AI.readServerSentEvents(response, data =>
+            {
+                if (data == "[DONE]") return;
+                let output: any;
+                try
+                {
+                    output = JSON.parse(data);
+                }
+                catch
+                {
+                    throw new Error("KoboldCPP returned an invalid streaming response.");
+                }
+
+                if (output.error) throw new Error(typeof output.error == "string" ? output.error : output.error.message ?? output.error.msg ?? "KoboldCPP request failed.");
+                const choice = output.choices?.[0];
+                if (!choice) return;
+                if (typeof choice.finish_reason == "string") finishReason = choice.finish_reason;
+                const chunk = choice.delta?.content;
+                if (typeof chunk != "string") return;
+
+                result += chunk;
+                onChunk(chunk);
+            });
+
+            if (!result && finishReason === null)
+                throw new Error("KoboldCPP returned an invalid streaming response.");
+            if (finishReason == "length") throw new Error("The max_length of request was to low!");
+            if (finishReason != null && finishReason != "stop") console.log("AI stopped early", finishReason);
+
+            return result;
+        }
+
         public async generateImage(prompt: string): Promise<string>
         {
             const body: AI.KoboldCPP.TXT2ImgInput = {

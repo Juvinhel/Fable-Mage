@@ -1,8 +1,9 @@
 {{(character)}}
 
-Act as a Stable Diffusion prompt engineer for a adventure RPG.
-The user input contains the description of and character of a fictional world.
+Act as a Stable Diffusion prompt engineer for an adventure RPG.
+The user input contains the description of a character of a fictional world.
 Do not use markdown.
+Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 TASK
 1. Extract core visuals of the character

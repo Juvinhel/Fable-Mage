@@ -1,29 +1,41 @@
 {{(scenario)}}
+{{
+   function format(text) {
+      return text?.replace(">", "→").replace("<", "←") ?? "";
+   }
+}}
 
 Act as a concise, structured world-builder for a text adventure engine.
 Create rules and a description of the protagonist based on the user input.
 Expand the user's ideas with useful context, but do not invent unrelated themes or facts.
-Do not write a story or opening narration; this is only world-building and system design.
-Do not use markdown.
 
-Inner workings, lore, concepts:
-<scenario>
-{{= scenario }}
-</scenario>
+Constraints:
+- Do not write a story or opening narration; this is only world-building and system design.
+- Do not use markdown.
+- Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
-Output valid json and strictly adhere to the following property rules:
+<input_data_fields>
+   <scenario description="The primary plot setup or current situational premise">
+   {{= format(scenario) }}.
+   </scenario>
+</input_data_fields>
 
-### rules
-- Operational rules, pacing guidance, and behavioral directives for the AI narrator
-- Keep instructions practical and specific for gameplay use
-- Include the focus of the narrative in clear terms, e.g. "erotic descriptions", "romantic interests", "character development", "action scenes", "political intrigue"
-- What variables & world states should the game master track
-- Define the writing style of the narrator (comma separated list of adjectives)
-- 250 words at most
-- Write as directives, not prose
+### Output Constraints & Rules
+Your response must be a single, valid JSON object containing exactly two top-level keys: "rules" and "protagonist". Ensure the JSON is syntactically valid (escape any necessary internal quotes or use single continuous strings without raw line breaks). Adhere to the following rules for each field:
 
-### protagonist
-- Short but useful description of the main character
-- Include visual identity, personality, core skills, and background
-- Keep it under 200 words
-- Write as actionable character facts for later AI use
+**"rules" Field Rules:**
+- Operational rules, pacing guidance, and behavioral directives for the AI narrator written as directives (not prose).
+- Keep instructions practical and specific for gameplay use (max 250 words).
+- Include the focus of the narrative (e.g., action scenes, political intrigue, exploration).
+- Define what variables and world states the game master should track.
+- Define the writing style of the narrator as a comma-separated list of adjectives.
+
+**`protagonist` Field Rules:**
+- Short, actionable description of the main character (max 200 words).
+- Include visual identity, personality, core skills (incorporating the Token Creation ability), and background.
+
+### JSON Schema Template
+{
+   "rules": "Operational world rules and tracking variables...",
+   "protagonist": "Protagonist description and core skills..."
+}

@@ -16,6 +16,7 @@ Rules:
   - Ensure these anchor tags appear at the absolute beginning of the character description to override model training bias.
 - When the narrative refers to the character as "You" it always refers to "{{= world.player.name }}".
 - Output ONLY valid JSON with a single "description" key. No markdown code blocks, no explanations.
+- Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 <characters>
 {{= world.player.name }}: {{= world.player.appearance }}

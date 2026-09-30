@@ -5,48 +5,16 @@ namespace AI
 {
     export const Client = new class extends TemplatingBase
     {
-        private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
-        {
-            const startedAt = Date.now();
-            try
-            {
-                const result = await textAPI.generateInteractions(messages, temperature, schema);
-                Logger.logRequest(methodName, messages, result, "message", startedAt);
-                return result;
-            }
-            catch (error)
-            {
-                const message = error instanceof Error ? error.message : String(error);
-                Logger.logRequest(methodName, messages, message, "error", startedAt);
-                throw error;
-            }
-        }
-
-        private async runImageRequest(methodName: string, prompt: string): Promise<string>
-        {
-            const startedAt = Date.now();
-            try
-            {
-                const result = await imageAPI.generateImage(prompt);
-                Logger.logRequest(methodName, [{ role: "user", content: prompt }], result, "message", startedAt);
-                return result;
-            }
-            catch (error)
-            {
-                const message = error instanceof Error ? error.message : String(error);
-                Logger.logRequest(methodName, [{ role: "user", content: prompt }], message, "error", startedAt);
-                throw error;
-            }
-        }
-
         public async advancePlot(
             input: string,
             summary: string,
             context: string,
             plot: Data.Plot,
-            story: Data.Story): Promise<{ plot: string; time: string; location: string; internal: string; }>
+            story: Data.Story,
+            player: Data.Character,
+            npcs: Data.Character[]): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(summary, context, plot, story);
+            const prompt: string = await this.advancePlotTemplate(summary, context, plot, story, player, npcs);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -83,9 +51,11 @@ namespace AI
 
         public async offerChoices(
             plot: Data.Plot,
-            story: Data.Story): Promise<string[]>
+            context: string,
+            story: Data.Story,
+            player: Data.Character): Promise<string[]>
         {
-            const prompt: string = await this.offerChoicesTemplate(plot, story);
+            const prompt: string = await this.offerChoicesTemplate(plot, context, story, player);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -198,7 +168,8 @@ namespace AI
 
         public async createPlayer(
             input: string,
-            world: Data.World): Promise<Data.Character>
+            world: Data.World,
+            npcs: Data.Character[]): Promise<Data.Character>
         {
             const prompt = await this.createPlayerTemplate(world);
             const messages: Message[] = [
@@ -213,9 +184,11 @@ namespace AI
 
         public async createNPC(
             input: string,
-            world: Data.World): Promise<Data.Character>
+            world: Data.World,
+            player: Data.Character,
+            npcs: Data.Character[]): Promise<Data.Character>
         {
-            const prompt = await this.createNPCTemplate(world);
+            const prompt = await this.createNPCTemplate(world, player, npcs);
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
@@ -226,9 +199,9 @@ namespace AI
             return obj as Data.Character;
         }
 
-        public async updateCharacter(character: Data.Character, story: Data.Story, plot: Data.Plot): Promise<Partial<Data.Character>>
+        public async updateCharacter(character: Data.Character, story: Data.Story, isPlayer: boolean, plot: Data.Plot): Promise<Partial<Data.Character>>
         {
-            const prompt = await this.updateCharacterTemplate(character, story);
+            const prompt = await this.updateCharacterTemplate(character, story, isPlayer);
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
             {
@@ -268,30 +241,55 @@ namespace AI
             return await this.runImageRequest("getImage", prompt);
         }
 
-        //public async createWorldRules(input: string): Promise<string>
-        //{
-        //    const prompt = await this.createWorldTemplate.createRulesTemplate();
-        //    const messages: Message[] = [
-        //        { role: "system", content: prompt },
-        //        { role: "user", content: input }
-        //    ];
-        //
-        //    const result = await this.runTextRequest("createWorldRules", messages, 0.3);
-        //
-        //    return result;
-        //}
-        //
-        //public async createWorldTitle(input: string): Promise<string>
-        //{
-        //    const prompt = await this.createWorldTemplate.createTitleTemplate();
-        //    const messages: Message[] = [
-        //        { role: "system", content: prompt },
-        //        { role: "user", content: input }
-        //    ];
-        //
-        //    const result = await this.runTextRequest("createWorldTitle", messages, 0.3);
-        //
-        //    return result;
-        //}
+        private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
+        {
+            const startedAt = Date.now();
+            try
+            {
+                const result = await textAPI.generateInteractions(messages, temperature, schema);
+                Logger.logRequest(methodName, messages, result, "message", startedAt);
+                return result;
+            }
+            catch (error)
+            {
+                const message = error instanceof Error ? error.message : String(error);
+                Logger.logRequest(methodName, messages, message, "error", startedAt);
+                throw error;
+            }
+        }
+
+        private async runTextRequestStream(methodName: string, messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>
+        {
+            const startedAt = Date.now();
+            try
+            {
+                const result = await textAPI.generateInteractionsStream(messages, temperature, onChunk, schema);
+                Logger.logRequest(methodName, messages, result, "message", startedAt);
+                return result;
+            }
+            catch (error)
+            {
+                const message = error instanceof Error ? error.message : String(error);
+                Logger.logRequest(methodName, messages, message, "error", startedAt);
+                throw error;
+            }
+        }
+
+        private async runImageRequest(methodName: string, prompt: string): Promise<string>
+        {
+            const startedAt = Date.now();
+            try
+            {
+                const result = await imageAPI.generateImage(prompt);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], result, "message", startedAt);
+                return result;
+            }
+            catch (error)
+            {
+                const message = error instanceof Error ? error.message : String(error);
+                Logger.logRequest(methodName, [{ role: "user", content: prompt }], message, "error", startedAt);
+                throw error;
+            }
+        }
     }();
 }

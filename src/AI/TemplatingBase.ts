@@ -52,7 +52,7 @@ namespace AI
         private sanitizePrompt(input: string): string
         {
             input = input.trim();
-            input = input.replaceAll(/\n[^\S\r\n]+/, "\n");
+            //input = input.replaceAll(/\n[^\S\r\n]+/, "\n");
             input = input.replaceAll(/\n{2,}<\//, "\n</");
             while (input.includes("\n\n\n"))
                 input = input.replace("\n\n\n", "\n\n");
@@ -103,7 +103,38 @@ namespace AI
 
         public parseJSON(input: string): any
         {
-            const obj = JSON.parse(input.replaceAll("```json", "").replaceAll("```", ""));
+            let json = input.trim();
+            try
+            {
+                const obj = JSON.parse(json);
+                this.cleanUpJSON(obj);
+                return obj;
+            }
+            catch { }
+
+            const jsonBlocks = [...input.matchAll(/```json\s*([\s\S]*?)```/gi)];
+            const finalBlock = jsonBlocks[jsonBlocks.length - 1];
+            if (finalBlock && !input.slice(finalBlock.index + finalBlock[0].length).trim())
+                json = finalBlock[1].trim();
+            else
+            {
+                let extractedJSON: string;
+                for (let index = input.length - 1; index >= 0; index--)
+                {
+                    if (input[index] != "{" && input[index] != "[") continue;
+                    const candidate = input.slice(index).trim();
+                    try
+                    {
+                        JSON.parse(candidate);
+                        extractedJSON = candidate;
+                        break;
+                    }
+                    catch { }
+                }
+                json = extractedJSON ?? input.replaceAll("```json", "").replaceAll("```", "").trim();
+            }
+
+            const obj = JSON.parse(json);
             this.cleanUpJSON(obj);
             return obj;
         }

@@ -1,5 +1,6 @@
 /// <reference path="KoboldCPP/API.ts" />
 /// <reference path="Gemini/API.ts" />
+/// <reference path="AnythingLLM/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
 
 namespace AI
@@ -13,6 +14,7 @@ namespace AI
         {
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
             case "Gemini": return new AI.Gemini.API(config);
+            case "AnythingLLM": return new AI.AnythingLLM.API(config);
         }
     }
 
@@ -30,7 +32,54 @@ namespace AI
     {
         generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>;
         generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>;
+        generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>;
         check(): Promise<void>;
+    }
+
+    export async function readServerSentEvents(response: Response, onData: (data: string) => void): Promise<void>
+    {
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error("The response did not include a readable stream.");
+
+        const decoder = new TextDecoder();
+        let buffer = "";
+        const dispatch = (event: string) =>
+        {
+            const data = event.split("\n")
+                .filter(line => line.startsWith("data:"))
+                .map(line => line.slice(5).replace(/^ /, ""))
+                .join("\n");
+            if (data) onData(data);
+        };
+
+        try
+        {
+            while (true)
+            {
+                const { done, value } = await reader.read();
+                buffer += decoder.decode(value, { stream: !done }).replace(/\r\n/g, "\n");
+                let boundary: number;
+                while ((boundary = buffer.indexOf("\n\n")) >= 0)
+                {
+                    dispatch(buffer.slice(0, boundary));
+                    buffer = buffer.slice(boundary + 2);
+                }
+                if (done)
+                {
+                    if (buffer) dispatch(buffer);
+                    break;
+                }
+            }
+        }
+        catch (error)
+        {
+            await reader.cancel();
+            throw error;
+        }
+        finally
+        {
+            reader.releaseLock();
+        }
     }
 
     export interface ImageAPI

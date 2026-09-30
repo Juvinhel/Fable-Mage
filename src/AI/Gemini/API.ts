@@ -95,6 +95,85 @@ namespace AI.Gemini
             return this.extractText(output);
         }
 
+        public async generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>
+        {
+            const url = "https://generativelanguage.googleapis.com/v1beta/interactions";
+            const systemInstruction = messages
+                .filter(x => x.role == "system")
+                .map(x => x.content.trim())
+                .join("\n\n");
+            const model = this.config.model ?? "gemini-3.8-flash";
+            const input = messages.filter(x => x.role != "system").map(x =>
+            {
+                let type: string = x.role;
+                if (type == "user") type = "user_input";
+                if (type == "assistant") type = "model_output";
+                return { type, content: x.content };
+            });
+            const body: any = {
+                input,
+                model,
+                store: false,
+                stream: true,
+                generation_config: { temperature }
+            };
+            if (systemInstruction)
+                body.system_instruction = systemInstruction;
+            if (schema)
+            {
+                body.response_format = {
+                    type: "text",
+                    mime_type: "application/json",
+                    schema
+                };
+            }
+
+            const response = await fetch(url,
+                {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-goog-api-key": this.config.api_key
+                    }
+                });
+
+            if (!response.ok)
+            {
+                let message = "Gemini request failed.";
+                try
+                {
+                    const output = await response.json();
+                    message = output.error?.message ?? message;
+                }
+                catch { }
+                throw new Error(message);
+            }
+
+            let result = "";
+            await AI.readServerSentEvents(response, data =>
+            {
+                if (data == "[DONE]") return;
+                let event: any;
+                try
+                {
+                    event = JSON.parse(data);
+                }
+                catch
+                {
+                    throw new Error("Gemini returned an invalid streaming response.");
+                }
+
+                if (event.event_type == "error")
+                    throw new Error(event.error?.message ?? "Gemini request failed.");
+                if (event.event_type != "step.delta" || event.delta?.type != "text" || typeof event.delta.text != "string") return;
+
+                result += event.delta.text;
+                onChunk(event.delta.text);
+            });
+            return result;
+        }
+
         private extractText(output: any): string
         {
             const steps = output.steps ?? [];

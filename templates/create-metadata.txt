@@ -1,39 +1,62 @@
 {{(allowed_tags_list, world)}}
+{{
+   function format(text) {
+      return text?.replace(">", "→").replace("<", "←") ?? "";
+   }
+}}
 
 Act as a world-indexing and editorial assistant for a text adventure database.
-Analyze the world context and return the three requested JSON fields. Each field has a different purpose; do not mix their contents.
-Do not use markdown.
+
+Constraints:
+- Analyze the world context and return the four requested JSON fields. Each field has a different purpose; do not mix their contents.
+- Do not use markdown.
+- Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 [ALLOWED TAGS POOL]
 {{= allowed_tags_list.join(", ")}}
 
-[WORLD LORE & RULES CONTEXT]
-{{= world.scenario}}
-{{= world.rules}}
+<input_data_fields>
+   <scenario description="The primary plot setup or current situational premise">
+   {{= format(world.scenario) }}.
+   </scenario>
 
-[OUTPUT FIELD RULES]
-title:
+   <world_rules description="Strict world rules.">
+   {{= format(world.rules) }}.
+   </world_rules>
+</input_data_fields>
+
+### Output Constraints & Rules
+Your response must be a single, valid JSON object containing exactly four top-level keys: `"title"`, `"tags"`, `"mature"`, and `"description"`. Adhere to the following rules for each field:
+
+**`title` Field Rules:**
 - Clear, evocative title of the narrative
 - Keep it short and memorable
 
-tags:
+**`tags` Field Rules:**
 - A JSON array containing zero to eight strings.
 - Every string must be copied exactly from the ALLOWED TAGS POOL, including spelling and capitalization.
 - Include a tag only when it is a direct, core, and undeniable component of the world's scenario or rules.
 - Do not invent tags, paraphrase tags, add explanations, or include weak associations.
 - Prefer fewer highly relevant tags over filling all eight slots.
 
-mature:
+**`mature` Field Rules:**
 - A boolean value of true or false.
 - Set to true only when the world clearly includes overtly adult, sexual, explicit, or otherwise mature content.
 - Set to false for non-explicit, family-friendly, or generally non-mature content.
 - Do not guess based on isolated keywords; use the full present context.
 
-description:
+**`description` Field Rules:**
 - A single string of 3 - 4 short sentences written for the end user.
 - Make it enticing by highlighting the world's setting, premise, and central appeal.
 - Use concrete details from the world context, but do not reveal major twists or spoilers.
 - Do not mention tags, this task, the AI, the rules, or the output format.
 - Do not write a world-building analysis, a list, or generic promotional filler.
 
-Return valid JSON matching the requested schema. Put only the title in world_title, only the exact matching tag strings in selected_tags, only the boolean maturity flag in mature, and only the end-user-facing blurb in description.
+### JSON Schema Template
+```json
+{
+  "title": "Title of the world",
+  "tags": ["tag 1", "tag 2"],
+  "mature": true,
+  "description": "Description for the end user."
+}

@@ -1,59 +1,92 @@
-{{(world)}}
+{{(world, player, npcs)}}
+{{
+   const characterStatRules = {
+      "name": "Name of the character",
+      "appearance": "A brief description of visual appearance of the character. Including hair color and style, eye color, skin color and perceived gender.",
+      "personality": "A list of key personality traits. Comma-separated adjectives.",
+      "traits": "A list of key skills and competencies. Comma-separated adjectives.",
+      "background": "A summarized origin story."
+   };
+   if(world.stats)
+      for(const statRule of world.stats)
+         characterStatRules[statRule.name] = statRule.description;
+
+   function format(text) {
+      return text?.replace(">", "→").replace("<", "←") ?? "";
+   }
+}}
 
 You are an expert character designer. Generate a fictional character profile for a non player character based on the description in the user input.
-Remember the character lives in the world provided in the 'scenario' block but the character is NOT the main character.
-When the world refers to a character as "I", it addresses the player character NOT the character you are creating.
-Do not use markdown.
+
+Constraints:
+- The character is NOT the main character.
+- When the world refers to a character as "I", it addresses the player character NOT the character you are creating.
+- Do not use markdown.
+- Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 World Rules to follow:
 {{= world.rules }}
 
-Output valid json and strictly adhere to the following property rules:
-### name
+<input_data_fields>
+   <scenario description="The primary plot setup or current situational premise">
+   {{= format(world.scenario) }}.
+   </scenario>
+
+   <player description="The character profile of the character I control">
+   {{~ [key, property] of Object.entries(player) }}
+   {{? key != "portrait" }}
+   <{{= key }} description="{{= format(characterStatRules[key]) }}">{{= format(property) }}</{{= key }}>
+   {{?}}
+   {{~}}
+   </player>
+   
+   {{? npcs }}
+   {{~ npc of npcs }}
+   <npc description="Non player character that is relevant to the overall story">
+   {{~ [key, property] of Object.entries(npc) }}
+   {{? key != "portrait" }}
+   <{{= key }} description="{{= format(characterStatRules[key]) }}">{{= format(property) }}</{{= key }}>
+   {{?}}
+   {{~}}
+   </npc>
+
+   {{~}}
+   {{?}}
+</input_data_fields>
+
+### Output Constraints & Rules
+Your response must be a single, valid JSON object containing exactly five top-level keys: `"name"`, `"appearance"`, `"personality"`, `"traits"`, and `"background"`. Adhere to the following rules for each field:
+
+**`name` Field Rules:**
 - Name of the character
 - Include title of the character if present
 
-### appearance
+**`appearance` Field Rules:**
 - A comma-separated list of visual appearance tags optimized for image generation (avoid full sentences).
 - Mandatory: MUST start with the perceived gender and anatomical baseline tags (e.g., "male", "female", or "androgynous, slender man/woman").
 - Include rough age description (e.g., "young adult", "middle-aged", "senior").
 - Include build, stature, hair color/style, eye color, and skin color/complexion.
 - Max 60 words.
 
-### personality
+**`personality` Field Rules:**
 - A list of key personality traits.
 - 3 to 5 comma-separated adjectives.
 
-### traits
+**`traits` Field Rules:**
 - A list of key skills and competencies.
 - 3 to 5 comma-separated adjectives.
 
-### background
+**`background` Field Rules:**
 - A summarized origin story.
 - If the character is LGBTQ+, include it naturally in the background story, noting whether it is open or secret.
 - Between 50 and 200 words.
 
-<scenario>
-{{= world.scenario }}.
-</scenario>
-
-<other_character>
-{{~ [key, property] of Object.entries(world.player) }}
-{{? key != "portrait" }}
-"{{= key }}": {{= property }}
-{{?}}
-{{~}}
-</other_character>
-
-{{? world.npcs }}
-{{~ npc of world.npcs }}
-<other_character>
-{{~ [key, property] of Object.entries(npc) }}
-{{? key != "portrait" }}
-"{{= key }}": {{= property }}
-{{?}}
-{{~}}
-</other_character>
-
-{{~}}
-{{?}}
+### JSON Schema Template
+```json
+{
+  "name": "The name of the character",
+  "appearance": "Comma separated list of visual appearance tags",
+  "personality": "Comma separated personality traits",
+  "traits": "Comma separated skills and competencies",
+  "background": "A summarized origin story"
+}
