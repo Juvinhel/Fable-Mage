@@ -293,7 +293,8 @@ namespace Views.World
                 await Promise.all([
                     this.createCoverImage(),
                     this.createMetadata(),
-                    this.createPlayerUsingAI(protagonist)]);
+                    this.createPlayerUsingAI(protagonist),
+                    this.createPrologue("Use this original draft to create a prologue:\n" + result)]);
             }
             catch (error)
             {
@@ -413,13 +414,18 @@ namespace Views.World
             if (!result) return;
             this.previousCreateProloguePrompt = result;
 
+            await this.createPrologue(result);
+        }
+
+        private async createPrologue(prompt: string)
+        {
             App.beginThinking();
 
             try
             {
                 this.prologueContainer.clearChildren();
                 const world = this.export();
-                const prologue = await AI.Client.writePrologue(result, world);
+                const prologue = await AI.Client.writePrologue(prompt, world);
 
                 const prologueElement = new PrologueElement();
                 prologueElement.classList.add("prologue");
