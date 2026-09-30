@@ -142,9 +142,7 @@ namespace Views.Story
                 plotPointElement.scenery = "generating image ...";
                 plotPointElement.context = this.contextElement.value.trim() ? this.contextElement.value : null;
                 this.plotList.appendChild(plotPointElement); HTMLButtonElement;
-                //deactivate all inputs
-                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea, img") as NodeListOf<any>)
-                    button.disabled = true;
+
                 this.tabControl.select("Plot");
                 this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
@@ -191,9 +189,6 @@ namespace Views.Story
                     story,
                     this.statsFlyOut.characters[0],);
                 plotPointElement.choices = choices;
-                // deactivate all inputs
-                for (const button of plotPointElement.querySelectorAll("button, input, select, textarea") as NodeListOf<any>)
-                    button.disabled = true;
             }
             catch (error)
             {

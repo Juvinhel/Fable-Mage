@@ -33,7 +33,7 @@ namespace Views.Dialogs
         const textInput = container.querySelector(".text-input") as HTMLAutoCorrectTextArea;
         const image = container.querySelector(".image") as HTMLImageElement;
 
-        beginThinking(container);
+        App.beginThinking();
 
         try
         {
@@ -45,19 +45,7 @@ namespace Views.Dialogs
             UI.Dialog.error(error);
         }
 
-        stopThinking(container);
-    }
-
-    function beginThinking(element: HTMLElement)
-    {
-        for (const button of element.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
-            button.disabled = true;
-    }
-
-    function stopThinking(element: HTMLElement)
-    {
-        for (const button of element.querySelectorAll("button, input, select, textarea, combo-select") as NodeListOf<any>)
-            button.disabled = false;
+        App.stopThinking();
     }
 
     function okClick(event: Event)

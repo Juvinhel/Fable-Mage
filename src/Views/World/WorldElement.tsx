@@ -247,7 +247,6 @@ namespace Views.World
                 const npccard = new CharacterCardElement();
                 npccard.import(npc);
                 this.npcCardList.appendChild(npccard);
-                App.beginThinking();
 
                 await this.createPortrait(npc, npccard);
             }
