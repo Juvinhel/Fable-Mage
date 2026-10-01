@@ -134,7 +134,7 @@ namespace Views.Settings
             return <div class="gemini-api">
                 <div>
                     <label>API Key:</label>
-                    <input name="api_key" type="text" value={ config.api_key ?? "" } placeholder="Gemini API key" />
+                    <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="Gemini API key" />
                 </div>
                 <div>
                     <label>Model:</label>
