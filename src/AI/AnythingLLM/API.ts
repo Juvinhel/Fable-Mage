@@ -107,6 +107,13 @@ namespace AI.AnythingLLM
 
         public async check(): Promise<void>
         {
+            const models = await this.getModels();
+            if (!models.includes(this.config.workspace))
+                throw new Error("AnythingLLM workspace not found.");
+        }
+
+        public async getModels(): Promise<string[]>
+        {
             const url = this.config.url.replace(/\/+$/, "") + "/api/v1/openai/models";
             const response = await fetch(url,
                 {
@@ -114,8 +121,10 @@ namespace AI.AnythingLLM
                     headers: { "Authorization": "Bearer " + this.config.api_key }
                 });
             const output = await this.parseOutput(response);
-            if (!output.data?.some((model: any) => model.id == this.config.workspace))
-                throw new Error("AnythingLLM workspace not found.");
+            if (!Array.isArray(output.data)) return [];
+            return output.data
+                .map((model: any) => model.id)
+                .filter((id: any): id is string => typeof id == "string");
         }
     }
 }

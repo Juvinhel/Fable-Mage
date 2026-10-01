@@ -142,17 +142,46 @@ namespace Views.Settings
             return <div class="anythingllm-api">
                 <div>
                     <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } />
+                    <input name="url" type="text" value={ config.url ?? "" } onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
                 </div>
                 <div>
                     <label>API Key:</label>
-                    <input name="api_key" type="password" value={ config.api_key ?? "" } />
+                    <input name="api_key" type="password" value={ config.api_key ?? "" } onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
                 </div>
                 <div>
                     <label>Workspace:</label>
-                    <input name="workspace" type="text" value={ config.workspace ?? "" } />
+                    <combo-select name="workspace" type="text" value={ config.workspace ?? "" } />
                 </div>
             </div>;
+        }
+
+        private async refreshAnythingLLMModels(input: HTMLInputElement)
+        {
+            const apiElement = input.closest(".anythingllm-api");
+            const urlInput = apiElement?.querySelector<HTMLInputElement>('input[name="url"]');
+            const apiKeyInput = apiElement?.querySelector<HTMLInputElement>('input[name="api_key"]');
+            const workspaceSelect = apiElement?.querySelector("combo-select") as any;
+            const url = urlInput?.value.trim();
+            const apiKey = apiKeyInput?.value;
+            if (!url || !apiKey?.trim() || !workspaceSelect) return;
+
+            const config: Data.AnythingLLMEndpoint = {
+                name: "AnythingLLM",
+                url,
+                api_key: apiKey,
+                workspace: workspaceSelect.value
+            };
+
+            try
+            {
+                const models = await new AI.AnythingLLM.API(config).getModels();
+                if (urlInput.value.trim() != url || apiKeyInput.value != apiKey) return;
+                workspaceSelect.options = models.map(model => ({ title: model, value: model }));
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
         }
 
         private geminiImageAPI(config: Partial<Data.GeminiEndpoint>)
