@@ -11,7 +11,7 @@ namespace Data
     {
         nexusAccount?: NexusAccount;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint;
-        imageAPI: KoboldCPPEndpoint | GeminiEndpoint | StableDiffusionEndpoint;
+        imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | NoneImageEndpoint;
     }
 
     export interface KoboldCPPEndpoint
@@ -20,6 +20,7 @@ namespace Data
         url: string;
         username?: string;
         password?: string;
+        max_length?: number;
     }
 
     export interface GeminiEndpoint
@@ -43,6 +44,11 @@ namespace Data
         url: string;
         username?: string;
         password?: string;
+    }
+
+    export interface NoneImageEndpoint
+    {
+        name: "None";
     }
 
     const defaultConfig: Config = {

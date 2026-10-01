@@ -23,16 +23,18 @@ namespace Views.Settings
                             <div>
                                 <label>TextAPI:</label>
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
-                                    <option value="KoboldCPP">KoboldCPP</option>
-                                    <option value="Gemini">Gemini</option>
                                     <option value="AnythingLLM">AnythingLLM</option>
+                                    <option value="Gemini">Gemini</option>
+                                    <option value="KoboldCPP">KoboldCPP</option>
                                 </select> as HTMLSelectElement }
                             </div>
                             <div>
                                 <label>ImageAPI:</label>
                                 { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
-                                    <option value="KoboldCPP">KoboldCPP</option>
+                                    <option value="AnythingLLM">AnythingLLM</option>
                                     <option value="Gemini">Gemini</option>
+                                    <option value="KoboldCPP">KoboldCPP</option>
+                                    <option value="None">None</option>
                                     <option value="Stable Diffusion">Stable Diffusion</option>
                                 </select> as HTMLSelectElement }
                             </div>
@@ -94,6 +96,11 @@ namespace Views.Settings
                 case "Gemini":
                     this.imageAPISelect.after(this.geminiImageAPI(App.config.imageAPI as any));
                     break;
+                case "AnythingLLM":
+                    this.imageAPISelect.after(this.anythingLLMTextAPI(App.config.imageAPI as any));
+                    break;
+                case "None":
+                    break;
                 case "Stable Diffusion":
                     this.imageAPISelect.after(this.stableDiffusionAPI(App.config.imageAPI as any));
                     break;
@@ -105,15 +112,19 @@ namespace Views.Settings
             return <div class="koboldcpp-api">
                 <div>
                     <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } />
+                    <input name="url" type="text" value={ config.url ?? "" } placeholder="KoboldCPP server URL" />
                 </div>
                 <div>
                     <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } />
+                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } />
+                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
+                </div>
+                <div>
+                    <label>Max Length:</label>
+                    <input name="max_length" type="number" min="0" value={ config.max_length ?? "" } placeholder="Leave blank for automatic calculation." />
                 </div>
             </div>;
         }
@@ -123,7 +134,7 @@ namespace Views.Settings
             return <div class="gemini-api">
                 <div>
                     <label>API Key:</label>
-                    <input name="api_key" type="text" value={ config.api_key ?? "" } />
+                    <input name="api_key" type="text" value={ config.api_key ?? "" } placeholder="Gemini API key" />
                 </div>
                 <div>
                     <label>Model:</label>
@@ -142,11 +153,11 @@ namespace Views.Settings
             return <div class="anythingllm-api">
                 <div>
                     <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
+                    <input name="url" type="text" value={ config.url ?? "" } placeholder="AnythingLLM server URL" onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
                 </div>
                 <div>
                     <label>API Key:</label>
-                    <input name="api_key" type="password" value={ config.api_key ?? "" } onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
+                    <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="AnythingLLM API key" onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
                 </div>
                 <div>
                     <label>Workspace:</label>
@@ -158,12 +169,12 @@ namespace Views.Settings
         private async refreshAnythingLLMModels(input: HTMLInputElement)
         {
             const apiElement = input.closest(".anythingllm-api");
-            const urlInput = apiElement?.querySelector<HTMLInputElement>('input[name="url"]');
-            const apiKeyInput = apiElement?.querySelector<HTMLInputElement>('input[name="api_key"]');
+            const urlInput = apiElement?.querySelector<HTMLInputElement>("input[name=\"url\"]");
+            const apiKeyInput = apiElement?.querySelector<HTMLInputElement>("input[name=\"api_key\"]");
             const workspaceSelect = apiElement?.querySelector("combo-select") as any;
             const url = urlInput?.value.trim();
-            const apiKey = apiKeyInput?.value;
-            if (!url || !apiKey?.trim() || !workspaceSelect) return;
+            const apiKey = apiKeyInput?.value?.trim();
+            if (!url || !apiKey) return;
 
             const config: Data.AnythingLLMEndpoint = {
                 name: "AnythingLLM",
@@ -189,7 +200,7 @@ namespace Views.Settings
             return <div class="gemini-api">
                 <div>
                     <label>API Key:</label>
-                    <input name="api_key" type="text" value={ config.api_key ?? "" } />
+                    <input name="api_key" type="text" value={ config.api_key ?? "" } placeholder="Gemini API key" />
                 </div>
                 <div>
                     <label>Model:</label>
@@ -206,15 +217,15 @@ namespace Views.Settings
             return <div class="koboldcpp-api">
                 <div>
                     <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } />
+                    <input name="url" type="text" value={ config.url ?? "" } placeholder="KoboldCPP server URL" />
                 </div>
                 <div>
                     <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } />
+                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } />
+                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
                 </div>
             </div>;
         }
@@ -224,15 +235,15 @@ namespace Views.Settings
             return <div class="stable-diffusion-api">
                 <div>
                     <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } />
+                    <input name="url" type="text" value={ config.url ?? "" } placeholder="Stable Diffusion server URL" />
                 </div>
                 <div>
                     <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } />
+                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
                 </div>
                 <div>
                     <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } />
+                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
                 </div>
             </div>;
         }
@@ -244,13 +255,16 @@ namespace Views.Settings
             for (const label of apiElement.querySelectorAll("label"))
             {
                 const input = label.nextElementSibling as HTMLInputElement;
+                const name = input.getAttribute("name");
 
                 let value: any;
                 if (input.type == "number")
-                    value = parseFloat(input.value);
+                    value = input.value == "" ? undefined : parseFloat(input.value);
+                else if (input.type == "checkbox" || input.type == "radio")
+                    value = input.checked;
                 else
                     value = input.value;
-                ret[input.name] = value;
+                ret[name] = value;
             }
             return ret;
         }
@@ -274,10 +288,11 @@ namespace Views.Settings
                 }
                 catch (error)
                 {
+                    console.error(error);
                     throw new Error("Something went wrong with your text api config!");
                 }
 
-                const imageAPIConfig = this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement);
+                const imageAPIConfig: any = this.imageAPISelect.nextElementSibling ? this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement) : {};
                 let imageAPI: AI.ImageAPI;
                 try
                 {
@@ -287,6 +302,7 @@ namespace Views.Settings
                 }
                 catch (error)
                 {
+                    console.error(error);
                     throw new Error("Something went wrong with your image api config!");
                 }
 

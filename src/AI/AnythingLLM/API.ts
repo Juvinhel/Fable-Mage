@@ -1,6 +1,6 @@
 namespace AI.AnythingLLM
 {
-    export class API implements AI.TextAPI
+    export class API implements AI.TextAPI, AI.ImageAPI
     {
         constructor (config: Data.AnythingLLMEndpoint)
         {
@@ -22,6 +22,31 @@ namespace AI.AnythingLLM
             if (typeof result != "string")
                 throw new Error("AnythingLLM returned an invalid chat response.");
             return result;
+        }
+
+        public async generateImage(prompt: string): Promise<string>
+        {
+            const url = this.config.url.replace(/\/+$/, "") + "/api/v1/openai/images/generations";
+            const response = await fetch(url,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + this.config.api_key,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: this.config.workspace,
+                        prompt: prompt.trim(),
+                        response_format: "b64_json"
+                    })
+                });
+            const output: any = await this.parseOutput(response);
+            const image = output.data?.[0];
+            if (typeof image?.b64_json == "string")
+                return "data:image/png;base64," + image.b64_json;
+            if (typeof image?.url == "string")
+                return image.url;
+            throw new Error("AnythingLLM did not return an image.");
         }
 
         public async generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>

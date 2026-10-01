@@ -25,7 +25,7 @@ namespace AI.KoboldCPP
         public async generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>
         {
             const grammar = schema ? await this.generateGrammar(schema) : null;
-            const safeMaxLength = await this.calculateSafeMaxLength(prompt);
+            const safeMaxLength = await this.getMaxLength(prompt);
             const body: AI.KoboldCPP.GenerationInput = { prompt: prompt, temperature, max_length: safeMaxLength };
             if (grammar) body.grammar = grammar;
 
@@ -45,7 +45,7 @@ namespace AI.KoboldCPP
         public async generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const grammar = schema ? await this.generateGrammar(schema) : null;
-            const safeMaxLength = await this.calculateSafeMaxLength(messages);
+            const safeMaxLength = await this.getMaxLength(messages);
             const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
             const body: any = { messages: m, temperature, max_length: safeMaxLength };
             if (grammar) body.grammar = grammar;
@@ -66,7 +66,7 @@ namespace AI.KoboldCPP
         public async generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>
         {
             const grammar = schema ? await this.generateGrammar(schema) : null;
-            const safeMaxLength = await this.calculateSafeMaxLength(messages);
+            const safeMaxLength = await this.getMaxLength(messages);
             const m = messages.map(x => ({ role: x.role == "system" ? "developer" : x.role, content: x.content.trim() }));
             const body: any = { messages: m, temperature, max_length: safeMaxLength, stream: true };
             if (grammar) body.grammar = grammar;
@@ -190,6 +190,14 @@ namespace AI.KoboldCPP
 
             // 3. Return the smaller of your desired length vs the actual available space
             return Math.min(desiredMaxLength, availableSpace);
+        }
+
+        private async getMaxLength(prompt: string | Message[]): Promise<number>
+        {
+            const configuredMaxLength = this.config.max_length;
+            if (configuredMaxLength == null || configuredMaxLength == 0)
+                return this.calculateSafeMaxLength(prompt);
+            return configuredMaxLength;
         }
 
         private async fetchTokenCount(prompt: string | Message[])

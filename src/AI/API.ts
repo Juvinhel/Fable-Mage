@@ -24,7 +24,9 @@ namespace AI
         {
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
             case "Gemini": return new AI.Gemini.API(config);
+            case "AnythingLLM": return new AI.AnythingLLM.API(config);
             case "Stable Diffusion": return new AI.StableDiffusion.API(config);
+            case "None": return new NoneImageAPI();
         }
     }
 
@@ -86,6 +88,18 @@ namespace AI
     {
         generateImage(prompt: string): Promise<string>;
         check(): Promise<void>;
+    }
+
+    export class NoneImageAPI implements ImageAPI
+    {
+        public async generateImage(prompt: string): Promise<string>
+        {
+            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lWQAAAAASUVORK5CYII=";
+        }
+
+        public async check(): Promise<void>
+        {
+        }
     }
 
     export type Message = { content: string, role: "system" | "user" | "assistant"; };
