@@ -90,7 +90,8 @@ namespace AI
                 messages.push({ role: "assistant", content });
             }
 
-            return await this.runTextRequest("summarizeProgression", messages, 0.3);
+            const result = await this.runTextRequest("summarizeProgression", messages, 0.3);
+            return this.removeThinkingSteps(result);
         }
 
         public async describeScene(
@@ -107,7 +108,7 @@ namespace AI
             const result = await this.runTextRequest("describeScene", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
-            return obj.description;
+            return this.removeThinkingSteps(obj.description);
         }
 
         public async createScenario(input: string): Promise<string>
@@ -120,7 +121,7 @@ namespace AI
 
             const result = await this.runTextRequest("createScenario", messages, 0.7);
 
-            return result;
+            return this.removeThinkingSteps(result);
         }
 
         public async createWorld(input: string, scenario: string): Promise<{
@@ -151,7 +152,7 @@ namespace AI
             const result = await this.runTextRequest("describeWorld", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
-            return obj.description;
+            return this.removeThinkingSteps(obj.description);
         }
 
         public async createMetadata(allowedTags: string[], world: Data.World): Promise<{ title: string; description: string; tags: string[]; mature: boolean; }>
@@ -232,13 +233,18 @@ namespace AI
             const result = await this.runTextRequest("describeCharacter", messages, 0.8, this.imagePromptSchema);
             const obj = this.parseJSON(result);
 
-            return obj.description;
+            return this.removeThinkingSteps(obj.description);
         }
 
         public async getImage(description: string): Promise<string>
         {
             const prompt = await this.getImageTemplate(description);
             return await this.runImageRequest("getImage", prompt);
+        }
+
+        private removeThinkingSteps(text: string): string
+        {
+            return text.replace(/<think\b[^>]*>[\s\S]*?(?:<\/think\s*>|$)/gi, "").trim();
         }
 
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>

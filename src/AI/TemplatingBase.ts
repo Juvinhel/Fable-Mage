@@ -52,7 +52,7 @@ namespace AI
         private sanitizePrompt(input: string): string
         {
             input = input.trim();
-            //input = input.replaceAll(/\n[^\S\r\n]+/, "\n");
+            input = input.replaceAll(/[ \t]+$/gm, "");
             input = input.replaceAll(/\n{2,}<\//, "\n</");
             while (input.includes("\n\n\n"))
                 input = input.replace("\n\n\n", "\n\n");
