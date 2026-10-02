@@ -190,9 +190,7 @@ namespace Views.Settings
                 workspaceSelect.options = models.map(model => ({ title: model, value: model }));
             }
             catch (error)
-            {
-                UI.Dialog.error(error);
-            }
+            { workspaceSelect.options = []; }
         }
 
         private geminiImageAPI(config: Partial<Data.GeminiEndpoint>)
