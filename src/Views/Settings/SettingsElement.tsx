@@ -32,6 +32,7 @@ namespace Views.Settings
                                 <label>ImageAPI:</label>
                                 { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                                     <option value="AnythingLLM">AnythingLLM</option>
+                                    <option value="ComfyUI">ComfyUI</option>
                                     <option value="Gemini">Gemini</option>
                                     <option value="KoboldCPP">KoboldCPP</option>
                                     <option value="None">None</option>
@@ -99,6 +100,9 @@ namespace Views.Settings
                 case "AnythingLLM":
                     this.imageAPISelect.after(this.anythingLLMTextAPI(App.config.imageAPI as any));
                     break;
+                case "ComfyUI":
+                    this.imageAPISelect.after(this.comfyUIAPI(App.config.imageAPI as Partial<Data.ComfyUIEndpoint>));
+                    break;
                 case "None":
                     break;
                 case "Stable Diffusion":
@@ -115,6 +119,10 @@ namespace Views.Settings
                     <input name="url" type="text" value={ config.url ?? "" } placeholder="KoboldCPP server URL" />
                 </div>
                 <div>
+                    <label>Max Length:</label>
+                    <input name="max_length" type="number" min="0" value={ config.max_length ?? "" } placeholder="Leave blank for automatic calculation." />
+                </div>
+                <div>
                     <label>Username:</label>
                     <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
                 </div>
@@ -122,10 +130,7 @@ namespace Views.Settings
                     <label>Password:</label>
                     <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
                 </div>
-                <div>
-                    <label>Max Length:</label>
-                    <input name="max_length" type="number" min="0" value={ config.max_length ?? "" } placeholder="Leave blank for automatic calculation." />
-                </div>
+                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
             </div>;
         }
 
@@ -225,6 +230,7 @@ namespace Views.Settings
                     <label>Password:</label>
                     <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
                 </div>
+                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
             </div>;
         }
 
@@ -243,17 +249,67 @@ namespace Views.Settings
                     <label>Password:</label>
                     <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
                 </div>
+                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
             </div>;
+        }
+
+        private comfyUIAPI(config: Partial<Data.ComfyUIEndpoint>)
+        {
+            return <div class="comfyui-api">
+                <div>
+                    <label>URL:</label>
+                    <input name="url" type="text" value={ config.url ?? "" } placeholder="ComfyUI server URL" />
+                </div>
+                <div>
+                    <label>Workflow JSON:</label>
+                    <input type="file" accept="application/json,.json" onchange={ (e: Event) => this.loadComfyUIWorkflow(e.currentTarget as HTMLInputElement) } />
+                    <input name="workflow" type="hidden" value={ config.workflow ?? "" } />
+                    <span>{ config.workflow ? "Workflow loaded" : "" }</span>
+                </div>
+                <p>Upload an API-format workflow JSON with { "{{prompt}}" } in the text input to fill with the generated prompt.</p>
+                <div>
+                    <label>Username:</label>
+                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
+                </div>
+                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
+            </div>;
+        }
+
+        private async loadComfyUIWorkflow(input: HTMLInputElement)
+        {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            try
+            {
+                const workflow = await file.text();
+                JSON.parse(workflow);
+                const apiElement = input.closest(".comfyui-api");
+                const workflowInput = apiElement?.querySelector<HTMLInputElement>('input[name="workflow"]');
+                if (!workflowInput) return;
+                workflowInput.value = workflow;
+                const status = workflowInput.nextElementSibling as HTMLElement;
+                status.textContent = file.name;
+            }
+            catch
+            {
+                input.value = "";
+                UI.Dialog.error(new Error("The selected workflow file is not valid JSON."));
+            }
         }
 
         private getConfig(apiElement: HTMLElement): any
         {
             const ret: { [key: string]: string; } = {};
 
-            for (const label of apiElement.querySelectorAll("label"))
+            for (const element of apiElement.querySelectorAll<HTMLElement>("input[name], select[name], combo-select[name]"))
             {
-                const input = label.nextElementSibling as HTMLInputElement;
-                const name = input.getAttribute("name");
+                const input = element as HTMLInputElement;
+                const name = element.getAttribute("name");
 
                 let value: any;
                 if (input.type == "number")

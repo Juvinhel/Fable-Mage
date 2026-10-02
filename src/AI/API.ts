@@ -2,6 +2,7 @@
 /// <reference path="Gemini/API.ts" />
 /// <reference path="AnythingLLM/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
+/// <reference path="ComfyUI/API.ts" />
 
 namespace AI
 {
@@ -26,6 +27,7 @@ namespace AI
             case "Gemini": return new AI.Gemini.API(config);
             case "AnythingLLM": return new AI.AnythingLLM.API(config);
             case "Stable Diffusion": return new AI.StableDiffusion.API(config);
+            case "ComfyUI": return new AI.ComfyUI.API(config);
             case "None": return new NoneImageAPI();
         }
     }

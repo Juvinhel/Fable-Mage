@@ -11,7 +11,7 @@ namespace Data
     {
         nexusAccount?: NexusAccount;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint;
-        imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | NoneImageEndpoint;
+        imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
     }
 
     export interface KoboldCPPEndpoint
@@ -44,6 +44,15 @@ namespace Data
         url: string;
         username?: string;
         password?: string;
+    }
+
+    export interface ComfyUIEndpoint
+    {
+        name: "ComfyUI";
+        url: string;
+        username?: string;
+        password?: string;
+        workflow: string;
     }
 
     export interface NoneImageEndpoint
