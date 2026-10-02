@@ -96,9 +96,10 @@ namespace AI
 
         public async describeScene(
             scene: string,
-            story: Data.Story): Promise<string>
+            player: Data.Character,
+            npcs: Data.Character[]): Promise<string>
         {
-            const prompt: string = await this.describeSceneTemplate(story);
+            const prompt: string = await this.describeSceneTemplate(player, npcs);
 
             const messages: Message[] = [
                 { role: "system", content: prompt },

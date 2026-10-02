@@ -79,6 +79,8 @@ namespace Views.Story
         private scenario: string;
         private rules: string;
         private stats?: Data.Stat[];
+        private get player(): Data.Character { return this.statsFlyOut.characters[0]; }
+        private get npcs(): Data.Character[] { return this.statsFlyOut.characters.slice(1); }
 
         private refreshTurnCount()
         {
@@ -130,8 +132,8 @@ namespace Views.Story
                     this.contextElement.value.trim(),
                     plot.slice((this.summaryInterval + plotPointsToSubmit) * -1),
                     story,
-                    this.statsFlyOut.characters[0],
-                    this.statsFlyOut.characters.slice(1));
+                    this.player,
+                    this.npcs);
 
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.input = input;
@@ -149,7 +151,7 @@ namespace Views.Story
                 await Promise.all([
                     this.updateSummary(story),
                     this.updateCharacters(story, plotPointElement),
-                    this.createAmbientImage(plotPointElement.text, story, plotPointElement),
+                    this.createAmbientImage(plotPointElement.text, plotPointElement),
                     this.offerChoices(plot, plotPointElement, story)]);
 
                 this.userInput.value = "";
@@ -162,11 +164,11 @@ namespace Views.Story
             App.stopThinking();
         }
 
-        private async createAmbientImage(scene: string, story: Data.Story, plotPointElement: PlotPointElement)
+        private async createAmbientImage(scene: string, plotPointElement: PlotPointElement)
         {
             try
             {
-                const prompt = await AI.Client.describeScene(scene, story);
+                const prompt = await AI.Client.describeScene(scene, this.player, this.npcs);
                 plotPointElement.scenery = prompt;
                 const image = await AI.Client.getImage(prompt);
                 plotPointElement.image = image;
@@ -187,7 +189,7 @@ namespace Views.Story
                     plot,
                     this.contextElement.value.trim(),
                     story,
-                    this.statsFlyOut.characters[0],);
+                    this.player);
                 plotPointElement.choices = choices;
             }
             catch (error)
@@ -218,7 +220,7 @@ namespace Views.Story
             const characters = this.statsFlyOut.characters;
 
             {   // update player
-                const player = characters[0];
+                const player = this.player;
                 const characterUpdate = await AI.Client.updateCharacter(player, story, true, [plotPointElement.export()]);
 
                 for (const [key, value] of Object.entries(characterUpdate))
@@ -234,7 +236,7 @@ namespace Views.Story
 
             {
                 //TODO: implement npc updates
-                plotPointElement.npcs = characters.slice(1);
+                plotPointElement.npcs = this.npcs;
                 if (plotPointElement.npcs.length == 0) plotPointElement.npcs = null;
             }
 

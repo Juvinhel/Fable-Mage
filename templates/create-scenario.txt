@@ -11,23 +11,20 @@ Follow these guidelines strictly:
 
 Generate the scenario output using the following mandatory sections:
 
-## 1. Timeframe
-* Short definition of the era, year, or chronological setting (e.g., modern day, medieval times, 24th century).
+## 1. Setting
+* Short definition of the setting (e.g., medieval fantasy, sci-fi space opera far in the future, 24th century slice of life).
 
-## 2. Location
-* Short definition of primary locale setting (e.g., rural town, City of London, Planet Alpha Tauri 3).
-
-## 3. Player Identity, Role, and Path
+## 2. Player Identity, Role, and Path
 * Define who the player character is and their place in the story, including any stated identity, role, status or designation, origin, responsibilities, and intended path. Preserve user-provided details; do not assign an unstated identity or predetermined destiny. If these details are not provided you should leave room for the player to define their path.
 
-## 4. Lore and Inner Workings of the World
+## 3. Lore and Inner Workings of the World
 * Describe the governing rules, factions, technology, magic, or societal structures that drive this universe. Explicitly state when facts are not known to the player.
 
-## 5. Expected Social Interactions and Social Conflicts
+## 4. Expected Social Interactions and Social Conflicts
 * Outline the primary social dynamics, power struggles, cultural norms, and interpersonal tensions likely to be encountered.
 
-## 6. Expected Enemies and Hazards
+## 5. Expected Enemies and Hazards
 * Detail the potential threats, hostile entities, environmental dangers, or obstacles present in this setting.
 
-## 7. User Expected Direction of the Story
+## 6. User Expected Direction of the Story
 * Identify the intended tone, genre focus, and thematic style requested or implied by the user (e.g., Action, Erotic, Coming of Age, Mystery).

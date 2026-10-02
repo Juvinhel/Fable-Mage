@@ -12,7 +12,7 @@ class App
 
         await this.initAI();
 
-        this.thinkingObserver.observe(document.body, { childList: true, subtree: true });
+        this.thinkingObserver.observe(document.querySelector("main"), { childList: true, subtree: true });
     }
 
     private static async startServiceWorker()

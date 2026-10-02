@@ -129,14 +129,69 @@ namespace AI
                         extractedJSON = candidate;
                         break;
                     }
-                    catch { }
+                    catch
+                    {
+                        const repairedCandidate = this.escapeUnescapedQuotes(candidate);
+                        try
+                        {
+                            JSON.parse(repairedCandidate);
+                            extractedJSON = repairedCandidate;
+                            break;
+                        }
+                        catch { }
+                    }
                 }
                 json = extractedJSON ?? input.replaceAll("```json", "").replaceAll("```", "").trim();
             }
 
-            const obj = JSON.parse(json);
+            let obj: any;
+            try
+            {
+                obj = JSON.parse(json);
+            }
+            catch
+            {
+                obj = JSON.parse(this.escapeUnescapedQuotes(json));
+            }
             this.cleanUpJSON(obj);
             return obj;
+        }
+
+        private escapeUnescapedQuotes(input: string): string
+        {
+            let output = "";
+            let inString = false;
+            for (let index = 0; index < input.length; index++)
+            {
+                const character = input[index];
+                if (character == "\\" && inString && index + 1 < input.length)
+                {
+                    output += character + input[++index];
+                    continue;
+                }
+                if (character != '"')
+                {
+                    output += character;
+                    continue;
+                }
+                if (!inString)
+                {
+                    inString = true;
+                    output += character;
+                    continue;
+                }
+
+                let next = index + 1;
+                while (/\s/.test(input[next] ?? "")) next++;
+                if (next == input.length || ",]}:".includes(input[next]))
+                {
+                    inString = false;
+                    output += character;
+                }
+                else
+                    output += "\\\"";
+            }
+            return output;
         }
 
         private cleanUpJSON(obj: any)

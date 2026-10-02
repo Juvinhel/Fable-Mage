@@ -41,7 +41,7 @@ Your job is to update the character sheet based on User Input and the game's rul
 </character>
 
 ### Output Constraints & Rules
-Your response must be a single, valid JSON object containing exactly {{= keys.length + 1 }} top-level keys: {{= keys.map(x=> "`\"" + key + "\"`").join(", ")}}. Adhere to the following rules for each field:
+Your response must be a single, valid JSON object containing exactly {{= keys.length + 1 }} top-level keys: {{= keys.map(key => "`\"" + key + "\"`").join(", ")}}. Adhere to the following rules for each field:
 
 {{~ key of keys }}
 **`{{= key }}` Field Rules:**
