@@ -52,7 +52,7 @@ namespace Views.World
                         </div>
                         <div>
                             <label>Tags:</label>
-                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
+                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder="Descriptive tags for your world" /> as HTMLMultiSelect }
                         </div>
                     </div>
 

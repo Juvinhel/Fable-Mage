@@ -68,7 +68,7 @@ my-settings > tab-control > .ai-tab
         height: max-content;
         gap: 0.25em;
 
-        > *
+        div
         {
             display: grid;
             grid-template-rows: min-content;
@@ -76,18 +76,30 @@ my-settings > tab-control > .ai-tab
             grid-auto-rows: min-content;
             grid-column: 1 / -1;
             gap: 0.25em;
+        }
 
-            > label
-            {
-                grid-column: 1;
-                align-self: baseline;
-                padding: 0.25em 0;
-            }
+        .group
+        {
+            padding: 0.5em;
+            border: 1px dashed var(--foreground-color);
+            border-radius: var(--corner-radius);
+        }
 
-            > *:not(label)
-            {
-                grid-column: 2;
-            }
+        label
+        {
+            grid-column: 1;
+            align-self: baseline;
+            padding: 0.25em 0;
+        }
+
+        input, select, textarea, button, combo-select, single-select, combo-select
+        {
+            grid-column: 2;
+        }
+
+        p
+        {
+            grid-column: 1 / -1;
         }
     }
 }

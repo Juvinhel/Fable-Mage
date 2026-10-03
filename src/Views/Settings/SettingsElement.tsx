@@ -73,13 +73,13 @@ namespace Views.Settings
             switch (apiName)
             {
                 case "KoboldCPP":
-                    this.textAPISelect.after(this.koboldCPPTextAPI(App.config.textAPI as any));
+                    this.textAPISelect.after(Views.Settings.TextAPI.koboldCPP(App.config.textAPI as Partial<Data.KoboldCPPEndpoint>));
                     break;
                 case "Gemini":
-                    this.textAPISelect.after(this.geminiTextAPI(App.config.textAPI as any));
+                    this.textAPISelect.after(Views.Settings.TextAPI.gemini(App.config.textAPI as Partial<Data.GeminiEndpoint>));
                     break;
                 case "AnythingLLM":
-                    this.textAPISelect.after(this.anythingLLMTextAPI(App.config.textAPI as any));
+                    this.textAPISelect.after(Views.Settings.TextAPI.anythingLLM(App.config.textAPI as Partial<Data.AnythingLLMEndpoint>));
                     break;
             }
         }
@@ -92,213 +92,22 @@ namespace Views.Settings
             switch (apiName)
             {
                 case "KoboldCPP":
-                    this.imageAPISelect.after(this.koboldCPPImageAPI(App.config.imageAPI as any));
+                    this.imageAPISelect.after(Views.Settings.ImageAPI.koboldCPP(App.config.imageAPI as Partial<Data.KoboldCPPEndpoint>));
                     break;
                 case "Gemini":
-                    this.imageAPISelect.after(this.geminiImageAPI(App.config.imageAPI as any));
+                    this.imageAPISelect.after(Views.Settings.ImageAPI.gemini(App.config.imageAPI as Partial<Data.GeminiEndpoint>));
                     break;
                 case "AnythingLLM":
-                    this.imageAPISelect.after(this.anythingLLMTextAPI(App.config.imageAPI as any));
+                    this.imageAPISelect.after(Views.Settings.ImageAPI.anythingLLM(App.config.imageAPI as Partial<Data.AnythingLLMEndpoint>));
                     break;
                 case "ComfyUI":
-                    this.imageAPISelect.after(this.comfyUIAPI(App.config.imageAPI as Partial<Data.ComfyUIEndpoint>));
+                    this.imageAPISelect.after(Views.Settings.ImageAPI.comfyUI(App.config.imageAPI as Partial<Data.ComfyUIEndpoint>));
                     break;
                 case "None":
                     break;
                 case "Stable Diffusion":
-                    this.imageAPISelect.after(this.stableDiffusionAPI(App.config.imageAPI as any));
+                    this.imageAPISelect.after(Views.Settings.ImageAPI.stableDiffusion(App.config.imageAPI as Partial<Data.StableDiffusionEndpoint>));
                     break;
-            }
-        }
-
-        private koboldCPPTextAPI(config: Partial<Data.KoboldCPPEndpoint>)
-        {
-            return <div class="koboldcpp-api">
-                <div>
-                    <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } placeholder="KoboldCPP server URL" />
-                </div>
-                <div>
-                    <label>Max Length:</label>
-                    <input name="max_length" type="number" min="0" value={ config.max_length ?? "" } placeholder="Leave blank for automatic calculation." />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
-                </div>
-                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
-            </div>;
-        }
-
-        private geminiTextAPI(config: Partial<Data.GeminiEndpoint>)
-        {
-            return <div class="gemini-api">
-                <div>
-                    <label>API Key:</label>
-                    <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="Gemini API key" />
-                </div>
-                <div>
-                    <label>Model:</label>
-                    <select name="model" value={ config.model ?? "gemini-3.8-flash" }>
-                        <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
-                        <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>
-                        <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
-                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                    </select>
-                </div>
-            </div>;
-        }
-
-        private anythingLLMTextAPI(config: Partial<Data.AnythingLLMEndpoint>)
-        {
-            return <div class="anythingllm-api">
-                <div>
-                    <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } placeholder="AnythingLLM server URL" onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
-                </div>
-                <div>
-                    <label>API Key:</label>
-                    <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="AnythingLLM API key" onblur={ (e: FocusEvent) => this.refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
-                </div>
-                <div>
-                    <label>Workspace:</label>
-                    <combo-select name="workspace" type="text" value={ config.workspace ?? "" } />
-                </div>
-            </div>;
-        }
-
-        private async refreshAnythingLLMModels(input: HTMLInputElement)
-        {
-            const apiElement = input.closest(".anythingllm-api");
-            const urlInput = apiElement?.querySelector<HTMLInputElement>("input[name=\"url\"]");
-            const apiKeyInput = apiElement?.querySelector<HTMLInputElement>("input[name=\"api_key\"]");
-            const workspaceSelect = apiElement?.querySelector("combo-select") as any;
-            const url = urlInput?.value.trim();
-            const apiKey = apiKeyInput?.value?.trim();
-            if (!url || !apiKey) return;
-
-            const config: Data.AnythingLLMEndpoint = {
-                name: "AnythingLLM",
-                url,
-                api_key: apiKey,
-                workspace: workspaceSelect.value
-            };
-
-            try
-            {
-                const models = await new AI.AnythingLLM.API(config).getModels();
-                if (urlInput.value.trim() != url || apiKeyInput.value != apiKey) return;
-                workspaceSelect.options = models.map(model => ({ title: model, value: model }));
-            }
-            catch (error)
-            { workspaceSelect.options = []; }
-        }
-
-        private geminiImageAPI(config: Partial<Data.GeminiEndpoint>)
-        {
-            return <div class="gemini-api">
-                <div>
-                    <label>API Key:</label>
-                    <input name="api_key" type="text" value={ config.api_key ?? "" } placeholder="Gemini API key" />
-                </div>
-                <div>
-                    <label>Model:</label>
-                    <select name="model" value={ config.model ?? "gemini-3.1-flash-image" }>
-                        <option value="gemini-3.1-flash-image">Gemini 3.1 Flash Image</option>
-                        <option value="gemini-3-pro-image">Gemini 3 Pro Image</option>
-                    </select>
-                </div>
-            </div>;
-        }
-
-        private koboldCPPImageAPI(config: Partial<Data.KoboldCPPEndpoint>)
-        {
-            return <div class="koboldcpp-api">
-                <div>
-                    <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } placeholder="KoboldCPP server URL" />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
-                </div>
-                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
-            </div>;
-        }
-
-        private stableDiffusionAPI(config: Partial<Data.StableDiffusionEndpoint>)
-        {
-            return <div class="stable-diffusion-api">
-                <div>
-                    <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } placeholder="Stable Diffusion server URL" />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
-                </div>
-                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
-            </div>;
-        }
-
-        private comfyUIAPI(config: Partial<Data.ComfyUIEndpoint>)
-        {
-            return <div class="comfyui-api">
-                <div>
-                    <label>URL:</label>
-                    <input name="url" type="text" value={ config.url ?? "" } placeholder="ComfyUI server URL" />
-                </div>
-                <div>
-                    <label>Workflow JSON:</label>
-                    <input type="file" accept="application/json,.json" onchange={ (e: Event) => this.loadComfyUIWorkflow(e.currentTarget as HTMLInputElement) } />
-                    <input name="workflow" type="hidden" value={ config.workflow ?? "" } />
-                    <span>{ config.workflow ? "Workflow loaded" : "" }</span>
-                </div>
-                <p>Upload an API-format workflow JSON with { "{{prompt}}" } in the text input to fill with the generated prompt.</p>
-                <div>
-                    <label>Username:</label>
-                    <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
-                </div>
-                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
-            </div>;
-        }
-
-        private async loadComfyUIWorkflow(input: HTMLInputElement)
-        {
-            const file = input.files?.[0];
-            if (!file) return;
-
-            try
-            {
-                const workflow = await file.text();
-                JSON.parse(workflow);
-                const apiElement = input.closest(".comfyui-api");
-                const workflowInput = apiElement?.querySelector<HTMLInputElement>('input[name="workflow"]');
-                if (!workflowInput) return;
-                workflowInput.value = workflow;
-                const status = workflowInput.nextElementSibling as HTMLElement;
-                status.textContent = file.name;
-            }
-            catch
-            {
-                input.value = "";
-                UI.Dialog.error(new Error("The selected workflow file is not valid JSON."));
             }
         }
 
