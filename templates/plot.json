@@ -10,19 +10,19 @@
     "properties": {
         "plot": {
             "type": "string",
-            "description": ""
+            "description": "The main narrative output presented to the player"
         },
         "time": {
             "type": "string",
-            "description": ""
+            "description": "Current time of the scene"
         },
         "location": {
             "type": "string",
-            "description": ""
+            "description": "Current location of the scene"
         },
         "internal": {
             "type": "string",
-            "description": ""
+            "description": "Internal continuity log of events, motivations, plans and environmental changes"
         }
     }
 }

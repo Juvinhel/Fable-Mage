@@ -5,23 +5,23 @@
     "properties": {
         "name": {
             "type": "string",
-            "description": ""
+            "description": "The name of the character"
         },
         "appearance": {
             "type": "string",
-            "description": ""
+            "description": "Comma separated list of visual appearance tags"
         },
         "personality": {
             "type": "string",
-            "description": ""
+            "description": "Comma separated personality traits"
         },
         "traits": {
             "type": "string",
-            "description": ""
+            "description": "Comma separated skills and competencies"
         },
         "background": {
             "type": "string",
-            "description": ""
+            "description": "A summarized origin story"
         }
     }
 }

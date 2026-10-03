@@ -29,6 +29,7 @@ namespace Views.Settings
                                     <option value="AnythingLLM">AnythingLLM</option>
                                     <option value="Gemini">Gemini</option>
                                     <option value="KoboldCPP">KoboldCPP</option>
+                                    <option value="LMStudio">LM Studio</option>
                                 </select> as HTMLSelectElement }
                             </div>
                             <div>
@@ -122,6 +123,9 @@ namespace Views.Settings
                     break;
                 case "AnythingLLM":
                     this.textAPISelect.after(Views.Settings.TextAPI.anythingLLM(App.config.textAPI as Partial<Data.AnythingLLMEndpoint>));
+                    break;
+                case "LMStudio":
+                    this.textAPISelect.after(Views.Settings.TextAPI.lmStudio(App.config.textAPI as Partial<Data.LMStudioEndpoint>));
                     break;
             }
         }

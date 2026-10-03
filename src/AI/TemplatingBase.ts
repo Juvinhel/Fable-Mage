@@ -6,7 +6,6 @@ namespace AI
         {
             this.plotSchema = await this.getSchema("plot");
             this.choicesSchema = await this.getSchema("choices");
-            this.imagePromptSchema = await this.getSchema("image-prompt");
             this.worldSchema = await this.getSchema("world");
             this.metadataSchema = await this.getSchema("metadata");
             this.characterSchema = await this.getSchema("character");
@@ -80,7 +79,6 @@ namespace AI
 
         public summarizeProgressionTemplate: (...params: any[]) => Promise<string>;
 
-        public imagePromptSchema: Schema;
         public describeSceneTemplate: (...params: any[]) => Promise<string>;
 
         public getImageTemplate: (...params: any[]) => Promise<string>;

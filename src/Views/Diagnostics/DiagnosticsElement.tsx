@@ -45,6 +45,8 @@ namespace Views.Diagnostics
 
         private addEntry(entry: AI.RequestLogEntry)
         {
+            const response = entry.response.trim();
+            const imageDataUri = entry.type != "error" && /^data:image\/[a-z0-9.+-]+(?:;[^,]*)?,/i.test(response);
             const request = <div class="chat-thread" /> as HTMLDivElement;
             for (const message of entry.request)
                 request.appendChild(<div class={ ["chat-message", message.role] } >
@@ -65,7 +67,7 @@ namespace Views.Diagnostics
                         <div class="chat-thread" >
                             <div class={ ["chat-message", entry.type == "error" ? "error" : "response"] }>
                                 <label>{ entry.type == "error" ? "error" : "response" }</label>
-                                <pre>{ entry.response }</pre>
+                                { imageDataUri ? <img src={ response } alt="Image response" /> : <pre>{ entry.response }</pre> }
                                 <button class="icon-button" title={ "Copy " + (entry.type == "error" ? "error" : "response") } onclick={ () => this.copyText(entry.response) }><color-icon src="img/icons/clipboard.svg" /></button>
                             </div>
                         </div>

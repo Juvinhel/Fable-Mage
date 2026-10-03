@@ -106,10 +106,8 @@ namespace AI
                 { role: "user", content: scene }
             ];
 
-            const result = await this.runTextRequest("describeScene", messages, 0.8, this.imagePromptSchema);
-            const obj = this.parseJSON(result);
-
-            return this.removeThinkingSteps(obj.description);
+            const result = await this.runTextRequest("describeScene", messages, 0.8);
+            return this.removeThinkingSteps(result);
         }
 
         public async createScenario(input: string): Promise<string>
@@ -150,10 +148,8 @@ namespace AI
                 { role: "user", content: world.scenario }
             ];
 
-            const result = await this.runTextRequest("describeWorld", messages, 0.8, this.imagePromptSchema);
-            const obj = this.parseJSON(result);
-
-            return this.removeThinkingSteps(obj.description);
+            const result = await this.runTextRequest("describeWorld", messages, 0.8);
+            return this.removeThinkingSteps(result);
         }
 
         public async createMetadata(allowedTags: string[], world: Data.World): Promise<{ title: string; description: string; tags: string[]; mature: boolean; }>
@@ -231,10 +227,8 @@ namespace AI
                 { role: "user", content: character.appearance }
             ];
 
-            const result = await this.runTextRequest("describeCharacter", messages, 0.8, this.imagePromptSchema);
-            const obj = this.parseJSON(result);
-
-            return this.removeThinkingSteps(obj.description);
+            const result = await this.runTextRequest("describeCharacter", messages, 0.8);
+            return this.removeThinkingSteps(result);
         }
 
         public async getImage(description: string): Promise<string>

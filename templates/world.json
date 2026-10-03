@@ -8,11 +8,11 @@
     "properties": {
         "rules": {
             "type": "string",
-            "description": ""
+            "description": "Operational world rules and tracking variables"
         },
         "protagonist": {
             "type": "string",
-            "description": ""
+            "description": "Protagonist description and core skills"
         }
     }
 }

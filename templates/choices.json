@@ -9,15 +9,15 @@
     "properties": {
         "first-choice": {
             "type": "string",
-            "description": ""
+            "description": "First suggested choice the player can take"
         },
         "second-choice": {
             "type": "string",
-            "description": ""
+            "description": "Second suggested choice the player can take"
         },
         "third-choice": {
             "type": "string",
-            "description": ""
+            "description": "Third suggested choice the player can take"
         }
     }
 }

@@ -1,6 +1,7 @@
 /// <reference path="KoboldCPP/API.ts" />
 /// <reference path="Gemini/API.ts" />
 /// <reference path="AnythingLLM/API.ts" />
+/// <reference path="LMStudio/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
 /// <reference path="ComfyUI/API.ts" />
 
@@ -16,6 +17,7 @@ namespace AI
             case "KoboldCPP": return new AI.KoboldCPP.API(config);
             case "Gemini": return new AI.Gemini.API(config);
             case "AnythingLLM": return new AI.AnythingLLM.API(config);
+            case "LMStudio": return new AI.LMStudio.API(config);
         }
     }
 

@@ -33,9 +33,3 @@ Your response must be a single, valid JSON object containing exactly two top-lev
 **`protagonist` Field Rules:**
 - Short, actionable description of the main character (max 200 words).
 - Include visual identity, personality, core skills (incorporating the Token Creation ability), and background.
-
-### JSON Schema Template
-{
-   "rules": "Operational world rules and tracking variables...",
-   "protagonist": "Protagonist description and core skills..."
-}

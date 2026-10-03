@@ -86,7 +86,7 @@ namespace AI.AnythingLLM
             const result = messages.map(message => ({ ...message }));
             if (schema)
             {
-                const instruction = "Return only valid JSON matching this JSON Schema:\n" + JSON.stringify(schema);
+                const instruction = "### JSON Schema Template\n```json\n" + JSON.stringify(schema, null, 4) + "\n```";
                 const systemMessage = result.find(message => message.role == "system");
                 if (systemMessage)
                     systemMessage.content += "\n\n" + instruction;

@@ -10,7 +10,7 @@ namespace Data
     export interface Config
     {
         nexusAccount?: NexusAccount;
-        textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint;
+        textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
     }
 
@@ -36,6 +36,13 @@ namespace Data
         url: string;
         api_key: string;
         workspace: string;
+    }
+
+    export interface LMStudioEndpoint
+    {
+        name: "LMStudio";
+        url: string;
+        model: string;
     }
 
     export interface StableDiffusionEndpoint

@@ -75,5 +75,5 @@ Your response must be a single, valid JSON object containing exactly three top-l
 - not more than 30 words
 
 **`third-choice` Field Rules:**
-- third suggested choice the player can take
+- Third suggested choice the player can take
 - not more than 30 words
