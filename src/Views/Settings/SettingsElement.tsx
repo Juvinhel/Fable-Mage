@@ -9,10 +9,13 @@ namespace Views.Settings
             this.append(this.build());
 
             this.load();
+            this.loadInfo();
         }
 
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
+        private versionValue: HTMLSpanElement;
+        private buildTimeValue: HTMLSpanElement;
 
         private build()
         {
@@ -49,8 +52,48 @@ namespace Views.Settings
                         </div>
                     </div>
                     { new NexusSettingsElement() }
+                    <div class="info-tab" tab-header="Info">
+                        <div>
+                            <label>Version:</label>
+                            { this.versionValue = <span>Loading...</span> as HTMLSpanElement }
+                        </div>
+                        <div>
+                            <label>Build time:</label>
+                            { this.buildTimeValue = <span>Loading...</span> as HTMLSpanElement }
+                        </div>
+                        <div>
+                            <label>Developer:</label>
+                            <span>Juvinhel</span>
+                        </div>
+                        <div>
+                            <label>Repository:</label>
+                            <a href="https://github.com/Juvinhel/Fable-Mage" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        </div>
+                        <p>Found a bug? Please report it on the <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">GitHub issues page</a>.</p>
+                    </div>
                 </tab-control>
             </>;
+        }
+
+        private async loadInfo()
+        {
+            try
+            {
+                const response = await fetch("manifest.json");
+                if (!response.ok)
+                    throw new Error(`Unable to load app manifest (${ response.status }).`);
+
+                const manifest = await response.json() as { version?: string; "build-date"?: string; };
+                this.versionValue.textContent = manifest.version ?? "Unknown";
+                const buildDate = manifest["build-date"] ? new Date(manifest["build-date"]) : undefined;
+                this.buildTimeValue.textContent = buildDate && !Number.isNaN(buildDate.getTime()) ? buildDate.toLocaleString() : "Unknown";
+            }
+            catch (error)
+            {
+                console.error(error);
+                this.versionValue.textContent = "Unavailable";
+                this.buildTimeValue.textContent = "Unavailable";
+            }
         }
 
         private load()
@@ -62,7 +105,6 @@ namespace Views.Settings
             for (const option of this.imageAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.imageAPI.name;
             this.imageAPIChange();
-
         }
 
         private textAPIChange()
@@ -193,4 +235,3 @@ namespace Views.Settings
 
     customElements.define("my-settings", SettingsElement);
 }
-
