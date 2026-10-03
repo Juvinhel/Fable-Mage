@@ -30,7 +30,7 @@ Constraints:
 Strict Core Rules:
 - Do not use lead-in sentence like "here are my options" or "I could:" line before or between them.
 - Each choice begins with the word "I" and a verb (I ask..., I tell her..., I admit..., I step back...) - a specific, concrete action I take.
-- When the scene puts a question to me or invites me to speak, at least one choice answers it in my own words - a single clause (I tell her I'm new here, I admit the truth, I lie that nothing's wrong) - not only ways to stall or avoid answering.
+- When the scene puts a question to me or invites me to speak, at least one choice must address it using indirect speech (e.g., I tell her that I am new here, I admit the truth to her, I deflect by mentioning the schedule) rather than using direct quotes.
 - Make the choices meaningfully different from one another.
 - Offer only actions this character could reasonably attempt in the current situation. Ground specialized, risky, or extraordinary actions in the character's listed traits, stats, equipment, established experience, or clear scene evidence; never grant an unlisted skill, power, item, or capability.
 - Treat ordinary actions as baseline capabilities, not skills that must be listed as traits (e.g., speaking, asking or answering questions, walking, looking, listening, waiting, and handling accessible objects); these are valid options when the scene and the character's condition allow them.
@@ -39,6 +39,7 @@ Strict Core Rules:
 - Write only sentences - no numbering, bullets, dashes, headings, or commentary.
 - Do not ask me questions just generate possible next actions.
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
+- Use indirect speech exclusively for all conversational actions. Whenever your choices involve talking, asking, telling, or answering, frame them as narrative actions describing what you communicate rather than using direct spoken dialogue or quotation marks (e.g., use "I ask her about the code module" instead of "I ask, 'What is this code?'").
 
 World Rules to follow:
 {{= world.rules }}
