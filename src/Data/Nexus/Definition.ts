@@ -45,6 +45,7 @@ namespace Data.Nexus
         title?: string;
         tags?: string[];
         mature?: boolean;
+        userid?: string;
         limit?: number;
         offset?: number;
     };

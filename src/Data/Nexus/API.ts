@@ -22,6 +22,9 @@ namespace Data.Nexus
             if (filters.mature != true)
                 filtersJSON.push({ field: "mature", type: "equal", value: "0" });
 
+            if (filters.userid?.trim())
+                filtersJSON.push({ field: "userid", type: "equal", value: filters.userid.trim() });
+
             if (filtersJSON.length)
                 url.searchParams.set("filters", JSON.stringify({ filter_type: "AND", filters: filtersJSON }));
 
@@ -78,6 +81,12 @@ namespace Data.Nexus
         public async updateWorld(id: number, world: WorldUpload): Promise<void>
         {
             await this.saveWorld(world, id);
+        }
+
+        public async deleteWorld(id: number): Promise<void>
+        {
+            const url = new URL("/api/database/rows/table/" + worldTable + "/" + id + "/", nexusURL);
+            await this.request<void>(url.toString(), { method: "DELETE" });
         }
 
         private async saveWorld(world: WorldUpload, id?: number): Promise<void>
@@ -146,6 +155,8 @@ namespace Data.Nexus
             });
             if (!response.ok)
                 throw new Error("Baserow request failed (" + response.status + ")");
+            if (response.status == 204)
+                return undefined as T;
             return await response.json();
         }
     }();

@@ -16,6 +16,7 @@ namespace Views.Nexus
         private titleInput: HTMLInputElement;
         private tagsInput: HTMLMultiSelect;
         private matureFilterInput: HTMLInputElement;
+        private ownWorldsFilterInput: HTMLInputElement;
         private page = 0;
         private pageSize = 10;
 
@@ -37,6 +38,10 @@ namespace Views.Nexus
                             <label>Mature:</label>
                             { this.matureFilterInput = <input type="checkbox" /> as HTMLInputElement }
                         </div>
+                        <div class="filter-field">
+                            <label>Only my worlds:</label>
+                            { this.ownWorldsFilterInput = <input type="checkbox" /> as HTMLInputElement }
+                        </div>
                         <button title="Search" onclick={ () => this.load() }>Search</button>
                     </div>
                 </details>
@@ -51,23 +56,37 @@ namespace Views.Nexus
 
         private connectedCallback()
         {
+            const userId = App.config.nexusAccount?.email;
+            this.ownWorldsFilterInput.disabled = !userId;
+            this.ownWorldsFilterInput.title = userId ? "" : "Sign in to Nexus to filter your worlds.";
             this.load();
+        }
+
+        public refresh(): Promise<void>
+        {
+            return this.load(this.page);
         }
 
         private async load(page = 0)
         {
             try
             {
+                this.listElement.clearChildren();
+                if(this.ownWorldsFilterInput.checked && !App.config.nexusAccount?.email) return;
+
                 const result = await Data.Nexus.API.getWorlds({
                     title: this.titleInput.value,
                     tags: this.tagsInput.checkedOptions.map(x => x.value),
                     mature: this.matureFilterInput.checked,
+                    userid: this.ownWorldsFilterInput.checked ? App.config.nexusAccount?.email : undefined,
                     limit: this.pageSize,
                     offset: page * this.pageSize
                 });
+                if (!result.worlds.length && page > 0)
+                    return this.load(page - 1);
+
                 this.page = Math.max(0, page);
 
-                this.listElement.clearChildren();
                 for (const world of result.worlds)
                 {
                     this.listElement.append(<div class="world" onclick={ async () =>
