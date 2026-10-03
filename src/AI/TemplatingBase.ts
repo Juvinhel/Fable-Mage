@@ -101,12 +101,23 @@ namespace AI
 
         public describeCharacterTemplate: (...params: any[]) => Promise<string>;
 
+        public removeThinkingSteps(text: string): string
+        {
+            return text.replace(/<think\b[^>]*>[\s\S]*?(?:<\/think\s*>|$)/gi, "").trim();
+        }
+
         public parseJSON(input: string): any
         {
+            function parse(text: string): any
+            {
+                const fixedJson = text.replace(/,\s*([}\]])/g, "$1");
+                return JSON.parse(fixedJson);
+            }
+
             let json = input.trim();
             try
             {
-                const obj = JSON.parse(json);
+                const obj = parse(json);
                 this.cleanUpJSON(obj);
                 return obj;
             }
@@ -125,7 +136,7 @@ namespace AI
                     const candidate = input.slice(index).trim();
                     try
                     {
-                        JSON.parse(candidate);
+                        parse(candidate);
                         extractedJSON = candidate;
                         break;
                     }
@@ -134,7 +145,7 @@ namespace AI
                         const repairedCandidate = this.escapeUnescapedQuotes(candidate);
                         try
                         {
-                            JSON.parse(repairedCandidate);
+                            parse(repairedCandidate);
                             extractedJSON = repairedCandidate;
                             break;
                         }
@@ -147,11 +158,11 @@ namespace AI
             let obj: any;
             try
             {
-                obj = JSON.parse(json);
+                obj = parse(json);
             }
             catch
             {
-                obj = JSON.parse(this.escapeUnescapedQuotes(json));
+                obj = parse(this.escapeUnescapedQuotes(json));
             }
             this.cleanUpJSON(obj);
             return obj;

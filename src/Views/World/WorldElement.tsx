@@ -365,7 +365,7 @@ namespace Views.World
                 version: world.version ?? "",
                 mature: !!world.mature,
                 cover: this.dataUriToBlob(cover),
-                file: new Blob([JSON.stringify(world)], { type: "application/json" })
+                data: JSON.stringify(world)
             };
 
             try

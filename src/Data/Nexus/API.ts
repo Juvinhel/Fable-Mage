@@ -10,6 +10,7 @@ namespace Data.Nexus
         {
             const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
             url.searchParams.set("user_field_names", "true");
+            url.searchParams.set("exclude", "data");
 
             const filtersJSON: BaserowFilter[] = [];
             if (filters.title?.trim())
@@ -48,6 +49,7 @@ namespace Data.Nexus
 
             const url = new URL("/api/database/rows/table/" + worldTable + "/", nexusURL);
             url.searchParams.set("user_field_names", "true");
+            url.searchParams.set("exclude", "data");
             url.searchParams.set("filters", JSON.stringify({
                 filter_type: "AND",
                 filters: [{ field: "title", type: "contains", value: title.trim() }]
@@ -65,12 +67,16 @@ namespace Data.Nexus
             return worlds.filter(x => x.title.trim().toLocaleLowerCase() == normalizedTitle);
         }
 
-        public async getWorldFile(world: WorldRecord): Promise<Data.World>
+        public async getWorldData(id: number): Promise<Data.World>
         {
-            if (!world.fileUrl)
-                throw new Error("World does not contain a world file.");
+            const url = new URL("/api/database/rows/table/" + worldTable + "/" + id + "/", nexusURL);
+            url.searchParams.set("user_field_names", "true");
 
-            return await this.request(world.fileUrl);
+            const result = await this.request<{ data?: string; }>(url.toString());
+            if (!result.data)
+                throw new Error("World does not contain world data.");
+
+            return JSON.parse(result.data) as Data.World;
         }
 
         public async createWorld(world: WorldUpload): Promise<void>
@@ -92,11 +98,9 @@ namespace Data.Nexus
         private async saveWorld(world: WorldUpload, id?: number): Promise<void>
         {
             const cover = await this.uploadFile(world.cover, "cover.png");
-            const file = await this.uploadFile(world.file, "world.json");
             const fields = {
                 ...world,
-                cover: [{ name: cover.name }],
-                file: [{ name: file.name }]
+                cover: [{ name: cover.name }]
             };
             const url = new URL("/api/database/rows/table/" + worldTable + "/" + (id === undefined ? "" : id + "/"), nexusURL);
             url.searchParams.set("user_field_names", "true");
@@ -121,12 +125,11 @@ namespace Data.Nexus
 
         private toWorldRecord(row: BaserowWorldRow): WorldRecord
         {
-            const { cover, file, ...fields } = row;
+            const { cover, ...fields } = row;
             return {
                 ...fields,
                 tags: this.toTags(fields.tags),
-                coverUrl: this.toFileUrl(cover),
-                fileUrl: this.toFileUrl(file)
+                coverUrl: this.toFileUrl(cover)
             };
         }
 
@@ -166,10 +169,9 @@ namespace Data.Nexus
         url: string;
     };
 
-    type BaserowWorldRow = Omit<WorldRecord, "tags" | "coverUrl" | "fileUrl"> & {
+    type BaserowWorldRow = Omit<WorldRecord, "tags" | "coverUrl"> & {
         tags: any;
         cover: any;
-        file: any;
     };
 
     type BaserowListResult = {

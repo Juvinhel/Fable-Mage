@@ -27,9 +27,27 @@ namespace Views.Nexus
                 <button class="edit-button" onclick={ () => openWorld(world, "edit") }>Edit</button>
                 <button class="play-button" onclick={ () => openWorld(world, "play") }>Play</button>
                 { isOwnWorld ? <button class="delete-button" onclick={ () => deleteWorld(world) }>Delete</button> : null }
-                <a target="_blank" href={ world.fileUrl } download={ world.title + ".json" }>Download</a>
+                <button class="download-button" onclick={ () => downloadWorld(world) }>Download</button>
             </div>
         </div>;
+    }
+
+    async function downloadWorld(world: Data.Nexus.WorldRecord)
+    {
+        try
+        {
+            const data = await Data.Nexus.API.getWorldData(world.id);
+            const url = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = world.title + ".json";
+            link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 0);
+        }
+        catch (error)
+        {
+            UI.Dialog.error(error);
+        }
     }
 
     async function deleteWorld(world: Data.Nexus.WorldRecord)
@@ -53,8 +71,7 @@ namespace Views.Nexus
     {
         try
         {
-            const reponse = await fetch(world.fileUrl);
-            const file = await reponse.json();
+            const file = await Data.Nexus.API.getWorldData(world.id);
             UI.Dialog.close(document.querySelector(".open-world-dialog"));
 
             if (action == "edit")

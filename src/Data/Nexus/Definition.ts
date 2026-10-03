@@ -26,7 +26,6 @@ namespace Data.Nexus
         version: string;
         mature: boolean;
         coverUrl?: string;
-        fileUrl?: string;
     };
 
     export type WorldUpload = {
@@ -38,7 +37,7 @@ namespace Data.Nexus
         version: string;
         mature: boolean;
         cover: Blob;
-        file: Blob;
+        data: string;
     };
 
     export type WorldFilters = {

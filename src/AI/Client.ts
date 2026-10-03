@@ -243,11 +243,6 @@ namespace AI
             return await this.runImageRequest("getImage", prompt);
         }
 
-        private removeThinkingSteps(text: string): string
-        {
-            return text.replace(/<think\b[^>]*>[\s\S]*?(?:<\/think\s*>|$)/gi, "").trim();
-        }
-
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const startedAt = Date.now();
