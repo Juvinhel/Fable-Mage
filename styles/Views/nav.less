@@ -1,6 +1,5 @@
 nav
 {
-    margin-bottom: 0.5em;
     overflow: hidden;
     background-color: var(--background-color);
 
@@ -25,13 +24,24 @@ nav
             background-color: var(--highlight-color);
         }
 
+        > span
+        {
+            color: var(--text-color);
+        }
+
         > color-icon
         {
             color: var(--text-color);
         }
+
+        &:not(.drop-down-button) > color-icon
+        {
+            margin-right: 0.5em;
+            transform: scale(1.75);
+        }
     }
 
-    .icon
+    .drop-down-button
     {
         display: none;
     }
@@ -44,7 +54,7 @@ nav
         display: none;
     }
 
-    nav button.icon
+    nav button.drop-down-button
     {
         display: block;
         float: right;
@@ -58,14 +68,14 @@ nav
         position: relative;
     }
 
-    nav.responsive .icon
+    nav.responsive .drop-down-button
     {
         position: absolute;
         top: 0;
         right: 0;
     }
 
-    nav.responsive button:not(.icon)
+    nav.responsive button:not(.drop-down-button)
     {
         display: block;
         width: 100%;

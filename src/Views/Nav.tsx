@@ -15,13 +15,13 @@ namespace Views
         diagnosticsElement = new Diagnostics.DiagnosticsElement();
 
         return <nav>
-            <button title="Home" onclick={ () => navigate("Home") }>Home</button>
-            <button title="Story" onclick={ () => navigate("Story") }>Story</button>
-            <button title="World" onclick={ () => navigate("World") }>World</button>
-            <button title="Nexus" onclick={ (e) => navigate("Nexus") }>Nexus</button>
-            <button title="Settings" onclick={ (e) => navigate("Settings") }>Settings</button>
-            <button title="Diagnostics" onclick={ (e) => navigate("Diagnostics") }>Diagnostics</button>
-            <button class="icon" onclick={ (e: Event) => toggleDropDown(e) }>
+            <button title="Home" onclick={ () => navigate("Home") }><color-icon src="img/icons/castle.svg" /><span>Home</span></button>
+            <button title="Story" onclick={ () => navigate("Story") }><color-icon src="img/icons/book.svg" /><span>Story</span></button>
+            <button title="World" onclick={ () => navigate("World") }><color-icon src="img/icons/planet.svg" /><span>World</span></button>
+            <button title="Nexus" onclick={ (e) => navigate("Nexus") }><color-icon src="img/icons/portal.svg" /><span>Nexus</span></button>
+            <button title="Settings" onclick={ (e) => navigate("Settings") }><color-icon src="img/icons/gears.svg" /><span>Settings</span></button>
+            <button title="Diagnostics" onclick={ (e) => navigate("Diagnostics") }><color-icon src="img/icons/stethoscope.svg" /><span>Diagnostics</span></button>
+            <button class="drop-down-button" onclick={ (e: Event) => toggleDropDown(e) }>
                 <color-icon src="img/icons/menu.svg" />
             </button>
         </nav>;
