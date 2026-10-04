@@ -36,11 +36,11 @@ namespace Views.Nexus
                         </div>
                         <div class="filter-field">
                             <label>Mature:</label>
-                            { this.matureFilterInput = <input type="checkbox" /> as HTMLInputElement }
+                            { this.matureFilterInput = <input type="checkbox" title="Show mature and safe worlds." /> as HTMLInputElement }
                         </div>
                         <div class="filter-field">
-                            <label>Only my worlds:</label>
-                            { this.ownWorldsFilterInput = <input type="checkbox" /> as HTMLInputElement }
+                            <label>Own worlds:</label>
+                            { this.ownWorldsFilterInput = <input type="checkbox" title="Show only your own worlds." /> as HTMLInputElement }
                         </div>
                         <button title="Search" onclick={ () => this.load() }>Search</button>
                     </div>
@@ -72,7 +72,7 @@ namespace Views.Nexus
             try
             {
                 this.listElement.clearChildren();
-                if(this.ownWorldsFilterInput.checked && !App.config.nexusAccount?.email) return;
+                if (this.ownWorldsFilterInput.checked && !App.config.nexusAccount?.email) return;
 
                 const result = await Data.Nexus.API.getWorlds({
                     title: this.titleInput.value,
