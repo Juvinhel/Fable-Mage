@@ -4,7 +4,7 @@
       "name": "Name of the character",
       "appearance": "A brief description of visual appearance of the character. Including hair color and style, eye color, skin color and perceived gender.",
       "personality": "A list of key personality traits. Comma-separated adjectives.",
-      "traits": "A list of key skills and competencies. Comma-separated adjectives.",
+      "skills": "A list of key skills and competencies. Comma-separated adjectives.",
       "background": "A summarized origin story."
    };
    if(world.stats)
@@ -55,7 +55,7 @@ World Rules to follow:
 </input_data_fields>
 
 ### Output Constraints & Rules
-Your response must be a single, valid JSON object containing exactly five top-level keys: `"name"`, `"appearance"`, `"personality"`, `"traits"`, and `"background"`. Adhere to the following rules for each field:
+Your response must be a single, valid JSON object containing exactly five top-level keys: `"name"`, `"appearance"`, `"personality"`, `"skills"`, and `"background"`. Adhere to the following rules for each field:
 
 **`name` Field Rules:**
 - Name of the character
@@ -72,7 +72,7 @@ Your response must be a single, valid JSON object containing exactly five top-le
 - A list of key personality traits.
 - 3 to 5 comma-separated adjectives.
 
-**`traits` Field Rules:**
+**`skills` Field Rules:**
 - A list of key skills and competencies.
 - 3 to 5 comma-separated adjectives.
 

@@ -13,7 +13,7 @@ namespace Views.World
         private portraitImage: HTMLImageElement;
         private appearanceProperty: HTMLAutoCorrectTextArea;
         private personalityProperty: HTMLAutoCorrectTextArea;
-        private traitsProperty: HTMLAutoCorrectTextArea;
+        private skillsProperty: HTMLAutoCorrectTextArea;
         private backgroundProperty: HTMLAutoCorrectTextArea;
 
         private additionalPropertiesList: HTMLDivElement;
@@ -36,8 +36,8 @@ namespace Views.World
                         { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
-                        <label for="traits">Traits:</label>
-                        { this.traitsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf skills and competencies" /> as HTMLAutoCorrectTextArea }
+                        <label for="skills">Skills:</label>
+                        { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Background:</label>
@@ -63,8 +63,8 @@ namespace Views.World
         public get personality(): string { return this.personalityProperty.value; }
         public set personality(value: string) { this.personalityProperty.value = value; }
 
-        public get traits(): string { return this.traitsProperty.value; }
-        public set traits(value: string) { this.traitsProperty.value = value; }
+        public get skills(): string { return this.skillsProperty.value; }
+        public set skills(value: string) { this.skillsProperty.value = value; }
 
         public get background(): string { return this.backgroundProperty.value; }
         public set background(value: string) { this.backgroundProperty.value = value; }
@@ -115,7 +115,7 @@ namespace Views.World
             ret.portrait = this.portrait;
             ret.appearance = this.appearance;
             ret.personality = this.personality;
-            ret.traits = this.traits;
+            ret.skills = this.skills;
             ret.background = this.background;
 
             for (const label of this.additionalPropertiesList.querySelectorAll("label"))
@@ -134,7 +134,7 @@ namespace Views.World
             this.portrait = character.portrait;
             this.appearance = character.appearance;
             this.personality = character.personality;
-            this.traits = character.traits;
+            this.skills = character.skills;
             this.background = character.background;
 
             for (const [key, value] of Object.entries(character))
@@ -142,7 +142,7 @@ namespace Views.World
                 if (key == "name") continue;
                 if (key == "appearance") continue;
                 if (key == "personality") continue;
-                if (key == "traits") continue;
+                if (key == "skills") continue;
                 if (key == "background") continue;
 
                 const label = this.additionalPropertiesList.querySelector("label[for=\"" + key + "\"]");

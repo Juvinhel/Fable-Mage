@@ -15,7 +15,7 @@
             "type": "string",
             "description": "Comma separated personality traits"
         },
-        "traits": {
+        "skills": {
             "type": "string",
             "description": "Comma separated skills and competencies"
         },

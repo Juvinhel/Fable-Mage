@@ -21,7 +21,7 @@ namespace Data
         portrait: string;
         appearance: string;
         personality: string;
-        traits: string;
+        skills: string;
         background: string;
         [key: string]: string;
     };

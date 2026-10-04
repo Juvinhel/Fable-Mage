@@ -454,7 +454,7 @@ namespace Views.World
 
         public clearWorld(): void
         {
-            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", traits: "", background: "" } });
+            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", skills: "", background: "" } });
         }
 
         public async startStory()

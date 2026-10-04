@@ -178,11 +178,11 @@ namespace AI.KoboldCPP
             }
         }
 
-        private async calculateSafeMaxLength(prompt: string | Message[], desiredMaxLength = 1024, safetyBuffer = 64)
+        private async calculateSafeMaxLength(prompt: string | Message[], desiredMaxLength = 32768, safetyBufferFraction = 0.15)
         {
             const promptTokenCount = await this.fetchTokenCount(prompt);
             // 1. Calculate the absolute remaining space in the context window
-            const availableSpace = this.true_max_context_length - promptTokenCount - safetyBuffer;
+            const availableSpace = this.true_max_context_length - promptTokenCount - Math.trunc(safetyBufferFraction * this.true_max_context_length);
 
             // 2. If the prompt is too large and leaves no room, fallback to a minimum safe token count (e.g., 64)
             if (availableSpace <= 0)

@@ -22,12 +22,12 @@ namespace Views.World
                     { this.timeElement = <span class="time" /> as HTMLSpanElement }
                 </div>
                 <span>Text:</span>
-                { this.textElement = <auto-correct-text-area class="plot-text large" /> as HTMLAutoCorrectTextArea }
+                { this.textElement = <auto-correct-text-area class="plot-text large" lang="en-US" /> as HTMLAutoCorrectTextArea }
                 <span>Choices:</span>
                 { this.choicesListElement = <div class="choices-list">
-                    <auto-correct-text-area class="choice single-line" placeholder="First Choice" />
-                    <auto-correct-text-area class="choice single-line" placeholder="Second Choice" />
-                    <auto-correct-text-area class="choice single-line" placeholder="Third Choice" />
+                    <auto-correct-text-area class="choice single-line" placeholder="First Choice" lang="en-US" />
+                    <auto-correct-text-area class="choice single-line" placeholder="Second Choice" lang="en-US" />
+                    <auto-correct-text-area class="choice single-line" placeholder="Third Choice" lang="en-US" />
                 </div> as HTMLDivElement }
                 <div class="actions">
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
