@@ -1,85 +1,99 @@
 nav
 {
+    z-index: 50000;
+    height: 3em;
     overflow: hidden;
-    background-color: var(--background-color);
 
-    button
+    > div
     {
-        padding: 0.5em 1em;
-        float: left;
-        border-radius: 0;
-        background: transparent;
-        color: var(--text-color);
-        font-size: 1.25em;
-        text-align: center;
-        text-decoration: none;
+        width: 100%;
+        height: max-content;
+        background-color: var(--background-color);
 
-        &.active
+        button
         {
-            background-color: var(--accent-color);
-        }
-
-        &:hover
-        {
-            background-color: var(--highlight-color);
-        }
-
-        > span
-        {
+            padding: 0.5em 1em;
+            float: left;
+            border-radius: 0;
+            background: transparent;
             color: var(--text-color);
+            font-size: 1.25em;
+            text-align: center;
+            text-decoration: none;
+
+            &.active
+            {
+                background-color: var(--accent-color);
+            }
+
+            &:hover
+            {
+                background-color: var(--highlight-color);
+            }
+
+            > span
+            {
+                color: var(--text-color);
+            }
+
+            > color-icon
+            {
+                color: var(--text-color);
+            }
+
+            &:not(.drop-down-button) > color-icon
+            {
+                margin-right: 0.5em;
+                transform: scale(1.75);
+            }
         }
 
-        > color-icon
+        .drop-down-button
         {
-            color: var(--text-color);
+            display: none;
         }
-
-        &:not(.drop-down-button) > color-icon
-        {
-            margin-right: 0.5em;
-            transform: scale(1.75);
-        }
-    }
-
-    .drop-down-button
-    {
-        display: none;
     }
 }
 
-@media screen and (max-width: 600px)
+@media screen and (max-width: 910px)
 {
-    nav button:not(:first-child)
-    {
-        display: none;
-    }
-
     nav button.drop-down-button
     {
         display: block;
         float: right;
     }
-}
 
-@media screen and (max-width: 600px)
-{
-    nav.responsive
+    nav button:not(.drop-down-button)
     {
-        position: relative;
+        justify-content: start;
     }
 
-    nav.responsive .drop-down-button
+    nav:not(.open)
     {
-        position: absolute;
-        top: 0;
-        right: 0;
+        button:not(.active):not(.drop-down-button)
+        {
+            display: none;
+        }
     }
 
-    nav.responsive button:not(.drop-down-button)
+    nav.open
     {
-        display: block;
-        width: 100%;
-        float: none;
-        text-align: left;
+        > div
+        {
+            position: fixed;
+        }
+
+        .drop-down-button
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        button:not(.drop-down-button)
+        {
+            width: 100%;
+            float: none;
+        }
     }
 }
