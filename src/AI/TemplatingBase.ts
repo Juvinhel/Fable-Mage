@@ -101,7 +101,7 @@ namespace AI
 
         public removeThinkingSteps(text: string): string
         {
-            return text.replace(/<think\b[^>]*>[\s\S]*?(?:<\/think\s*>|$)/gi, "").trim();
+            return text.replace(/<think[^>\s]*>[\s\S]*?<\/think[^>\s]*>/g, "").trim();
         }
 
         public parseJSON(input: string): any

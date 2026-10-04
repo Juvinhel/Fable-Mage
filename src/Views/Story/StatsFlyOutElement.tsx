@@ -25,7 +25,7 @@ namespace Views.Story
                 {
                     ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
                         <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
-                        <span>{ value }</span>
+                        <span>{ Helper.FormatAIText(value) }</span>
                     ])
                 }
             </div>;

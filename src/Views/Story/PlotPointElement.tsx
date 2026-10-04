@@ -50,8 +50,13 @@ namespace Views.Story
 
         public input: string;
 
-        public get text(): string { return this.textElement.textContent; }
-        public set text(value: string) { this.textElement.textContent = value; }
+        private internal_text;
+        public get text(): string { return this.internal_text; }
+        public set text(value: string)
+        {
+            this.internal_text = value;
+            this.textElement.innerHTML = Helper.FormatAIText(value);
+        }
 
         public get location(): string { return this.locationElement.textContent; }
         public set location(value: string) { this.locationElement.textContent = value; }

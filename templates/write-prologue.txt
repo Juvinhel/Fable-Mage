@@ -22,7 +22,6 @@ Write a prologue for this text-based adventure.
 Constraints:
 - When 'I' is used in the user input it always refers to the player character.
 - The user input describes what should happen in the prologue.
-- Do not use markdown.
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 World Rules to follow:
@@ -59,10 +58,13 @@ World Rules to follow:
 Your response must be a single, valid JSON object containing exactly four top-level keys: `"plot"`, `"time"`, `"location"`, and `"internal"`. Adhere to the following rules for each field:
 
 **`plot` Field Rules:**
-- 120 to 220 words, divided into sensible paragraphs; use fewer when the scene needs less
+- 120 to 320 words, divided into sensible paragraphs; use fewer when the scene needs less
 - Second person, present tense ("You feel...", "You walk...")
 - Only use the player's name if directly spoken to by another character
 - Describe observable events and involuntary physical reactions.
+- Always complete the conversational loop: if an interaction is initiated, carry it through to a natural conversational pause point or an NPC reply within the current word limit.
+- Markdown Formatting: You are encouraged to use standard Markdown formatting (such as **bold text**, *italics*, and bullet points) inside the "plot" string where appropriate to emphasize key elements, dialogue.
+- Dialogue Formatting: Always use single quotes ('...') for all spoken dialogue by characters, never double quotes, to maintain clean and conflict-free text.
 
 **`time` Field Rules:**
 - Current starting date and time of the scene

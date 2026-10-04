@@ -97,7 +97,7 @@ namespace Views.Nexus
                         <img src={ world.coverUrl ?? null } />
                         <ul class="tag-list" title={ world.tags.join("; ") }>{ world.tags.map(x => <li>{ x.trim() }</li>) }</ul>
                         <div class="username">{ world.username }</div>
-                        <div class="description">{ world.description }</div>
+                        <div class="description">{ Helper.FormatAIText(world.description) }</div>
                     </div>);
                 }
 

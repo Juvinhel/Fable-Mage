@@ -9,7 +9,6 @@ Act as a world-indexing and editorial assistant for a text adventure database.
 
 Constraints:
 - Analyze the world context and return the four requested JSON fields. Each field has a different purpose; do not mix their contents.
-- Do not use markdown.
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 [ALLOWED TAGS POOL]
@@ -31,6 +30,7 @@ Your response must be a single, valid JSON object containing exactly four top-le
 **`title` Field Rules:**
 - Clear, evocative title of the narrative
 - Keep it short and memorable
+- Do not use Markdown.
 
 **`tags` Field Rules:**
 - A JSON array containing zero to eight strings.
@@ -51,3 +51,4 @@ Your response must be a single, valid JSON object containing exactly four top-le
 - Use concrete details from the world context, but do not reveal major twists or spoilers.
 - Do not mention tags, this task, the AI, the rules, or the output format.
 - Do not write a world-building analysis, a list, or generic promotional filler.
+- Markdown Formatting: You are encouraged to use standard Markdown formatting (such as **bold text**, *italics*, and bullet points) inside the "plot" string where appropriate to emphasize key elements, dialogue.

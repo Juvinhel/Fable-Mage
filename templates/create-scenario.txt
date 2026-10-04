@@ -7,6 +7,7 @@ Follow these guidelines strictly:
 4. NO NARRATIVE: Do not write a story, plot summary, or pre-determined narrative arc. You are creating a structural background scenario and sandbox for later use, not a completed tale.
 5. STYLE & MECHANICS: Frame this scenario strictly as a "Choose Your Own Adventure" style template. Explicitly note that there are no dice rolls and no distinct numerical health bars, though character attributes (such as appearance, reputation, or qualitative skill levels) may be referenced.
 6. Never include conversational filler, introductory remarks (e.g., 'Sure, here is...'), or concluding summaries.
+7. Markdown Formatting: You are encouraged to use standard Markdown formatting (such as **bold text**, *italics*, and bullet points) inside the "plot" string where appropriate to emphasize key elements, dialogue.
 
 Generate the scenario output using the following mandatory sections:
 

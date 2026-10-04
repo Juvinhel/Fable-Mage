@@ -11,7 +11,6 @@ Expand the user's ideas with useful context, but do not invent unrelated themes 
 
 Constraints:
 - Do not write a story or opening narration; this is only world-building and system design.
-- Do not use markdown.
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
 <input_data_fields>
@@ -29,6 +28,7 @@ Your response must be a single, valid JSON object containing exactly two top-lev
 - Include the focus of the narrative (e.g., action scenes, political intrigue, exploration).
 - Define what variables and world states the game master should track.
 - Define the writing style of the narrator as a comma-separated list of adjectives.
+- Markdown Formatting: You are encouraged to use standard Markdown formatting (such as **bold text**, *italics*, and bullet points) inside the "plot" string where appropriate to emphasize key elements, dialogue.
 
 **`protagonist` Field Rules:**
 - Short, actionable description of the main character (max 200 words).
