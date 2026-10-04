@@ -24,10 +24,10 @@ namespace Views.Nexus
             </div>
             <div class="description"><label>Description:</label><p>{ world.description || "No description provided." }</p></div>
             <div class="actions">
-                <button class="edit-button" onclick={ () => openWorld(world, "edit") }>Edit</button>
-                <button class="play-button" onclick={ () => openWorld(world, "play") }>Play</button>
-                { isOwnWorld ? <button class="delete-button" onclick={ () => deleteWorld(world) }>Delete</button> : null }
-                <button class="download-button" onclick={ () => downloadWorld(world) }>Download</button>
+                <button class="play-button" onclick={ () => openWorld(world, "play") }><color-icon src="img/icons/play.svg" /><span>Play</span></button>
+                <button class="edit-button" onclick={ () => openWorld(world, "edit") }><color-icon src="img/icons/edit.svg" /><span>Edit</span></button>
+                { isOwnWorld ? <button class="delete-button" onclick={ () => deleteWorld(world) }><color-icon src="img/icons/delete.svg" /><span>Delete</span></button> : null }
+                <button class="download-button" onclick={ () => downloadWorld(world) }><color-icon src="img/icons/download-from-cloud.svg" /><span>Download</span></button>
             </div>
         </div>;
     }
