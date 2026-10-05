@@ -25,7 +25,7 @@ namespace Views.Story
                 {
                     ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
                         <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
-                        <span>{ Helper.FormatAIText(value) }</span>
+                        <span innerHTML={ Helper.FormatAIText(value) } />
                     ])
                 }
             </div>;
@@ -76,7 +76,8 @@ namespace Views.Story
                     for (const label of characterCard.querySelectorAll("label"))
                     {
                         const span = label.nextElementSibling as HTMLSpanElement;
-                        span.textContent = list[i][label.htmlFor];
+                        const text = list[i][label.htmlFor];
+                        span.innerHTML = Helper.FormatAIText(text);
                     }
                 }
             }

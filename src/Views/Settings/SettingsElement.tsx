@@ -14,6 +14,7 @@ namespace Views.Settings
 
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
+        private summaryIntervalInput: HTMLInputElement;
         private versionValue: HTMLSpanElement;
         private buildTimeValue: HTMLSpanElement;
 
@@ -42,6 +43,11 @@ namespace Views.Settings
                                     <option value="None">None</option>
                                     <option value="Stable Diffusion">Stable Diffusion</option>
                                 </select> as HTMLSelectElement }
+                            </div>
+                            <div class="group">
+                                <label>Summary Interval:</label>
+                                { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder="Default: 5" /> as HTMLInputElement }
+                                <p>Creates a story summary every few turns to preserve important details. Larger intervals include more turns in each summary and use more of your AI's context.</p>
                             </div>
                         </div>
 
@@ -99,6 +105,8 @@ namespace Views.Settings
 
         private load()
         {
+            this.summaryIntervalInput.value = App.config.summaryInterval?.toString() ?? "";
+
             for (const option of this.textAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.textAPI.name;
             this.textAPIChange();
@@ -187,6 +195,12 @@ namespace Views.Settings
         {
             try
             {
+                if (!this.summaryIntervalInput.checkValidity())
+                {
+                    this.summaryIntervalInput.reportValidity();
+                    return;
+                }
+
                 const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
                 let textAPI: AI.TextAPI;
                 try
@@ -217,6 +231,7 @@ namespace Views.Settings
 
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
+                App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
                 Data.saveConfig(App.config);
 
                 AI.textAPI = textAPI;

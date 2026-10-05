@@ -101,36 +101,68 @@ namespace Views.Story
             const characters = [nextPlotElement.player, ...(nextPlotElement.npcs ?? [])];
 
             let remove = false;
+            const remainingPlotPointElements: PlotPointElement[] = [];
             for (const plotPointElement of this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>)
             {
+                if (!remove) remainingPlotPointElements.push(plotPointElement);
                 if (plotPointElement == returnalElement) { remove = true; continue; }
                 if (remove) plotPointElement.remove();
             }
+
+            // remove summary of last x elements
+            const lastRemaningPlotPointElements = remainingPlotPointElements.slice(- this.summaryInterval);
+            for (const plotPointElement of lastRemaningPlotPointElements)
+                plotPointElement.summary = null;
 
             this.userInput.value = input ?? "";
             this.contextElement.value = context ?? "";
             this.statsFlyOut.characters = characters;
         }
 
-        private summaryInterval = 3;
+        private get summaryInterval()
+        {
+            return Math.max(5, App.config.summaryInterval ?? 5);
+        }
+
+        private async updateSummary()
+        {
+            const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
+
+            const summaryInterval = this.summaryInterval;
+            let lastSummaryIndex;
+            while (plotPointElements.length - (lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary)) >= (summaryInterval * 2))
+            {
+                const previousSummaryElement = plotPointElements[lastSummaryIndex];
+                const plotPointElementsToSummarize = plotPointElements.slice(lastSummaryIndex + 1, lastSummaryIndex + 1 + summaryInterval);
+
+                const summary = await AI.Client.summarizeProgression(previousSummaryElement?.summary ?? "", plotPointElementsToSummarize.map(x => x.export()), this.player);
+                plotPointElementsToSummarize.last().summary = summary;
+            }
+        }
+
         private async onSubmit()
         {
             App.beginThinking();
 
             try
             {
+                await this.updateSummary();
+
                 const input = this.userInput.value.trim();
                 const story = this.export();
 
-                const plot = story.plot;
-                let plotPointsToSubmit = plot.length % this.summaryInterval;
-                if (!plotPointsToSubmit) plotPointsToSubmit = this.summaryInterval;
+                const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
+                const lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary);
+                const summaryElement = plotPointElements[lastSummaryIndex];
+                const plotElements = plotPointElements.slice(lastSummaryIndex + 1);
+                const summary = summaryElement?.summary;
+                const plot = plotElements.map(x => x.export());
 
                 const result = await AI.Client.advancePlot(
                     input,
-                    this.summaryElement.value.trim(),
                     this.contextElement.value.trim(),
-                    plot.slice((this.summaryInterval + plotPointsToSubmit) * -1),
+                    summary,
+                    plot,
                     story,
                     this.player,
                     this.npcs);
@@ -149,10 +181,9 @@ namespace Views.Story
                 this.plotTab.scrollTo({ behavior: "smooth", top: plotPointElement.offsetTop - 4 });
 
                 await Promise.all([
-                    this.updateSummary(story),
                     this.updateCharacters(story, plotPointElement),
                     this.createAmbientImage(plotPointElement.text, plotPointElement),
-                    this.offerChoices(plot, plotPointElement, story)]);
+                    this.offerChoices([...plot, plotPointElement.export()], plotPointElement, story)]);
 
                 this.userInput.value = "";
             }
@@ -179,14 +210,12 @@ namespace Views.Story
             }
         }
 
-        private async offerChoices(plot: Data.Plot, plotPointElement: PlotPointElement, story: Data.Story)
+        private async offerChoices(plotPoints: Data.PlotPoint[], plotPointElement: PlotPointElement, story: Data.Story)
         {
             try
             {
-                plot = [...plot];
-                plot.push(plotPointElement.export());
                 const choices = await AI.Client.offerChoices(
-                    plot,
+                    plotPoints,
                     this.contextElement.value.trim(),
                     story,
                     this.player);
@@ -195,23 +224,6 @@ namespace Views.Story
             catch (error)
             {
                 UI.Dialog.error(error);
-            }
-        }
-
-        private async updateSummary(story: Data.Story)
-        {
-            const plotPointElements = [...this.querySelectorAll("my-plot-point") as NodeListOf<PlotPointElement>];
-
-            const lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary);
-            const plotPointElementsSinceLastSummary = plotPointElements.slice(lastSummaryIndex >= 0 ? lastSummaryIndex : 0);
-
-            const createSummary = plotPointElementsSinceLastSummary.length >= 2 * this.summaryInterval;
-            if (createSummary)
-            {
-                const turnsToSummarize = plotPointElementsSinceLastSummary.slice(0, -1 * this.summaryInterval);
-
-                this.summaryElement.value =
-                    turnsToSummarize.last().summary = await AI.Client.summarizeProgression(plotPointElements[lastSummaryIndex]?.summary ?? "", turnsToSummarize.map(x => x.export()), story);
             }
         }
 
@@ -250,6 +262,7 @@ namespace Views.Story
             this.rules = world.rules;
             this.stats = world.stats;
 
+            this.plotList.clearChildren();
             if (world.prologue)
             {
                 const plotPoint = JSON.clone(world.prologue) as Data.PlotPoint;

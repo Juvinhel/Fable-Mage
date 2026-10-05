@@ -10,6 +10,7 @@ namespace Data
     export interface Config
     {
         nexusAccount?: NexusAccount;
+        summaryInterval?: number;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
     }

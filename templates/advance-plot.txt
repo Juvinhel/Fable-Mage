@@ -1,4 +1,4 @@
-{{(memory, context, plot, world, player, npcs)}}
+{{(context, memory, plot, world, player, npcs)}}
 {{
    const characterStatRules = {
       "name": "Name of the character",

@@ -1,4 +1,4 @@
-{{(previous_memory, turn, world)}}
+{{(previous_memory, player)}}
 {{
    function format(text) {
       return text?.replace(">", "→").replace("<", "←") ?? "";
@@ -8,8 +8,7 @@
 You are a precise memory compression engine. Review the conversation history below and produce an updated COMPRESSED SESSION MEMORY under 500 tokens.
 
 Constraints:
-- We are at turn {{= turn }}. 
-- The player character's name is "{{= world.player.name}}".
+- The player character's name is "{{= player.name}}".
 - The narrator in the input refers to the player as "You".
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 - Begin your response directly with the updated memory text. Do not include introductory phrases.

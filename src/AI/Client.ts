@@ -7,14 +7,14 @@ namespace AI
     {
         public async advancePlot(
             input: string,
-            summary: string,
             context: string,
+            summary: string,
             plot: Data.Plot,
             story: Data.Story,
             player: Data.Character,
             npcs: Data.Character[]): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(summary, context, plot, story, player, npcs);
+            const prompt: string = await this.advancePlotTemplate(context, summary, plot, story, player, npcs);
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -75,11 +75,11 @@ namespace AI
             return [obj["first-choice"], obj["second-choice"], obj["third-choice"]];
         }
 
-        public async summarizeProgression(previousSummary: string, plot: Data.Plot, story: Data.Story): Promise<string>
+        public async summarizeProgression(previousSummary: string, plotPoints: Data.PlotPoint[], player: Data.Character): Promise<string>
         {
-            const prompt: string = await this.summarizeProgressionTemplate(previousSummary, plot.length + 1, story);
+            const prompt: string = await this.summarizeProgressionTemplate(previousSummary, player);
             const messages: Message[] = [{ role: "system", content: prompt }];
-            for (const plotPoint of plot)
+            for (const plotPoint of plotPoints)
             {
                 messages.push({ role: "user", content: plotPoint.input ?? "Start Game" });
                 let content = "";
