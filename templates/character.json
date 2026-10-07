@@ -8,7 +8,6 @@
         "skills",
         "background"
     ],
-    "additionalProperties": true,
     "properties": {
         "name": {
             "type": "string",
@@ -16,7 +15,7 @@
         },
         "appearance": {
             "type": "string",
-            "description": "Comma separated list of visual appearance tags"
+            "description": "A comma-separated list of the character's current visual traits, including baseline features (hair color and style, eye color, skin color, perceived gender, build), permanent modifications (scars, tattoos, body shape changes like breast size), and active temporary states (flushing, dirt, sweat, bruises, posture)."
         },
         "personality": {
             "type": "string",

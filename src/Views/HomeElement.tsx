@@ -40,14 +40,22 @@ namespace Views
 
         private async onStartStory()
         {
-            await Views.worldElement.open();
-            await Views.worldElement.startStory();
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
+            if (result?.length > 0)
+            {
+                const file = result.item(0);
+                const text = await file.text();
+                const world = JSON.parse(text);
+                Views.navigate("Story");
+                Views.storyElement.startStory(world);
+            }
         }
 
         private async onLoadStory()
         {
             Views.navigate("Story");
             await Views.storyElement.open();
+
         }
     }
 

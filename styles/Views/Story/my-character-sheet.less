@@ -1,0 +1,52 @@
+my-character-sheet
+{
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-auto-rows: max-content;
+    grid-column: 1 / -1;
+    align-items: start;
+    padding: 0.25em;
+    gap: 0.25em;
+    border-radius: var(--corner-radius);
+    background-color: var(--dark-background-color);
+
+    > img
+    {
+        grid-row: 1;
+        grid-column: 1;
+        aspect-ratio: 1;
+        height: 7em;
+        object-fit: cover;
+        border-radius: var(--corner-radius);
+
+        background-image: url("img/default-portrait.png");
+        background-size: contain;
+    }
+
+    > h3
+    {
+        grid-row: 1;
+        grid-column: 2;
+        margin: 0.25em;
+        font-size: 1.25em;
+        text-align: center;
+    }
+
+    > label
+    {
+        grid-column: 1;
+    }
+
+    > span
+    {
+        grid-column: 2;
+        user-select: text;
+    }
+
+    > .icon-button
+    {
+        grid-column: 3;
+        --button-text-color: white;
+        font-size: 1.25em;
+    }
+}

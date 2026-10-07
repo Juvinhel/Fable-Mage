@@ -1,16 +1,5 @@
-{{(world, npcs)}}
+{{(world, npcs, characterStatRules)}}
 {{
-   const characterStatRules = {
-      "name": "Name of the character",
-      "appearance": "A brief description of visual appearance of the character. Including hair color and style, eye color, skin color and perceived gender.",
-      "personality": "A list of key personality traits. Comma-separated adjectives.",
-      "skills": "A list of key skills and competencies. Comma-separated adjectives.",
-      "background": "A summarized origin story."
-   };
-   if(world.stats)
-      for(const statRule of world.stats)
-         characterStatRules[statRule.name] = statRule.description;
-
    function format(text) {
       return text?.replace(">", "→").replace("<", "←") ?? "";
    }

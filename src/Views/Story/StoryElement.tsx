@@ -17,6 +17,7 @@ namespace Views.Story
         public userInput: HTMLAutoCorrectTextArea;
         public submitButton: HTMLButtonElement;
         private statsFlyOut: StatsFlyOutElement;
+        private characterList: HTMLElement;
 
         private contextElement: HTMLTextAreaElement;
         private summaryElement: HTMLTextAreaElement;
@@ -43,6 +44,13 @@ namespace Views.Story
                         <button class="fly-out-toggle icon-button" onclick={ () => this.statsFlyOut.classList.toggle("maximized") }><color-icon src="img/icons/stat.svg" /></button>
                         { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
+                    <div class="characters-tab" tab-header="Characters">
+                        { this.characterList = <div class="character-list" /> as HTMLElement }
+
+                        <div class="anchor" />
+
+                        <div />
+                    </div>
                     <div class="context-tab" tab-header="Context">
                         <div>
                             <label>Context</label>
@@ -51,7 +59,8 @@ namespace Views.Story
 
                         <div class="anchor" />
 
-                        <div /></div>
+                        <div />
+                    </div>
                     <div class="summary" tab-header="Summary">
                         <div>
                             <label>Summary</label>
@@ -79,8 +88,16 @@ namespace Views.Story
         private scenario: string;
         private rules: string;
         private stats?: Data.Stat[];
-        private get player(): Data.Character { return this.statsFlyOut.characters[0]; }
-        private get npcs(): Data.Character[] { return this.statsFlyOut.characters.slice(1); }
+        private get player(): Data.Character { return (this.characterList.children[0] as CharacterSheetElement).character; }
+        private get npcs(): Data.Character[] { return (this.characterList.children.slice(1) as CharacterSheetElement[]).map(x => x.character); }
+        private get characters(): Data.Character[] { return this.characterList.children.map(x => (x as CharacterSheetElement).character); }
+        private set characters(values: Data.Character[])
+        {
+            this.characterList.clearChildren();
+            for (const character of values)
+                this.characterList.append(new CharacterSheetElement(character));
+            this.statsFlyOut.characters = values;
+        }
 
         private refreshTurnCount()
         {
@@ -116,7 +133,7 @@ namespace Views.Story
 
             this.userInput.value = input ?? "";
             this.contextElement.value = context ?? "";
-            this.statsFlyOut.characters = characters;
+            this.characters = characters;
         }
 
         private get summaryInterval()
@@ -229,30 +246,27 @@ namespace Views.Story
 
         private async updateCharacters(story: Data.Story, plotPointElement: PlotPointElement)
         {
-            const characters = this.statsFlyOut.characters;
+            const characters = [];
 
             {   // update player
                 const player = this.player;
                 const characterUpdate = await AI.Client.updateCharacter(player, story, true, [plotPointElement.export()]);
 
                 for (const [key, value] of Object.entries(characterUpdate))
-                    if (value)
-                    {
-                        // new properties are not allowed
-                        if (!(key in player)) { UI.Dialog.error({ title: "AI Error", text: "AI introduced new character property (" + key + ": \"" + value + "\")!" }); continue; }
-                        player[key] = value;
-                    }
+                    player[key] = value;
 
                 plotPointElement.player = player;
+                characters.push(player);
             }
 
             {
                 //TODO: implement npc updates
                 plotPointElement.npcs = this.npcs;
                 if (plotPointElement.npcs.length == 0) plotPointElement.npcs = null;
+                characters.push(...plotPointElement.npcs ?? []);
             }
 
-            this.statsFlyOut.characters = characters;
+            this.characters = characters;
         }
 
         public async startStory(world: Data.World)
@@ -273,8 +287,7 @@ namespace Views.Story
                 this.plotList.appendChild(plotPointElement);
             }
 
-            this.statsFlyOut.reset();
-            this.statsFlyOut.characters = [world.player, ...(world.npcs ?? [])];
+            this.characters = [world.player, ...(world.npcs ?? [])];
         }
 
         public export(): Data.Story
@@ -315,8 +328,7 @@ namespace Views.Story
             }
             this.contextElement.value = plotPointElement?.context ?? "";
 
-            this.statsFlyOut.reset();
-            this.statsFlyOut.characters = [plotPointElement.player, ...(plotPointElement.npcs ?? [])];
+            this.characters = [plotPointElement.player, ...(plotPointElement.npcs ?? [])];
         }
 
         public async save()
@@ -326,9 +338,10 @@ namespace Views.Story
             DownloadHelper.downloadData(story.title + " - Turn: " + story.plot.length + ".json", story);
         }
 
-        public async open()
+        public async open(): Promise<boolean>
         {
             const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            if (!result || !result.length) return false;
             if (result.length > 0)
             {
                 const file = result.item(0);
@@ -338,9 +351,14 @@ namespace Views.Story
             }
             this.tabControl.select("Plot");
 
-            await delay(50); // or scroll wont work
-            if (this.plotList.children.length)
-                this.plotTab.scrollTo({ behavior: "smooth", top: (this.plotList.querySelector("my-plot-point:last-child") as HTMLElement).offsetTop - 4 });
+            // or scroll wont work
+            delay(50).then(() =>
+            {
+                if (this.plotList.children.length)
+                    this.plotTab.scrollTo({ behavior: "smooth", top: (this.plotList.querySelector("my-plot-point:last-child") as HTMLElement).offsetTop - 4 });
+            });
+
+            return true;
         }
     }
 

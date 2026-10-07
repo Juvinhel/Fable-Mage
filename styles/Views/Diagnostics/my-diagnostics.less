@@ -32,7 +32,6 @@ my-diagnostics
                 min-width: 6em;
             }
         }
-
     }
 
     > .log-list
@@ -116,6 +115,12 @@ my-diagnostics
             display: grid;
             grid-template-rows: auto 1fr;
             gap: 0.5em;
+
+            > .icon-button
+            {
+                position: absolute;
+                right: 0;
+            }
         }
 
         label
@@ -147,8 +152,6 @@ my-diagnostics
         > .icon-button
         {
             align-self: start;
-            --button-text-color: white;
-            font-size: 1.25em;
         }
 
         > label
@@ -211,6 +214,12 @@ my-diagnostics
             border-left: 3px solid rgba(219, 106, 106, 0.9);
             background: rgba(166, 44, 44, 0.18);
         }
+    }
+
+    .icon-button
+    {
+        --button-text-color: white;
+        font-size: 1.25em;
     }
 
     pre

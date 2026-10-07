@@ -14,7 +14,7 @@ namespace AI
             player: Data.Character,
             npcs: Data.Character[]): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.advancePlotTemplate(context, summary, plot, story, player, npcs);
+            const prompt: string = await this.advancePlotTemplate(context, summary, plot, story, player, npcs, this.characterStats(story.stats));
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -37,7 +37,7 @@ namespace AI
         public async writePrologue(input: string,
             world: Data.World): Promise<{ plot: string; time: string; location: string; internal: string; }>
         {
-            const prompt: string = await this.writePrologueTemplate(world);
+            const prompt: string = await this.writePrologueTemplate(world, this.characterStats(world.stats));
 
             const messages: Message[] = [
                 { role: "system", content: prompt },
@@ -55,7 +55,7 @@ namespace AI
             story: Data.Story,
             player: Data.Character): Promise<string[]>
         {
-            const prompt: string = await this.offerChoicesTemplate(plot, context, story, player);
+            const prompt: string = await this.offerChoicesTemplate(plot, context, story, player, this.characterStats(story.stats));
 
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
@@ -169,7 +169,7 @@ namespace AI
             world: Data.World,
             npcs: Data.Character[]): Promise<Data.Character>
         {
-            const prompt = await this.createPlayerTemplate(world);
+            const prompt = await this.createPlayerTemplate(world, npcs, this.characterStats(world.stats));
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
@@ -186,7 +186,7 @@ namespace AI
             player: Data.Character,
             npcs: Data.Character[]): Promise<Data.Character>
         {
-            const prompt = await this.createNPCTemplate(world, player, npcs);
+            const prompt = await this.createNPCTemplate(world, player, npcs, this.characterStats(world.stats));
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
@@ -199,7 +199,7 @@ namespace AI
 
         public async updateCharacter(character: Data.Character, story: Data.Story, isPlayer: boolean, plot: Data.Plot): Promise<Partial<Data.Character>>
         {
-            const prompt = await this.updateCharacterTemplate(character, story, isPlayer);
+            const prompt = await this.updateCharacterTemplate(character, story, isPlayer, this.characterStats(story.stats));
             const messages: Message[] = [{ role: "system", content: prompt }];
             for (const plotPoint of plot)
             {
@@ -212,7 +212,7 @@ namespace AI
                 messages.push({ role: "assistant", content });
             }
 
-            const result = await this.runTextRequest("updateCharacter", messages, 0.5, this.characterUpdateSchema);
+            const result = await this.runTextRequest("updateCharacter", messages, 0.5, this.createExpandedCharacterSchema(story.stats));
             const obj = this.parseJSON(result) as Partial<Data.Character>;
 
             return Object.fromEntries(Object.entries(obj).map(([key, value]) => [Helper.convertPascalCaseToKebabCase(key), value]));

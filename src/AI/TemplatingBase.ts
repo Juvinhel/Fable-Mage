@@ -9,7 +9,6 @@ namespace AI
             this.worldSchema = await this.getSchema("world");
             this.metadataSchema = await this.getSchema("metadata");
             this.characterSchema = await this.getSchema("character");
-            this.characterUpdateSchema = await this.getSchema("character-update");
 
             this.advancePlotTemplate = await this.getTemplate("advance-plot");
             this.offerChoicesTemplate = await this.getTemplate("offer-choices");
@@ -91,13 +90,38 @@ namespace AI
         public createMetadataTemplate: (...params: any[]) => Promise<string>;
 
         public characterSchema: Schema;
+        public createExpandedCharacterSchema(additionalStats?: Data.Stat[]): Schema
+        {
+            const ret = JSON.clone(this.characterSchema);
+            if (additionalStats)
+                for (const stat of additionalStats)
+                {
+                    ret.required.push(stat.name);
+                    ret.properties[stat.name] = {
+                        type: "string",
+                        description: stat.description
+                    };
+                }
+            return ret;
+        }
         public createPlayerTemplate: (...params: any[]) => Promise<string>;
         public createNPCTemplate: (...params: any[]) => Promise<string>;
 
-        public characterUpdateSchema: Schema;
         public updateCharacterTemplate: (...params: any[]) => Promise<string>;
 
         public describeCharacterTemplate: (...params: any[]) => Promise<string>;
+
+        public characterStats(additionalStats?: Data.Stat[]): { [key: string]: string; }
+        {
+            const ret: { [key: string]: string; } = {};
+            if (this.characterSchema.properties)
+                for (const property of Object.entries(this.characterSchema.properties))
+                    ret[property[0]] = property[1].description ?? "";
+            if (additionalStats)
+                for (const stat of additionalStats)
+                    ret[stat.name] = stat.description;
+            return ret;
+        }
 
         public removeThinkingSteps(text: string): string
         {

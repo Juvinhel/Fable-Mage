@@ -274,10 +274,10 @@ namespace Views.World
         }
 
         private previousCreateWorldPrompt = "";
-        public async createWorldUsingAI()
+        public async createWorldUsingAI(): Promise<boolean>
         {
             const result = await Dialogs.TextEdit("World Description", this.previousCreateWorldPrompt, "Describe your scenario including lore and background story.");
-            if (!result) return;
+            if (!result) return false;
             this.previousCreateWorldPrompt = result;
 
             await this.onDeleteWorld();
@@ -294,13 +294,15 @@ namespace Views.World
                     this.createMetadata(),
                     this.createPlayerUsingAI(protagonist),
                     this.createPrologue("Use this original draft to create a prologue:\n" + result)]);
+                App.stopThinking();
+                return true;
             }
             catch (error)
             {
+                App.stopThinking();
                 UI.Dialog.error(error);
+                return false;
             }
-
-            App.stopThinking();
         }
 
         private async createCoverImage()
@@ -470,7 +472,7 @@ namespace Views.World
             DownloadHelper.downloadData(world.title + ".json", world);
         }
 
-        public async open()
+        public async open(): Promise<boolean>
         {
             const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
             if (result?.length > 0)
@@ -479,8 +481,10 @@ namespace Views.World
                 const text = await file.text();
                 const world = JSON.parse(text);
                 this.import(world);
+                this.tabControl.select("Overview");
+                return true;
             }
-            this.tabControl.select("Overview");
+            return false;
         }
 
         public export(): Data.World

@@ -62,8 +62,12 @@ namespace Views.Diagnostics
                 </summary>
                 <div class="log-body">
                     <div class="meta"><span>{ entry.duration } ms</span></div>
-                    <div class="request-body"><label>Request</label>{ request }</div>
-                    <div class="response-body"><label>Response</label>
+                    <div class="request-body">
+                        <label>Request</label>
+                        <button class="icon-button" title="Copy full request" onclick={ () => this.copyText(entry.request.map(x => x.role + ":\n" + x.content).join("\n\n")) }><color-icon src="img/icons/clipboard.svg" /></button>
+                        { request }</div>
+                    <div class="response-body">
+                        <label>Response</label>
                         <div class="chat-thread" >
                             <div class={ ["chat-message", entry.type == "error" ? "error" : "response"] }>
                                 <label>{ entry.type == "error" ? "error" : "response" }</label>

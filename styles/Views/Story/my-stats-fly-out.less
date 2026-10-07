@@ -9,46 +9,5 @@ my-stats-fly-out
         grid-auto-rows: max-content;
         padding: 0.25em;
         gap: 0.25em;
-
-        > *
-        {
-            display: grid;
-            grid-template-columns: subgrid;
-            grid-auto-rows: max-content;
-            grid-column: 1 / -1;
-            padding: 0.25em;
-            gap: 0.25em;
-            border-radius: var(--corner-radius);
-            background-color: var(--dark-background-color);
-
-            > img
-            {
-                grid-row: 1;
-                grid-column: 1;
-                aspect-ratio: 1;
-                height: 7em;
-                object-fit: cover;
-                border-radius: var(--corner-radius);
-            }
-
-            > h3
-            {
-                grid-row: 1;
-                grid-column: 2;
-                margin: 0.25em;
-                font-size: 1.25em;
-                text-align: center;
-            }
-
-            > label
-            {
-                grid-column: 1;
-            }
-
-            > span
-            {
-                grid-column: 2;
-            }
-        }
     }
 }

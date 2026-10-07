@@ -17,20 +17,6 @@ namespace Views.Story
             return this.contentContainer = <div /> as HTMLElement;
         }
 
-        private buildCharacterCard(character: Data.Character)
-        {
-            return <div data-name={ character.name }>
-                <img class="portrait" src={ character.portrait } />
-                <h3>{ character.name }</h3>
-                {
-                    ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
-                        <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
-                        <span innerHTML={ Helper.FormatAIText(value) } />
-                    ])
-                }
-            </div>;
-        }
-
         private connectedCallback()
         {
             this.storyElement = this.closest("my-story");
@@ -39,19 +25,8 @@ namespace Views.Story
         public get characters(): Data.Character[]
         {
             const ret: Data.Character[] = [];
-            for (const characterCard of this.contentContainer.children)
-            {
-                const name = characterCard.querySelector("h3").textContent;
-                const portrait = characterCard.querySelector("img").getAttribute("src");
-
-                const character: Data.Character = { name, portrait } as any;
-                for (const label of characterCard.querySelectorAll("label"))
-                {
-                    const span = label.nextElementSibling as HTMLSpanElement;
-                    character[label.htmlFor] = span.textContent;
-                }
-                ret.push(character);
-            }
+            for (const characterCard of this.contentContainer.querySelectorAll("my-character-stats") as NodeListOf<CharacterStatsElement>)
+                ret.push(characterCard.character);
             return ret;
         }
 
@@ -61,25 +36,14 @@ namespace Views.Story
 
             for (let i = 0; i < list.length; ++i)
             {
-                let characterCard = this.contentContainer.children[i];
+                let characterCard = this.contentContainer.children[i] as CharacterStatsElement;
                 if (!characterCard)
                 {
-                    characterCard = this.buildCharacterCard(list[i]) as HTMLElement;
-                    this.contentContainer.append(characterCard);
+                    characterCard = new CharacterStatsElement(list[i]);
+                    this.contentContainer.insertAt(i, characterCard);
                 }
                 else
-                {
-                    const heading = characterCard.querySelector("h3");
-                    heading.textContent = list[i].name;
-                    const img = characterCard.querySelector("img");
-                    img.src = list[i].portrait;
-                    for (const label of characterCard.querySelectorAll("label"))
-                    {
-                        const span = label.nextElementSibling as HTMLSpanElement;
-                        const text = list[i][label.htmlFor];
-                        span.innerHTML = Helper.FormatAIText(text);
-                    }
-                }
+                    characterCard.character = list[i];
             }
         }
 

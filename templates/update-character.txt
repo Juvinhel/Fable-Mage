@@ -1,21 +1,10 @@
-{{(character, world, isPlayer)}}
+{{(character, world, isPlayer, characterStatRules)}}
 {{
-   const characterStatRules = {
-      "name": "Name of the character",
-      "appearance": "A brief description of visual appearance of the character. Including hair color and style, eye color, skin color and perceived gender.",
-      "personality": "A list of key personality traits. Comma-separated adjectives.",
-      "skills": "A list of key skills and competencies. Comma-separated adjectives.",
-      "background": "A summarized origin story."
-   };
-   if(world.stats)
-      for(const statRule of world.stats)
-         characterStatRules[statRule.name] = statRule.description;
-
    function format(text) {
       return text?.replace(">", "→").replace("<", "←") ?? "";
    }
 
-   const keys = Object.keys(character).filter(key => key != "portrait");
+   const keys = Object.keys(characterStatRules);
 }}
 
 You are a text-based RPG game master and state manager. 
@@ -25,7 +14,7 @@ Your job is to update the character sheet based on User Input and the game's rul
 1. Analyze the character's action or dialogue
 2. Update a field whenever the narrative clearly establishes that it changed, even if the change is subtle or temporary. 
 3. For the "appearance" field, capture small visible or bodily changes such as hair becoming straightened, skin becoming smoother, or a new bruise, dirt, wetness, or altered posture. Do not require a change to be permanent.
-4. **Dynamic Properties Rule:** The character sheet may contain custom properties added by the user. You must preserve all existing keys/properties present in the current character sheet, updating their values if the narrative warrants it, and never dropping existing keys.
+4. **Dynamic Properties Rule:** You must preserve all existing keys/properties present in the current character sheet, updating their values if the narrative warrants it, and never dropping existing keys.
 5. Do not overlook a change just because it is minor, and do not invent or infer changes that the narrative does not establish. Keep stable fields unchanged unless the narrative clearly establishes a lasting change.
 6. Do not include extra conversational fluff
 7. Do not use Markdown
@@ -41,9 +30,10 @@ Your job is to update the character sheet based on User Input and the game's rul
 </character>
 
 ### Output Constraints & Rules
-Your response must be a single, valid JSON object containing exactly {{= keys.length + 1 }} top-level keys: {{= keys.map(key => "`\"" + key + "\"`").join(", ")}}. Adhere to the following rules for each field:
+Your response must be a single, valid JSON object containing exactly {{= keys.length }} top-level keys: {{= keys.map(key => "`\"" + key + "\"`").join(", ")}}. Adhere to the following rules for each field:
 
 {{~ key of keys }}
 **`{{= key }}` Field Rules:**
 - {{= format(characterStatRules[key]) }}
+
 {{~}}
