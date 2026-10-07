@@ -17,7 +17,6 @@ namespace Views.Story
 
         private build(character: Data.Character)
         {
-            console.log("C", character);
             return <>
                 { this.portraitImg = <img class="portrait" src={ character.portrait } /> as HTMLImageElement }
                 { this.nameHeading = <h3>{ character.name }</h3> as HTMLHeadingElement }
@@ -45,7 +44,6 @@ namespace Views.Story
 
         public set character(value: Data.Character)
         {
-            console.log("update", value);
             this.nameHeading.textContent = value.name;
             this.portraitImg.src = value.portrait;
 

@@ -35,7 +35,7 @@ namespace Views.Story
             const button = e.currentTarget as HTMLButtonElement;
             const span = button.previousElementSibling as HTMLSpanElement;
             const label = span.previousElementSibling as HTMLLabelElement;
-            console.log(label.htmlFor, span.getAttribute("text"));
+
             const result = await Views.Dialogs.TextEdit("Edit " + label.htmlFor, span.getAttribute("text"));
             if (result)
             {
