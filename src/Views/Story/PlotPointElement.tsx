@@ -111,8 +111,12 @@ namespace Views.Story
 
         private async onEdit()
         {
-            const result = await Views.Dialogs.TextEdit("Edit Plot-Point", this.text);
-            if (result) this.text = result;
+            const result = await PlotEdit(this.location, this.time, this.text);
+            if (!result) return;
+
+            this.location = result.location;
+            this.time = result.time;
+            this.text = this.text;
         }
 
         private async onShowInternal()

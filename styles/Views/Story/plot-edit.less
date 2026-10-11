@@ -1,0 +1,88 @@
+.plot-edit
+{
+    display: grid;
+    grid-template-rows: max-content max-content max-content 1fr max-content;
+    grid-template-columns: max-content 1fr;
+    grid-template-areas:
+        "location-label location"
+        "time-label time"
+        "text-label text-label"
+        "text text"
+        "actions actions";
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 1em;
+    border-radius: var(--corner-radius);
+
+    *
+    {
+        overflow-anchor: none;
+    }
+
+    > .location-label
+    {
+        grid-area: location-label;
+    }
+
+    > .location-input
+    {
+        grid-area: location;
+        font-size: 1.125em;
+    }
+
+    > .time-label
+    {
+        grid-area: time-label;
+    }
+
+    > .time-input
+    {
+        grid-area: time;
+        font-size: 1.125em;
+    }
+
+    > .text-label
+    {
+        grid-area: text-label;
+    }
+
+    > .text-input
+    {
+        grid-area: text;
+        height: 100%;
+        font-size: 1.125em;
+    }
+
+    > .actions
+    {
+        display: grid;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-area: actions;
+        overflow-anchor: auto;
+        gap: 1em;
+
+        > .ok-button
+        {
+            background: var(--ok-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-ok-color);
+            }
+        }
+
+        > .cancel-button
+        {
+            background: var(--cancel-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-cancel-color);
+            }
+        }
+    }
+}
