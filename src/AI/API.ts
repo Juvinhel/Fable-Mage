@@ -8,7 +8,7 @@
 namespace AI
 {
     export let textAPI: TextAPI;
-    export let imageAPI: ImageAPI;
+    export declare let imageAPI: ImageAPI;
 
     export function createTextAPI(config: any): TextAPI
     {
@@ -98,7 +98,7 @@ namespace AI
     {
         public async generateImage(prompt: string): Promise<string>
         {
-            return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=";
+            return "";
         }
 
         public async check(): Promise<void>
@@ -108,3 +108,17 @@ namespace AI
 
     export type Message = { content: string, role: "system" | "user" | "assistant"; };
 }
+
+Object.defineProperty(AI, "imageAPI", {
+    get(): AI.ImageAPI
+    {
+        return AI["internal_imageAPI"];
+    },
+    set(value: AI.ImageAPI)
+    {
+        AI["internal_imageAPI"] = value;
+        document.body.classList.toggle("no-image-api", value instanceof AI.NoneImageAPI);
+    },
+    enumerable: true,
+    configurable: true,
+});

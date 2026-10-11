@@ -27,7 +27,7 @@ namespace Views.Story
                 </div>
                 <div class="plot-text">
                     { this.turnElement = <span class="turn" /> as HTMLSpanElement }
-                    { this.imageElement = <img class="image hidden" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: this.image }] }); } } /> as HTMLImageElement }
+                    { this.imageElement = <img class="image" onclick={ (e: Event) => { UI.Dialog.lightBox({ pages: [{ content: this.image }] }); } } /> as HTMLImageElement }
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div class="actions">
@@ -68,10 +68,10 @@ namespace Views.Story
 
         private internal_scenery: string;
         public get scenery(): string { return this.internal_scenery; }
-        public set scenery(value: string) { this.internal_scenery = value; this.imageElement.classList.toggle("hidden", !value); }
+        public set scenery(value: string) { this.internal_scenery = value; }
 
         public get image(): string { return this.imageElement.getAttribute("src"); }
-        public set image(value: string) { value ? this.imageElement.setAttribute("src", value) : this.imageElement.removeAttribute("src"); }
+        public set image(value: string) { value == null ? this.imageElement.removeAttribute("src") : this.imageElement.setAttribute("src", value); }
 
         public get choices(): string[] { return [...this.choicesListElement.querySelectorAll("button")].map(x => x.textContent); }
         public set choices(values: string[])

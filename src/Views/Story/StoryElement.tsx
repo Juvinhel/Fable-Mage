@@ -282,6 +282,7 @@ namespace Views.Story
                 const plotPoint = JSON.clone(world.prologue) as Data.PlotPoint;
                 plotPoint.player = JSON.clone(world.player);
                 plotPoint.npcs = JSON.clone(world.npcs);
+                plotPoint.image = world.cover;
                 const plotPointElement = new PlotPointElement();
                 plotPointElement.import(plotPoint);
                 this.plotList.appendChild(plotPointElement);

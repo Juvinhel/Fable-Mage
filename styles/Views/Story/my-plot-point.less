@@ -51,6 +51,7 @@ my-plot-point
 
         > img
         {
+            display: block;
             aspect-ratio: 1;
             width: 20em;
             max-width: 50%;
@@ -59,11 +60,6 @@ my-plot-point
             border-radius: 0.5em;
             background-image: url("img/default-scene.png");
             background-size: contain;
-
-            &:not(.hidden)
-            {
-                display: block;
-            }
         }
     }
 
@@ -116,5 +112,13 @@ my-plot-point
     {
         --button-text-color: white;
         font-size: 1.25em;
+    }
+}
+
+.no-image-api my-plot-point > .plot-text > img
+{
+    &:is(:not([src]), [src=""])
+    {
+        display: none;
     }
 }
