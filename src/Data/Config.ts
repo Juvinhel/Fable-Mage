@@ -12,7 +12,22 @@ namespace Data
         nexusAccount?: NexusAccount;
         summaryInterval?: number;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;
+        languageAPI: LanguageToolEndpoint | NoneLanguageEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
+    }
+
+    export interface LanguageToolEndpoint
+    {
+        name: "LanguageTool";
+        endpoint: string;
+        api_key?: string;
+        username?: string;
+        password?: string;
+    }
+
+    export interface NoneLanguageEndpoint
+    {
+        name: "None";
     }
 
     export interface KoboldCPPEndpoint
@@ -72,6 +87,10 @@ namespace Data
         textAPI: {
             name: "KoboldCPP",
             url: "https://ai.coffinprincess.de"
+        },
+        languageAPI: {
+            name: "LanguageTool",
+            endpoint: "https://api.languagetool.org/v2/check"
         },
         imageAPI: {
             name: "Stable Diffusion",

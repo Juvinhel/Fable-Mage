@@ -17,7 +17,7 @@ namespace Views.World
         {
             return <>
                 { this.nameInput = <input class="stat-name" type="text" placeholder="Name" onblur={ () => this.onBlur() } /> as HTMLInputElement }
-                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder="Description, include range and impact on the character." lang="en-US" /> as HTMLAutoCorrectTextArea }
+                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder="Description, include range and impact on the character." lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 <div class="functions">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
@@ -53,4 +53,3 @@ namespace Views.World
 
     customElements.define("my-stat-description", StatDescriptionElement);
 }
-

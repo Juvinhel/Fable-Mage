@@ -13,6 +13,7 @@ namespace Views.Settings
         }
 
         private textAPISelect: HTMLSelectElement;
+        private languageAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
         private summaryIntervalInput: HTMLInputElement;
         private versionValue: HTMLSpanElement;
@@ -42,6 +43,13 @@ namespace Views.Settings
                                     <option value="KoboldCPP">KoboldCPP</option>
                                     <option value="None">None</option>
                                     <option value="Stable Diffusion">Stable Diffusion</option>
+                                </select> as HTMLSelectElement }
+                            </div>
+                            <div>
+                                <label>LanguageAPI:</label>
+                                { this.languageAPISelect = <select onchange={ () => this.languageAPIChange() }>
+                                    <option value="LanguageTool">LanguageTool</option>
+                                    <option value="None">None</option>
                                 </select> as HTMLSelectElement }
                             </div>
                             <div class="group">
@@ -114,6 +122,10 @@ namespace Views.Settings
             for (const option of this.imageAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.imageAPI.name;
             this.imageAPIChange();
+
+            for (const option of this.languageAPISelect.querySelectorAll("option"))
+                option.selected = option.value == App.config.languageAPI.name;
+            this.languageAPIChange();
         }
 
         private textAPIChange()
@@ -161,6 +173,21 @@ namespace Views.Settings
                     break;
                 case "Stable Diffusion":
                     this.imageAPISelect.after(Views.Settings.ImageAPI.stableDiffusion(App.config.imageAPI as Partial<Data.StableDiffusionEndpoint>));
+                    break;
+            }
+        }
+
+        private languageAPIChange()
+        {
+            const apiName = this.languageAPISelect.value;
+
+            this.languageAPISelect.nextElementSibling?.remove();
+            switch (apiName)
+            {
+                case "LanguageTool":
+                    this.languageAPISelect.after(Views.Settings.LanguageAPI.languageTool(App.config.languageAPI as Partial<Data.LanguageToolEndpoint>));
+                    break;
+                case "None":
                     break;
             }
         }
@@ -229,13 +256,31 @@ namespace Views.Settings
                     throw new Error("Something went wrong with your image api config!");
                 }
 
+                const languageAPIConfig: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint = this.languageAPISelect.value == "None"
+                    ? { name: "None" }
+                    : this.getConfig(this.languageAPISelect.nextElementSibling as HTMLElement);
+                let languageAPI: AI.LanguageAPI;
+                try
+                {
+                    languageAPIConfig.name = this.languageAPISelect.value as "LanguageTool" | "None";
+                    languageAPI = AI.createLanguageAPI(languageAPIConfig);
+                    await languageAPI.check();
+                }
+                catch (error)
+                {
+                    console.error(error);
+                    throw new Error("Something went wrong with your language api config!");
+                }
+
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
+                App.config.languageAPI = languageAPIConfig;
                 App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
                 Data.saveConfig(App.config);
 
                 AI.textAPI = textAPI;
                 AI.imageAPI = imageAPI;
+                AI.languageAPI = languageAPI;
 
                 UI.Dialog.message({ title: "Seetings Saved!", text: "Your settings have been saved." });
             }

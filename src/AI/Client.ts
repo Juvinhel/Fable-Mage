@@ -237,6 +237,12 @@ namespace AI
             return await this.runImageRequest("getImage", prompt);
         }
 
+        public analyzeLanguage(text: string, language?: string): Promise<SuggestedCorrection[]>
+        {
+            console.log("Analyze", text, language);
+            return AI.languageAPI.analyze(text, language);
+        }
+
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const startedAt = Date.now();

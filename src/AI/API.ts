@@ -2,12 +2,15 @@
 /// <reference path="Gemini/API.ts" />
 /// <reference path="AnythingLLM/API.ts" />
 /// <reference path="LMStudio/API.ts" />
+/// <reference path="LanguageAPI.ts" />
+/// <reference path="LanguageTool/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
 /// <reference path="ComfyUI/API.ts" />
 
 namespace AI
 {
     export let textAPI: TextAPI;
+    export let languageAPI: LanguageAPI;
     export declare let imageAPI: ImageAPI;
 
     export function createTextAPI(config: any): TextAPI
@@ -34,12 +37,13 @@ namespace AI
         }
     }
 
-    export interface TextAPI
+    export function createLanguageAPI(config: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint): LanguageAPI
     {
-        generateText(prompt: string, temperature: number, schema?: Schema): Promise<string>;
-        generateInteractions(messages: Message[], temperature: number, schema?: Schema): Promise<string>;
-        generateInteractionsStream(messages: Message[], temperature: number, onChunk: (chunk: string) => void, schema?: Schema): Promise<string>;
-        check(): Promise<void>;
+        switch (config.name)
+        {
+            case "LanguageTool": return new AI.LanguageTool.API(config);
+            case "None": return new NoneLanguageAPI();
+        }
     }
 
     export async function readServerSentEvents(response: Response, onData: (data: string) => void): Promise<void>
@@ -87,26 +91,6 @@ namespace AI
             reader.releaseLock();
         }
     }
-
-    export interface ImageAPI
-    {
-        generateImage(prompt: string): Promise<string>;
-        check(): Promise<void>;
-    }
-
-    export class NoneImageAPI implements ImageAPI
-    {
-        public async generateImage(prompt: string): Promise<string>
-        {
-            return "";
-        }
-
-        public async check(): Promise<void>
-        {
-        }
-    }
-
-    export type Message = { content: string, role: "system" | "user" | "assistant"; };
 }
 
 Object.defineProperty(AI, "imageAPI", {

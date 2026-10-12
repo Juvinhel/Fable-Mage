@@ -57,6 +57,17 @@ class App
                 throw new Error("Something went wrong with your text api config!");
             }
 
+            let languageAPI: AI.LanguageAPI;
+            try
+            {
+                languageAPI = AI.createLanguageAPI(this.config.languageAPI);
+                await languageAPI.check();
+            }
+            catch (error)
+            {
+                throw new Error("Something went wrong with your language api config!");
+            }
+
             let imageAPI: AI.ImageAPI;
             try
             {
@@ -69,6 +80,7 @@ class App
             }
 
             AI.textAPI = textAPI;
+            AI.languageAPI = languageAPI;
             AI.imageAPI = imageAPI;
         }
         catch (error)

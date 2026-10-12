@@ -20,11 +20,11 @@ namespace Views.Story
     {
         return <div class="plot-edit">
             <label class="location-label">Location:</label>
-            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder="Location" value={ location } />
+            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder="Location" value={ location } analyze={ AI.Client.analyzeLanguage } />
             <label class="time-label">Time:</label>
-            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder="Time" value={ time } />
+            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder="Time" value={ time } analyze={ AI.Client.analyzeLanguage } />
             <label class="text-label">Text:</label>
-            <auto-correct-text-area lang="en-US" class="text-input" placeholder="Text" value={ text } />
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder="Text" value={ text } analyze={ AI.Client.analyzeLanguage } />
             <div class="actions">
                 <button class="ok-button" onclick={ okClick }>OK</button>
                 <button class="cancel-button" onclick={ cancelClick }>Cancel</button>

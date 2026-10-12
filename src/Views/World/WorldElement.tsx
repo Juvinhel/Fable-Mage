@@ -32,7 +32,7 @@ namespace Views.World
                     <div>
                         <div>
                             <label>Title:</label>
-                            { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" /> as HTMLAutoCorrectTextArea }
+                            { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Cover:</label>
@@ -48,7 +48,7 @@ namespace Views.World
                         </div>
                         <div>
                             <label>Description:</label>
-                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" /> as HTMLAutoCorrectTextArea }
+                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Tags:</label>
@@ -70,11 +70,11 @@ namespace Views.World
                     <div>
                         <div>
                             <label>Scenario:</label>
-                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" /> as HTMLAutoCorrectTextArea }
+                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Rules:</label>
-                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" /> as HTMLAutoCorrectTextArea }
+                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                         </div>
                         <div>
                             <label>Tracked Stats:</label>

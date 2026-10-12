@@ -25,23 +25,23 @@ namespace Views.World
                 <div class="base-property-list">
                     <div>
                         <label>Name:</label>
-                        { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" /> as HTMLAutoCorrectTextArea }
+                        { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Appearance:</label>
-                        { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" /> as HTMLAutoCorrectTextArea }
+                        { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Personality:</label>
-                        { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" /> as HTMLAutoCorrectTextArea }
+                        { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label for="skills">Skills:</label>
-                        { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" /> as HTMLAutoCorrectTextArea }
+                        { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                     </div>
                     <div>
                         <label>Background:</label>
-                        { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" /> as HTMLAutoCorrectTextArea }
+                        { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                     </div>
                 </div>
                 { this.additionalPropertiesList = <div class="additional-property-list" /> as HTMLDivElement }
@@ -86,7 +86,7 @@ namespace Views.World
             {
                 this.additionalPropertiesList.append(<div>
                     <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>
-                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } />
+                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } analyze={ AI.Client.analyzeLanguage } />
                 </div>);
             }
 

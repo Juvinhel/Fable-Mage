@@ -36,6 +36,7 @@ namespace Views.Story
                                 class="user-input"
                                 lang="en-US"
                                 ontouchend={ TextEditTouch }
+                                analyze={ AI.Client.analyzeLanguage }
                                 onkeydown={ (e: KeyboardEvent) => { if (e.key == "Enter" && !e.shiftKey) { e.preventDefault(); this.onSubmit(); } } }
                                 placeholder="Write what your character should do. Use [Square Brackets] for Game Master instructions." /> as HTMLAutoCorrectTextArea }
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }

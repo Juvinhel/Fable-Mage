@@ -19,7 +19,7 @@ namespace Views.Dialogs
     {
         return <div class="image-edit">
             <img class="image" src={ image } />
-            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? "input text" } lang="en-US" value={ prompt } />
+            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? "input text" } lang="en-US" value={ prompt } analyze={ AI.Client.analyzeLanguage } />
             <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>Generate</button>
             <button class="ok-button" onclick={ okClick }>OK</button>
             <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
