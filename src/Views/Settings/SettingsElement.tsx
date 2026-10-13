@@ -23,10 +23,10 @@ namespace Views.Settings
         {
             return <>
                 <tab-control>
-                    <div class="ai-tab" tab-header="AI">
-                        <div>
+                    <div id="ai-tab" class="data-view" tab-header="AI">
+                        <div class="property-list">
+                            <label>TextAPI:</label>
                             <div>
-                                <label>TextAPI:</label>
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
                                     <option value="AnythingLLM">AnythingLLM</option>
                                     <option value="Gemini">Gemini</option>
@@ -34,8 +34,9 @@ namespace Views.Settings
                                     <option value="LMStudio">LM Studio</option>
                                 </select> as HTMLSelectElement }
                             </div>
+
+                            <label>ImageAPI:</label>
                             <div>
-                                <label>ImageAPI:</label>
                                 { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                                     <option value="AnythingLLM">AnythingLLM</option>
                                     <option value="ComfyUI">ComfyUI</option>
@@ -45,13 +46,15 @@ namespace Views.Settings
                                     <option value="Stable Diffusion">Stable Diffusion</option>
                                 </select> as HTMLSelectElement }
                             </div>
+
+                            <label>LanguageAPI:</label>
                             <div>
-                                <label>LanguageAPI:</label>
                                 { this.languageAPISelect = <select onchange={ () => this.languageAPIChange() }>
                                     <option value="LanguageTool">LanguageTool</option>
                                     <option value="None">None</option>
                                 </select> as HTMLSelectElement }
                             </div>
+
                             <div class="group">
                                 <label>Summary Interval:</label>
                                 { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder="Default: 5" /> as HTMLInputElement }
@@ -61,30 +64,32 @@ namespace Views.Settings
 
                         <div class="anchor" />
 
-                        <div>
+                        <div class="actions">
                             <button title="Cancel" onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>Cancel</span></button>
                             <button title="Save" onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>Save</span></button>
                         </div>
                     </div>
                     { new NexusSettingsElement() }
-                    <div class="info-tab" tab-header="Info">
-                        <div>
+                    <div id="info-tab" class="data-view" tab-header="Info">
+                        <div class="property-list">
                             <label>Version:</label>
                             { this.versionValue = <span>Loading...</span> as HTMLSpanElement }
-                        </div>
-                        <div>
+
                             <label>Build time:</label>
                             { this.buildTimeValue = <span>Loading...</span> as HTMLSpanElement }
-                        </div>
-                        <div>
+
                             <label>Developer:</label>
                             <span>Juvinhel</span>
-                        </div>
-                        <div>
+
                             <label>Repository:</label>
                             <a href="https://github.com/Juvinhel/Fable-Mage" target="_blank" rel="noopener noreferrer">GitHub</a>
+
+                            <p>Found a bug? Please report it on the <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">GitHub issues page</a>.</p>
                         </div>
-                        <p>Found a bug? Please report it on the <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">GitHub issues page</a>.</p>
+
+                        <div class="anchor" />
+
+                        <div />
                     </div>
                 </tab-control>
             </>;

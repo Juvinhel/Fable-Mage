@@ -34,36 +34,6 @@ my-character-card
         grid-area: functions;
     }
 
-    > [class$="property-list"]
-    {
-        display: grid;
-        grid-template-rows: min-content;
-        grid-template-columns: subgrid;
-
-        gap: 0.25em;
-
-        > div
-        {
-            display: grid;
-            grid-template-rows: min-content;
-            grid-template-columns: subgrid;
-            grid-column: 1 / -1;
-            gap: 0.25em;
-
-            > label
-            {
-                grid-column: 1;
-                align-self: baseline;
-                padding: 0.25em 0;
-            }
-
-            > *:not(label)
-            {
-                grid-column: 2;
-            }
-        }
-    }
-
     > .functions
     {
         display: grid;

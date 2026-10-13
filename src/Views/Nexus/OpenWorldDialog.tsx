@@ -12,7 +12,7 @@ namespace Views.Nexus
         const userId = App.config.nexusAccount?.email?.trim().toLocaleLowerCase();
         const isOwnWorld = !!userId && world.userid?.trim().toLocaleLowerCase() == userId;
 
-        return <div class="open-world-dialog">
+        return <div id="open-world-dialog">
             { coverUrl ? <img class="cover" src={ coverUrl } /> : <div class="cover missing-cover">No cover</div> }
             <div class="details">
                 <div class="metadata">
@@ -58,7 +58,7 @@ namespace Views.Nexus
         try
         {
             await Data.Nexus.API.deleteWorld(world.id);
-            UI.Dialog.close(document.querySelector(".open-world-dialog"));
+            UI.Dialog.close(document.querySelector("#open-world-dialog"));
             await Views.nexusElement.refresh();
         }
         catch (error)
@@ -72,7 +72,7 @@ namespace Views.Nexus
         try
         {
             const file = await Data.Nexus.API.getWorldData(world.id);
-            UI.Dialog.close(document.querySelector(".open-world-dialog"));
+            UI.Dialog.close(document.querySelector("#open-world-dialog"));
 
             if (action == "edit")
             {

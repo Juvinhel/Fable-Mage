@@ -22,29 +22,23 @@ namespace Views.World
         {
             return <>
                 { this.portraitImage = <img class="portrait" onclick={ () => this.onGeneratePortrait() } /> as HTMLImageElement }
-                <div class="base-property-list">
-                    <div>
-                        <label>Name:</label>
-                        { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                    </div>
-                    <div>
-                        <label>Appearance:</label>
-                        { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                    </div>
-                    <div>
-                        <label>Personality:</label>
-                        { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                    </div>
-                    <div>
-                        <label for="skills">Skills:</label>
-                        { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                    </div>
-                    <div>
-                        <label>Background:</label>
-                        { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                    </div>
+                <div class="base-property-list property-list">
+                    <label>Name:</label>
+                    { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                    <label>Appearance:</label>
+                    { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                    <label>Personality:</label>
+                    { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                    <label for="skills">Skills:</label>
+                    { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                    <label>Background:</label>
+                    { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 </div>
-                { this.additionalPropertiesList = <div class="additional-property-list" /> as HTMLDivElement }
+                { this.additionalPropertiesList = <div class="additional-property-list property-list" /> as HTMLDivElement }
                 <div class="functions vertical">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
@@ -84,10 +78,9 @@ namespace Views.World
             this.additionalPropertiesList.clearChildren();
             for (const property of values)
             {
-                this.additionalPropertiesList.append(<div>
-                    <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>
-                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } analyze={ AI.Client.analyzeLanguage } />
-                </div>);
+                this.additionalPropertiesList.append(
+                    <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>,
+                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } analyze={ AI.Client.analyzeLanguage } />);
             }
 
             this.import(data);
@@ -106,6 +99,12 @@ namespace Views.World
 
             this.previousGeneratePortraitPrompt = result.prompt;
             this.portraitImage.src = result.image;
+        }
+
+        private async onDelete()
+        {
+            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this character?", title: "Delete character?" }))
+                this.remove();
         }
 
         public export(): Data.Character
@@ -152,12 +151,6 @@ namespace Views.World
                     input.value = value;
                 }
             }
-        }
-
-        private async onDelete()
-        {
-            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this character?", title: "Delete character?" }))
-                this.remove();
         }
     }
 

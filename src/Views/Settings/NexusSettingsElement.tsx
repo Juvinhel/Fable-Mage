@@ -10,7 +10,8 @@ namespace Views.Settings
         {
             super();
 
-            this.classList.add("nexus-tab");
+            this.id = "nexus-tab";
+            this.classList.add("property-list");
             this.setAttribute("tab-header", "Nexus");
             this.append(this.build());
             this.load();
@@ -22,19 +23,16 @@ namespace Views.Settings
         private build()
         {
             return <>
+                <label>Login:</label>
                 <div>
-                    <label>Login:</label>
                     <button onclick={ () => this.loginWithGoogle() }>Login with Google</button>
                     <button onclick={ () => this.logoutWithGoogle() }>Logout</button>
                 </div>
-                <div>
-                    <label>Email:</label>
-                    { this.emailInput = <input type="email" value={ App.config.nexusAccount?.email ?? "" } readonly /> as HTMLInputElement }
-                </div>
-                <div>
-                    <label>Username:</label>
-                    { this.usernameInput = <input type="text" value={ App.config.nexusAccount?.username ?? "" } readonly /> as HTMLInputElement }
-                </div>
+                <label>Email:</label>
+                { this.emailInput = <input type="email" value={ App.config.nexusAccount?.email ?? "" } readonly /> as HTMLInputElement }
+
+                <label>Username:</label>
+                { this.usernameInput = <input type="text" value={ App.config.nexusAccount?.username ?? "" } readonly /> as HTMLInputElement }
             </>;
         }
 

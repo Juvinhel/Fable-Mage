@@ -2,15 +2,12 @@ namespace Views.Settings.TextAPI
 {
     export function lmStudio(config: Partial<Data.LMStudioEndpoint>)
     {
-        return <div class="lmstudio-api">
-            <div>
-                <label>URL:</label>
-                <input name="url" type="text" value={ config.url ?? "" } placeholder="LM Studio API URL (e.g. http://localhost:1234/v1)" onblur={ (e: FocusEvent) => refreshLMStudioModels(e.currentTarget as HTMLInputElement) } />
-            </div>
-            <div>
-                <label>Model:</label>
-                <combo-select name="model" type="text" value={ config.model ?? "" } />
-            </div>
+        return <div id="lmstudio-api">
+            <label>URL:</label>
+            <input name="url" type="text" value={ config.url ?? "" } placeholder="LM Studio API URL (e.g. http://localhost:1234/v1)" onblur={ (e: FocusEvent) => refreshLMStudioModels(e.currentTarget as HTMLInputElement) } />
+
+            <label>Model:</label>
+            <combo-select name="model" type="text" value={ config.model ?? "" } />
         </div>;
     }
 

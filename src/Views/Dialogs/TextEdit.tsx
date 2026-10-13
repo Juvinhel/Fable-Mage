@@ -16,7 +16,7 @@ namespace Views.Dialogs
 
     function buildTextEditDialog(text: string, placeholder?: string)
     {
-        return <div class="text-edit">
+        return <div id="text-edit">
             <auto-correct-text-area lang="en-US" class="text-input" placeholder={ placeholder ?? "input text" } value={ text } analyze={ AI.Client.analyzeLanguage } />
             <button class="ok-button" onclick={ okClick }>OK</button>
             <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
@@ -26,7 +26,7 @@ namespace Views.Dialogs
     function okClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".text-edit");
+        const dialog = target.closest("#text-edit");
         dialog.classList.toggle("ok", true);
 
         UI.Dialog.close(dialog);
@@ -35,7 +35,7 @@ namespace Views.Dialogs
     function cancelClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".text-edit");
+        const dialog = target.closest("#text-edit");
         dialog.classList.toggle("ok", false);
         UI.Dialog.close(dialog);
     }

@@ -28,37 +28,31 @@ namespace Views.World
         private build()
         {
             return this.tabControl = <tab-control>
-                <div tab-header="Overview" class="world-tab overview-tab">
-                    <div>
-                        <div>
-                            <label>Title:</label>
-                            { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                        </div>
-                        <div>
-                            <label>Cover:</label>
-                            { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
-                        </div>
-                        <div>
-                            <label>Version:</label>
-                            { this.versionInput = <semantic-version-input placeholder="1.0.0" value="1.0" /> as UI.Elements.SemanticVersionInput }
-                        </div>
-                        <div>
-                            <label>Mature content:</label>
-                            { this.matureContentInput = <input type="checkbox" /> as HTMLInputElement }
-                        </div>
-                        <div>
-                            <label>Description:</label>
-                            { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                        </div>
-                        <div>
-                            <label>Tags:</label>
-                            { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder="Descriptive tags for your world" /> as HTMLMultiSelect }
-                        </div>
+                <div id="overview-tab" class="data-view" tab-header="Overview" >
+                    <div class="property-list">
+                        <label>Title:</label>
+                        { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                        <label>Cover:</label>
+                        { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
+
+                        <label>Version:</label>
+                        { this.versionInput = <semantic-version-input placeholder="1.0.0" value="1.0" /> as UI.Elements.SemanticVersionInput }
+
+                        <label>Mature content:</label>
+                        { this.matureContentInput = <input type="checkbox" /> as HTMLInputElement }
+
+                        <label>Description:</label>
+                        { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                        <label>Tags:</label>
+                        { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder="Descriptive tags for your world" /> as HTMLMultiSelect }
+
                     </div>
 
                     <div class="anchor" />
 
-                    <div>
+                    <div class="actions">
                         <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
                         <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
                         <button onclick={ () => this.startStory() }><color-icon src="img/icons/play.svg" /><span>Start Story</span></button>
@@ -66,31 +60,27 @@ namespace Views.World
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div tab-header="Details" class="world-tab details-tab">
-                    <div>
-                        <div>
-                            <label>Scenario:</label>
-                            { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                <div id="details-tab" class="data-view" tab-header="Details">
+                    <div class="property-list">
+                        <label>Scenario:</label>
+                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                        <label>Rules:</label>
+                        { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+
+                        <label>Tracked Stats:</label>
+                        <div class="functions horizontal">
+                            <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
                         </div>
-                        <div>
-                            <label>Rules:</label>
-                            { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                        </div>
-                        <div>
-                            <label>Tracked Stats:</label>
-                            <div class="functions horizontal">
-                                <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
-                            </div>
-                            { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
-                        </div>
+                        { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
                     </div>
 
                     <div class="anchor" />
 
-                    <div />
+                    <div class="actions" />
                 </div>
-                <div tab-header="Characters" class="characters-tab">
-                    <div>
+                <div id="characters-tab" class="data-view" tab-header="Characters" >
+                    <div class="property-list">
                         <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
                             <label>Player:</label>
                             <div class="functions horizontal">
@@ -111,26 +101,26 @@ namespace Views.World
 
                     <div class="anchor" />
 
-                    <div />
+                    <div class="actions" />
                 </div>
-                <div tab-header="Prologue" class="prologue-tab">
+                <div id="prologue-tab" class="data-view" tab-header="Prologue">
                     { this.prologueContainer = <div>{ new PrologueElement() }</div> as HTMLDivElement }
 
                     <div class="anchor" />
 
-                    <div>
+                    <div class="actions">
                         <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
                         <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div tab-header="Import / Export" class="import-export-tab">
+                <div id="import-export-tab" class="data-view" tab-header="Import / Export">
                     <div />
 
                     <div class="anchor" />
 
-                    <div>
-                        <button onclick={ () => this.open() }><span>Import JSON</span></button>
-                        <button onclick={ () => this.save() }><span>Export JSON</span></button>
+                    <div class="actions">
+                        <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>Import JSON</span></button>
+                        <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>Export JSON</span></button>
                     </div>
                 </div>
             </tab-control> as HTMLTabControl;

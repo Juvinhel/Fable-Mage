@@ -1,10 +1,6 @@
 namespace Data
 {
-    export type Story = {
-        title: string;
-        scenario: string;
-        rules: string;
-        stats?: Stat[];
+    export type Story = World & {
         plot: Plot;
     };
 

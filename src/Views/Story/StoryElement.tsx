@@ -19,14 +19,14 @@ namespace Views.Story
         private statsFlyOut: StatsFlyOutElement;
         private characterList: HTMLElement;
 
-        private contextElement: HTMLTextAreaElement;
-        private summaryElement: HTMLTextAreaElement;
+        private contextElement: HTMLAutoCorrectTextArea;
+        private summaryElement: HTMLAutoCorrectTextArea;
 
         private build()
         {
             return <>
                 { this.tabControl = <tab-control>
-                    { this.plotTab = <div class="plot-tab" tab-header="Plot">
+                    { this.plotTab = <div id="plot-tab" tab-header="Plot">
                         { this.heading = <h1 class="title" /> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input"
@@ -45,50 +45,51 @@ namespace Views.Story
                         <button class="fly-out-toggle icon-button" onclick={ () => this.statsFlyOut.classList.toggle("maximized") }><color-icon src="img/icons/stat.svg" /></button>
                         { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
-                    <div class="characters-tab" tab-header="Characters">
+                    <div id="characters-tab" class="data-view" tab-header="Characters">
                         { this.characterList = <div class="character-list" /> as HTMLElement }
 
                         <div class="anchor" />
 
-                        <div />
+                        <div class="actions">
+                            <button class="add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /><span>Create new npc</span></button>
+                            <button class="add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new npc using AI</span></button>
+                        </div>
                     </div>
-                    <div class="context-tab" tab-header="Context">
-                        <div>
+                    <div id="context-tab" class="data-view" tab-header="Context">
+                        <div class="property-list">
                             <label>Context</label>
-                            { this.contextElement = <textarea /> as HTMLTextAreaElement }
+                            { this.contextElement = <auto-correct-text-area class="large" /> as HTMLAutoCorrectTextArea }
                         </div>
 
                         <div class="anchor" />
 
-                        <div />
+                        <div class="actions" />
                     </div>
-                    <div class="summary" tab-header="Summary">
-                        <div>
+                    <div id="summary-tab" class="data-view" tab-header="Summary">
+                        <div class="property-list">
                             <label>Summary</label>
-                            { this.summaryElement = <textarea></textarea> as HTMLTextAreaElement }
+                            { this.summaryElement = <auto-correct-text-area class="large" /> as HTMLAutoCorrectTextArea }
                         </div>
 
                         <div class="anchor" />
 
-                        <div />
+                        <div class="actions" />
                     </div>
-                    <div class="save-load" tab-header="Save / Load">
-                        <div />
+                    <div id="save-load-tab" class="data-view" tab-header="Save / Load">
+                        <div class="property-list" />
 
                         <div class="anchor" />
 
-                        <div>
-                            <button onclick={ () => this.open() }><span>Load Savegame</span></button>
-                            <button onclick={ () => this.save() }><span>Save Savegame</span></button>
+                        <div class="actions">
+                            <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>Load Savegame</span></button>
+                            <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>Save Savegame</span></button>
                         </div>
                     </div>
                 </tab-control> as HTMLTabControl }
             </>;
         }
 
-        private scenario: string;
-        private rules: string;
-        private stats?: Data.Stat[];
+        private world: Data.World;
         private get player(): Data.Character { return (this.characterList.children[0] as CharacterSheetElement).character; }
         private get npcs(): Data.Character[] { return (this.characterList.children.slice(1) as CharacterSheetElement[]).map(x => x.character); }
         private get characters(): Data.Character[] { return this.characterList.children.map(x => (x as CharacterSheetElement).character); }
@@ -270,12 +271,41 @@ namespace Views.Story
             this.characters = characters;
         }
 
+        private async onAddNPC()
+        {
+            const newCharacter = { name: "", appearance: "", background: "", personality: "", portrait: "", skills: "" } as Data.Character;
+            this.characters = [...this.characters, newCharacter];
+        }
+
+        private previousCreateNPCPrompt = "";
+        private async onAddNPCUsingAI()
+        {
+            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
+            if (!result) return;
+            this.previousCreateNPCPrompt = result;
+
+            App.beginThinking();
+
+            try
+            {
+                const npc = await AI.Client.createNPC(result, this.world, this.player, this.npcs);
+                const prompt = await AI.Client.describeCharacter(npc);
+                const image = await AI.Client.getImage(prompt);
+                npc.portrait = image;
+                this.characters = [...this.characters, npc];
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
+
+            App.stopThinking();
+        }
+
         public async startStory(world: Data.World)
         {
             this.heading.textContent = world.title;
-            this.scenario = world.scenario;
-            this.rules = world.rules;
-            this.stats = world.stats;
+            this.world = JSON.clone(world);
 
             this.plotList.clearChildren();
             if (world.prologue)
@@ -294,11 +324,7 @@ namespace Views.Story
 
         public export(): Data.Story
         {
-            const story = {} as Data.Story;
-            story.title = this.heading.textContent;
-            story.scenario = this.scenario;
-            story.rules = this.rules;
-            story.stats = this.stats;
+            const story = JSON.clone(this.world) as Data.Story;
 
             const plot: Data.Plot = [];
             for (const plotPointElement of this.plotList.querySelectorAll(":scope > my-plot-point") as NodeListOf<PlotPointElement>)
@@ -313,11 +339,11 @@ namespace Views.Story
 
         public import(story: Data.Story)
         {
+            this.world = JSON.clone(story);
+            delete this.world["plot"];
+
             // world
             this.heading.textContent = story.title;
-            this.scenario = story.scenario;
-            this.rules = story.rules;
-            this.stats = story.stats;
 
             // plot
             this.plotList.clearChildren();

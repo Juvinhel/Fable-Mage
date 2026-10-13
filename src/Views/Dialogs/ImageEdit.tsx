@@ -17,7 +17,7 @@ namespace Views.Dialogs
 
     function buildImageEditDialog(image: string, prompt: string, placeholder?: string)
     {
-        return <div class="image-edit">
+        return <div id="image-edit">
             <img class="image" src={ image } />
             <auto-correct-text-area class="text-input" placeholder={ placeholder ?? "input text" } lang="en-US" value={ prompt } analyze={ AI.Client.analyzeLanguage } />
             <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>Generate</button>
@@ -29,7 +29,7 @@ namespace Views.Dialogs
     async function onGenerateImage(e: Event)
     {
         const button = e.currentTarget as HTMLButtonElement;
-        const container = button.closest(".image-edit") as HTMLDivElement;
+        const container = button.closest("#image-edit") as HTMLDivElement;
         const textInput = container.querySelector(".text-input") as HTMLAutoCorrectTextArea;
         const image = container.querySelector(".image") as HTMLImageElement;
 
@@ -51,7 +51,7 @@ namespace Views.Dialogs
     function okClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".image-edit");
+        const dialog = target.closest("#image-edit");
         dialog.classList.toggle("ok", true);
 
         UI.Dialog.close(dialog);
@@ -60,7 +60,7 @@ namespace Views.Dialogs
     function cancelClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".image-edit");
+        const dialog = target.closest("#image-edit");
         dialog.classList.toggle("ok", false);
         UI.Dialog.close(dialog);
     }

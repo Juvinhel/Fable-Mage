@@ -18,7 +18,7 @@ namespace Views.Story
 
     function buildPlotEditDialog(location: string, time: string, text: string)
     {
-        return <div class="plot-edit">
+        return <div id="plot-edit">
             <label class="location-label">Location:</label>
             <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder="Location" value={ location } analyze={ AI.Client.analyzeLanguage } />
             <label class="time-label">Time:</label>
@@ -35,7 +35,7 @@ namespace Views.Story
     function okClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".plot-edit");
+        const dialog = target.closest("#plot-edit");
         dialog.classList.toggle("ok", true);
 
         UI.Dialog.close(dialog);
@@ -44,7 +44,7 @@ namespace Views.Story
     function cancelClick(event: Event)
     {
         const target = event.currentTarget as HTMLElement;
-        const dialog = target.closest(".plot-edit");
+        const dialog = target.closest("#plot-edit");
         dialog.classList.toggle("ok", false);
         UI.Dialog.close(dialog);
     }

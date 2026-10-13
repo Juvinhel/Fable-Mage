@@ -18,10 +18,10 @@ namespace Views
                 <img class="background" src="img/home-cover.png" />
 
                 <div>
-                    <button onclick={ () => this.onCreateNewWorld() }><span>Create new World</span></button>
-                    <button onclick={ () => this.onLoadWorld() }><span>Load World</span></button>
-                    <button onclick={ () => this.onStartStory() }><span>Start Story</span></button>
-                    <button onclick={ () => this.onLoadStory() }><span>Load Story</span></button>
+                    <button title="Create new World" onclick={ () => this.onCreateNewWorld() }><color-icon src="img/icons/ai.svg" /><span>Create new World</span></button>
+                    <button title="Load World" onclick={ () => this.onLoadWorld() }><color-icon src="img/icons/open.svg" /><span>Load World</span></button>
+                    <button title="Start Story" onclick={ () => this.onStartStory() }><color-icon src="img/icons/play.svg" /><span>Start Story</span></button>
+                    <button title="Load Story" onclick={ () => this.onLoadStory() }><color-icon src="img/icons/open.svg" /><span>Load Story</span></button>
                 </div>
             </>;
         }

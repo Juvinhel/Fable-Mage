@@ -20,6 +20,7 @@ namespace Views.Story
             return <>
                 { this.portraitImg = <img class="portrait" src={ character.portrait } /> as HTMLImageElement }
                 { this.nameHeading = <h3>{ character.name }</h3> as HTMLHeadingElement }
+                <button class="icon-button delete-button" title="Delete" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 {
                     ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
                         <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
@@ -28,20 +29,6 @@ namespace Views.Story
                     ])
                 }
             </>;
-        }
-
-        private async onEdit(e: Event)
-        {
-            const button = e.currentTarget as HTMLButtonElement;
-            const span = button.previousElementSibling as HTMLSpanElement;
-            const label = span.previousElementSibling as HTMLLabelElement;
-
-            const result = await Views.Dialogs.TextEdit("Edit " + label.htmlFor, span.getAttribute("text"));
-            if (result)
-            {
-                span.setAttribute("text", result);
-                span.innerHTML = Helper.FormatAIText(result);
-            }
         }
 
         public get character(): Data.Character
@@ -68,6 +55,26 @@ namespace Views.Story
                 const text = value[label.htmlFor];
                 span.setAttribute("text", text);
                 span.innerHTML = Helper.FormatAIText(text);
+            }
+        }
+
+        private async onDelete()
+        {
+            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this character?", title: "Delete character?" }))
+                this.remove();
+        }
+
+        private async onEdit(e: Event)
+        {
+            const button = e.currentTarget as HTMLButtonElement;
+            const span = button.previousElementSibling as HTMLSpanElement;
+            const label = span.previousElementSibling as HTMLLabelElement;
+
+            const result = await Views.Dialogs.TextEdit("Edit " + label.htmlFor, span.getAttribute("text"));
+            if (result)
+            {
+                span.setAttribute("text", result);
+                span.innerHTML = Helper.FormatAIText(result);
             }
         }
     }

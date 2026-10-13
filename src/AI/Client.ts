@@ -186,6 +186,7 @@ namespace AI
             player: Data.Character,
             npcs: Data.Character[]): Promise<Data.Character>
         {
+            console.log("createNPC", world, player, npcs);
             const prompt = await this.createNPCTemplate(world, player, npcs, this.characterStats(world.stats));
             const messages: Message[] = [
                 { role: "system", content: prompt },
@@ -239,7 +240,6 @@ namespace AI
 
         public analyzeLanguage(text: string, language?: string): Promise<SuggestedCorrection[]>
         {
-            console.log("Analyze", text, language);
             return AI.languageAPI.analyze(text, language);
         }
 
