@@ -12,14 +12,14 @@ namespace Data
         nexusAccount?: NexusAccount;
         summaryInterval?: number;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;
-        languageAPI: LanguageToolEndpoint | NoneLanguageEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
+        languageAPI: LanguageToolEndpoint | NoneLanguageEndpoint;
     }
 
     export interface LanguageToolEndpoint
     {
         name: "LanguageTool";
-        url: string;
+        url?: string;
         api_key?: string;
         username?: string;
         password?: string;
@@ -86,16 +86,15 @@ namespace Data
     const defaultConfig: Config = {
         textAPI: {
             name: "KoboldCPP",
-            url: "https://ai.coffinprincess.de"
-        },
-        languageAPI: {
-            name: "LanguageTool",
-            url: "https://api.languagetool.org/v2/check"
+            url: "http://localhost:5001"
         },
         imageAPI: {
             name: "Stable Diffusion",
-            url: "https://diffusion.coffinprincess.de"
-        }
+            url: "http://localhost:7860"
+        },
+        languageAPI: {
+            name: "LanguageTool"
+        },
     };
 
     export async function loadConfig(): Promise<Config>
