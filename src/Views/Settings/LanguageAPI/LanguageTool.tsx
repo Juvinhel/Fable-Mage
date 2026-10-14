@@ -3,8 +3,8 @@ namespace Views.Settings.LanguageAPI
     export function languageTool(config: Partial<Data.LanguageToolEndpoint>)
     {
         return <div id="languagetool-api">
-            <label>Endpoint:</label>
-            <input name="endpoint" type="text" value={ config.endpoint ?? "" } placeholder="LanguageTool API endpoint" />
+            <label>Url:</label>
+            <input name="url" type="text" value={ config.url ?? "" } placeholder="LanguageTool API url. Leave blank for default public url." />
 
             <label>API Key:</label>
             <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="Optional LanguageTool API key" />
@@ -16,7 +16,7 @@ namespace Views.Settings.LanguageAPI
                 <label>Password:</label>
                 <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
 
-                <p>Used for Basic authentication when both are provided.</p>
+                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
             </div>
         </div>;
     }

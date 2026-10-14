@@ -4,16 +4,11 @@ namespace AI.LanguageTool
     {
         constructor (config: Data.LanguageToolEndpoint)
         {
-            this.endpoint = config.endpoint;
-            this.apiKey = config.api_key;
-            this.username = config.username;
-            this.password = config.password;
+            this.config = config;
         }
 
-        private endpoint: string;
-        private apiKey?: string;
-        private username?: string;
-        private password?: string;
+        private config: Data.LanguageToolEndpoint;
+        private defaultUrl = "https://api.languagetool.org";
 
         public async analyze(text: string, language?: string): Promise<SuggestedCorrection[]>
         {
@@ -31,15 +26,16 @@ namespace AI.LanguageTool
 
         private async sendRequest(text: string, language = "auto"): Promise<CheckResponse>
         {
+            const url = (this.config.url?.trimEnd("/") || this.defaultUrl) + "/v2/check";
             const body = new URLSearchParams({ text, language });
-            if (this.apiKey)
-                body.set("apiKey", this.apiKey);
+            if (this.config.api_key)
+                body.set("apiKey", this.config.api_key);
 
             const headers: HeadersInit = { "Content-Type": "application/x-www-form-urlencoded" };
-            if (this.username && this.password)
-                headers.authorization = "Basic " + btoa(this.username + ":" + this.password);
+            if (this.config.username && this.config.password)
+                headers.authorization = "Basic " + btoa(this.config.username + ":" + this.config.password);
 
-            const response = await fetch(this.endpoint,
+            const response = await fetch(url,
                 {
                     method: "POST",
                     headers,

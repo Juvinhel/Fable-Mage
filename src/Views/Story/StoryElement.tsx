@@ -149,7 +149,7 @@ namespace Views.Story
 
             const summaryInterval = this.summaryInterval;
             let lastSummaryIndex;
-            while (plotPointElements.length - (lastSummaryIndex = plotPointElements.findLastIndex(x => !!x.summary)) >= (summaryInterval * 2))
+            while (plotPointElements.length - (lastSummaryIndex = plotPointElements.findLastIndex(x => x.summary != null)) >= (summaryInterval * 2))
             {
                 const previousSummaryElement = plotPointElements[lastSummaryIndex];
                 const plotPointElementsToSummarize = plotPointElements.slice(lastSummaryIndex + 1, lastSummaryIndex + 1 + summaryInterval);

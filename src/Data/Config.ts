@@ -19,7 +19,7 @@ namespace Data
     export interface LanguageToolEndpoint
     {
         name: "LanguageTool";
-        endpoint: string;
+        url: string;
         api_key?: string;
         username?: string;
         password?: string;
@@ -90,7 +90,7 @@ namespace Data
         },
         languageAPI: {
             name: "LanguageTool",
-            endpoint: "https://api.languagetool.org/v2/check"
+            url: "https://api.languagetool.org/v2/check"
         },
         imageAPI: {
             name: "Stable Diffusion",
