@@ -42,10 +42,10 @@ jobs:
           gh release download "$TAG" -p "web.zip" --dir .
 
           echo "Verifying downloaded file..."
-          file release.zip || true
+          file web.zip || true
 
           echo "Extracting zip contents..."
-          unzip -q release.zip -d ./site-content
+          unzip -q web.zip -d ./site-content
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
