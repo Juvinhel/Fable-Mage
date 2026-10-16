@@ -1,0 +1,47 @@
+name: Deploy GitHub Pages from Release Zip
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download and extract web.zip
+        run: |
+          mkdir -p ./site-content
+          
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          REPO="${{ github.repository }}"
+          ZIP_URL="https://github.com/${REPO}/releases/download/${TAG_NAME}/web.zip"
+
+          echo "Downloading web.zip from release tag: $TAG_NAME..."
+          curl -L \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/octet-stream" \
+            -o release.zip \
+            "$ZIP_URL"
+
+          echo "Extracting zip contents..."
+          unzip -q release.zip -d ./site-content
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './site-content'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
