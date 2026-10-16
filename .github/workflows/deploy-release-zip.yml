@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to deploy (leave blank for latest)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -17,20 +22,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download and extract web.zip
+      - name: Download web.zip using GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p ./site-content
           
-          TAG_NAME="${{ github.event.release.tag_name }}"
-          REPO="${{ github.repository }}"
-          ZIP_URL="https://github.com/${REPO}/releases/download/${TAG_NAME}/web.zip"
+          # Determine which tag to download from
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          elif [ -n "${{ github.event.release.tag_name }}" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            echo "Fetching latest release tag..."
+            TAG=$(gh release view --json tagName --jq .tagName)
+          fi
+          
+          echo "Downloading web.zip from release: $TAG"
+          gh release download "$TAG" -p "web.zip" --dir .
 
-          echo "Downloading web.zip from release tag: $TAG_NAME..."
-          curl -L \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/octet-stream" \
-            -o release.zip \
-            "$ZIP_URL"
+          echo "Verifying downloaded file..."
+          file release.zip || true
 
           echo "Extracting zip contents..."
           unzip -q release.zip -d ./site-content
