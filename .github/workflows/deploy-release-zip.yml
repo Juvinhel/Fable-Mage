@@ -44,7 +44,7 @@ jobs:
         run: |
           python3 - << 'EOF'
           import zipfile
-          with zipfile.ZipFile('release.zip', 'r') as zf:
+          with zipfile.ZipFile('web.zip', 'r') as zf:
               for info in zf.infolist():
                   # Convert Windows backslashes to Linux forward slashes
                   info.filename = info.filename.replace('\\', '/')
