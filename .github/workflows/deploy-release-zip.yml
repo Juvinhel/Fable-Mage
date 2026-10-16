@@ -28,7 +28,6 @@ jobs:
         run: |
           mkdir -p ./site-content
           
-          # Determine which tag to download from
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ inputs.tag }}" ]; then
             TAG="${{ inputs.tag }}"
           elif [ -n "${{ github.event.release.tag_name }}" ]; then
@@ -41,11 +40,17 @@ jobs:
           echo "Downloading web.zip from release: $TAG"
           gh release download "$TAG" -p "web.zip" --dir .
 
-          echo "Verifying downloaded file..."
-          file web.zip || true
-
-          echo "Extracting zip contents..."
-          unzip -q web.zip -d ./site-content
+      - name: Extract zip safely with Python
+        run: |
+          python3 -c "
+          import zipfile
+          with zipfile.ZipFile('web.zip', 'r') as zf:
+              for info in zf.infolist():
+                  # Convert Windows backslashes to Linux forward slashes
+                  info.filename = info.filename.replace('\\', '/')
+                  zf.extract(info, './site-content')
+          print('Successfully extracted zip contents.')
+          "
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
