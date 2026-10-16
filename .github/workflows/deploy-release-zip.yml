@@ -42,15 +42,15 @@ jobs:
 
       - name: Extract zip safely with Python
         run: |
-          python3 -c "
+          python3 - << 'EOF'
           import zipfile
-          with zipfile.ZipFile('web.zip', 'r') as zf:
+          with zipfile.ZipFile('release.zip', 'r') as zf:
               for info in zf.infolist():
                   # Convert Windows backslashes to Linux forward slashes
                   info.filename = info.filename.replace('\\', '/')
                   zf.extract(info, './site-content')
           print('Successfully extracted zip contents.')
-          "
+          EOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
