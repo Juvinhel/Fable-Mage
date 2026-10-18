@@ -110,9 +110,22 @@ namespace AI
             return this.removeThinkingSteps(result);
         }
 
-        public async createScenario(input: string): Promise<string>
+        public async createLore(input: string): Promise<string>
         {
-            const prompt = await this.createScenarioTemplate();
+            const prompt = await this.createLoreTemplate();
+            const messages: Message[] = [
+                { role: "system", content: prompt },
+                { role: "user", content: input }
+            ];
+
+            const result = await this.runTextRequest("createLore", messages, 0.7);
+
+            return this.removeThinkingSteps(result);
+        }
+
+        public async createScenario(input: string, lore: string): Promise<string>
+        {
+            const prompt = await this.createScenarioTemplate(lore);
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
@@ -123,12 +136,11 @@ namespace AI
             return this.removeThinkingSteps(result);
         }
 
-        public async createWorld(input: string, scenario: string): Promise<{
-            "rules": string,
+        public async createWorld(input: string, lore: string, scenario: string): Promise<{
             "protagonist": string;
         }>
         {
-            const prompt = await this.createWorldTemplate(scenario);
+            const prompt = await this.createWorldTemplate(lore, scenario);
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }

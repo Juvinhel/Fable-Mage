@@ -1,7 +1,7 @@
 {{(world, player, npcs, characterStatRules)}}
 {{
    function format(text) {
-      return text?.replace(">", "→").replace("<", "←") ?? "";
+      return text?.replaceAll("->", "→").replaceAll(">", "→").replaceAll("<-", "←").replaceAll("<", "←") ?? "";
    }
 }}
 
@@ -13,10 +13,11 @@ Constraints:
 - Do not use markdown.
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 
-World Rules to follow:
-{{= world.rules }}
+<input_data_fields>  
+   <lore description="The inner workings and lore">
+   {{= format(world.lore) }}.
+   </lore>
 
-<input_data_fields>
    <scenario description="The primary plot setup or current situational premise">
    {{= format(world.scenario) }}.
    </scenario>

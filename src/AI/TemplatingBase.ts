@@ -17,6 +17,7 @@ namespace AI
             this.describeSceneTemplate = await this.getTemplate("describe-scene");
             this.getImageTemplate = await this.getTemplate("get-image");
 
+            this.createLoreTemplate = await this.getTemplate("create-lore");
             this.createScenarioTemplate = await this.getTemplate("create-scenario");
             this.createWorldTemplate = await this.getTemplate("create-world");
             this.describeWorldTemplate = await this.getTemplate("describe-world");
@@ -82,6 +83,7 @@ namespace AI
 
         public getImageTemplate: (...params: any[]) => Promise<string>;
 
+        public createLoreTemplate: (...params: any[]) => Promise<string>;
         public createScenarioTemplate: (...params: any[]) => Promise<string>;
         public worldSchema: Schema;
         public createWorldTemplate: (...params: any[]) => Promise<string>;

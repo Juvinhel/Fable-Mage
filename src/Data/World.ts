@@ -7,8 +7,8 @@ namespace Data
             version: string;
             mature: boolean;
             description: string;
+            lore: string;
             scenario: string;
-            rules: string;
             stats?: Stat[];
             player: Character;
             npcs?: Character[];

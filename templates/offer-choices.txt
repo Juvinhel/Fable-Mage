@@ -1,7 +1,7 @@
 {{(plot, context, world, player, characterStatRules)}}
 {{
    function format(text) {
-      return text?.replace(">", "→").replace("<", "←") ?? "";
+      return text?.replaceAll("->", "→").replaceAll(">", "→").replaceAll("<-", "←").replaceAll("<", "←") ?? "";
    }
 }}
 
@@ -30,10 +30,11 @@ Strict Core Rules:
 - Do not include any internal monologues, reasoning steps, or thinking processes in your response. Output only the final answer or narrative.
 - Use indirect speech exclusively for all conversational actions. Whenever your choices involve talking, asking, telling, or answering, frame them as narrative actions describing what you communicate rather than using direct spoken dialogue or quotation marks (e.g., use "I ask her about the code module" instead of "I ask, 'What is this code?'").
 
-World Rules to follow:
-{{= world.rules }}
-
 <input_data_fields>
+   <lore description="The inner workings and lore">
+   {{= format(world.lore) }}.
+   </lore>
+
    <scenario description="The primary plot setup or current situational premise">
    {{= format(world.scenario) }}.
    </scenario>

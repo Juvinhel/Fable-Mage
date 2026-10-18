@@ -53,7 +53,6 @@ namespace Views.Dialogs
         const target = event.currentTarget as HTMLElement;
         const dialog = target.closest("#image-edit");
         dialog.classList.toggle("ok", true);
-
         UI.Dialog.close(dialog);
     }
 

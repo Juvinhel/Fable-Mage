@@ -1,0 +1,86 @@
+#scenario-edit
+{
+    display: grid;
+    grid-template-rows: max-content max-content 1fr max-content;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "lore"
+        "text-label"
+        "text"
+        "actions";
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 1em;
+    border-radius: var(--corner-radius);
+
+    *
+    {
+        overflow-anchor: none;
+    }
+
+    > .lore
+    {
+        grid-area: lore;
+
+        > summary
+        {
+            list-style-position: outside;
+
+            > div
+            {
+                display: grid;
+                grid-template-columns: 1fr max-content;
+            }
+        }
+    }
+
+    .lore-input
+    {
+        font-size: 1.125em;
+    }
+
+    > .text-label
+    {
+        grid-area: text-label;
+    }
+
+    > .text-input
+    {
+        grid-area: text;
+        height: 100%;
+        font-size: 1.125em;
+    }
+
+    > .actions
+    {
+        display: grid;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr 1fr;
+        grid-area: actions;
+        overflow-anchor: auto;
+        gap: 1em;
+
+        > .ok-button
+        {
+            background: var(--ok-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-ok-color);
+            }
+        }
+
+        > .cancel-button
+        {
+            background: var(--cancel-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-cancel-color);
+            }
+        }
+    }
+}

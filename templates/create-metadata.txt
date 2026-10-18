@@ -1,7 +1,7 @@
 {{(allowed_tags_list, world)}}
 {{
    function format(text) {
-      return text?.replace(">", "→").replace("<", "←") ?? "";
+      return text?.replaceAll("->", "→").replaceAll(">", "→").replaceAll("<-", "←").replaceAll("<", "←") ?? "";
    }
 }}
 
@@ -15,13 +15,17 @@ Constraints:
 {{= allowed_tags_list.join(", ")}}
 
 <input_data_fields>
+   <lore description="The inner workings and lore">
+   {{= format(world.lore) }}.
+   </lore>
+
    <scenario description="The primary plot setup or current situational premise">
    {{= format(world.scenario) }}.
    </scenario>
 
-   <world_rules description="Strict world rules.">
-   {{= format(world.rules) }}.
-   </world_rules>
+   <world_description description="The public-facing description of the world.">
+   {{= format(world.description || world.scenario) }}.
+   </world_description>
 </input_data_fields>
 
 ### Output Constraints & Rules

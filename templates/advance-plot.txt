@@ -1,7 +1,7 @@
 {{(context, memory, plot, world, player, npcs, characterStatRules)}}
 {{
    function format(text) {
-      return text?.replace(">", "→").replace("<", "←") ?? "";
+      return text?.replaceAll("->", "→").replaceAll(">", "→").replaceAll("<-", "←").replaceAll("<", "←") ?? "";
    }
 }}
 
@@ -33,10 +33,11 @@ Strict Core Rules:
       2. Immediately apply the bracketed GM instruction, enforcing its exact outcome on the environment, NPCs, or world state.
       3. Evaluate and resolve any subsequent player intentions appearing AFTER the bracketed instruction against the newly updated world state created by the GM command.
 
-World Rules to follow:
-{{= world.rules }}
-
 <input_data_fields>
+   <lore description="The inner workings and lore">
+   {{= format(world.lore) }}.
+   </lore>
+
    <scenario description="The primary plot setup or current situational premise">
    {{= format(world.scenario) }}.
    </scenario>

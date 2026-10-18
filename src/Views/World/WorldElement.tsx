@@ -16,8 +16,8 @@ namespace Views.World
         private versionInput: UI.Elements.SemanticVersionInput;
         private matureContentInput: HTMLInputElement;
         private descriptionInput: HTMLAutoCorrectTextArea;
+        private loreInput: HTMLAutoCorrectTextArea;
         private scenarioInput: HTMLAutoCorrectTextArea;
-        private rulesInput: HTMLAutoCorrectTextArea;
         private tagsInput: HTMLMultiSelect;
         private statList: HTMLDivElement;
         private playerCharacterCard: CharacterCardElement;
@@ -62,11 +62,11 @@ namespace Views.World
                 </div>
                 <div id="details-tab" class="data-view" tab-header="Details">
                     <div class="property-list">
-                        <label>Scenario:</label>
-                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Lore and inner workings of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>Lore:</label>
+                        { this.loreInput = <auto-correct-text-area lang="en-US" class="lore-input large" value="" ontouchend={ TextEditTouch } placeholder="Detailed lore and background of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                        <label>Rules:</label>
-                        { this.rulesInput = <auto-correct-text-area lang="en-US" class="rules-input large" value="" ontouchend={ TextEditTouch } placeholder="Strict rules your ai game master has to follow" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>Scenario:</label>
+                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Current story setup and conflicts" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                         <label>Tracked Stats:</label>
                         <div class="functions horizontal">
@@ -121,6 +121,8 @@ namespace Views.World
                     <div class="actions">
                         <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>Import JSON</span></button>
                         <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>Export JSON</span></button>
+                        <button onclick={ () => this.openLore() }><color-icon src="img/icons/open.svg" /><span>Load Lore</span></button>
+                        <button onclick={ () => this.saveLore() }><color-icon src="img/icons/save.svg" /><span>Save Lore</span></button>
                     </div>
                 </div>
             </tab-control> as HTMLTabControl;
@@ -266,18 +268,24 @@ namespace Views.World
         private previousCreateWorldPrompt = "";
         public async createWorldUsingAI(): Promise<boolean>
         {
-            const result = await Dialogs.TextEdit("World Description", this.previousCreateWorldPrompt, "Describe your scenario including lore and background story.");
+            const result = await ScenarioEdit(this.previousCreateWorldPrompt);
             if (!result) return false;
-            this.previousCreateWorldPrompt = result;
+            this.previousCreateWorldPrompt = result.text;
 
             await this.onDeleteWorld();
             App.beginThinking();
 
             try
             {
-                this.scenarioInput.value = await AI.Client.createScenario(result);
-                const { rules, protagonist } = await AI.Client.createWorld(result, this.scenarioInput.value);
-                this.rulesInput.value = rules;
+                if (result.lore?.trim())
+                    this.loreInput.value = result.lore;
+                else
+                {
+                    const lore = await AI.Client.createLore(result.text);
+                    this.loreInput.value = lore;
+                }
+                this.scenarioInput.value = await AI.Client.createScenario(this.loreInput.value, result.text);
+                const { protagonist } = await AI.Client.createWorld(result.text, this.loreInput.value, this.scenarioInput.value);
 
                 await Promise.all([
                     this.createCoverImage(),
@@ -446,7 +454,7 @@ namespace Views.World
 
         public clearWorld(): void
         {
-            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", scenario: "", rules: "", player: { name: "", portrait: "", appearance: "", personality: "", skills: "", background: "" } });
+            this.import({ title: "", cover: "", version: "1.0", mature: false, description: "", lore: "", scenario: "", player: { name: "", portrait: "", appearance: "", personality: "", skills: "", background: "" } });
         }
 
         public async startStory()
@@ -460,6 +468,24 @@ namespace Views.World
             const world = this.export();
 
             DownloadHelper.downloadData(world.title + ".json", world);
+        }
+
+        public async saveLore()
+        {
+            const title = this.titleInput.value.trim() || "lore";
+            DownloadHelper.downloadData(title + ".txt", this.loreInput.value);
+        }
+
+        public async openLore(): Promise<boolean>
+        {
+            const result = await UI.Dialog.upload({ multiple: false, title: "Upload lore text", accept: "text/plain,.txt,.md,.text" });
+            if (result?.length > 0)
+            {
+                const file = result.item(0);
+                this.loreInput.value = await file.text();
+                return true;
+            }
+            return false;
         }
 
         public async open(): Promise<boolean>
@@ -485,8 +511,8 @@ namespace Views.World
                 "version": this.versionInput.value.trim(),
                 "mature": this.matureContentInput.checked,
                 "description": this.descriptionInput.value.trim(),
+                "lore": this.loreInput.value.trim().trimRight("."),
                 "scenario": this.scenarioInput.value.trim().trimRight("."),
-                "rules": this.rulesInput.value.trim().trimRight("."),
                 "player": this.playerCharacterCard.export(),
             };
 
@@ -521,8 +547,8 @@ namespace Views.World
             this.versionInput.value = world.version ?? "1.0";
             this.matureContentInput.checked = world.mature ?? false;
             this.descriptionInput.value = world.description ?? "";
-            this.scenarioInput.value = world.scenario;
-            this.rulesInput.value = world.rules;
+            this.loreInput.value = world.lore ?? "";
+            this.scenarioInput.value = world.scenario ?? "";
 
             if (world.tags) this.tagsInput.checkedOptions = world.tags.map(x => this.tagsInput.options.first(t => t.value == x));
             else this.tagsInput.checkedOptions = [];

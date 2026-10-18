@@ -2,14 +2,9 @@
     "$schema": "https://json-schema.org/draft-07/schema",
     "type": "object",
     "required": [
-        "rules",
         "protagonist"
     ],
     "properties": {
-        "rules": {
-            "type": "string",
-            "description": "Operational world rules and tracking variables"
-        },
         "protagonist": {
             "type": "string",
             "description": "Protagonist description and core skills"

@@ -37,7 +37,6 @@ namespace Views.Story
         const target = event.currentTarget as HTMLElement;
         const dialog = target.closest("#plot-edit");
         dialog.classList.toggle("ok", true);
-
         UI.Dialog.close(dialog);
     }
 
