@@ -6,7 +6,7 @@ namespace AI
         {
             this.plotSchema = await this.getSchema("plot");
             this.choicesSchema = await this.getSchema("choices");
-            this.worldSchema = await this.getSchema("world");
+            this.charactersSchema = await this.getSchema("characters");
             this.metadataSchema = await this.getSchema("metadata");
             this.characterSchema = await this.getSchema("character");
 
@@ -19,7 +19,8 @@ namespace AI
 
             this.createLoreTemplate = await this.getTemplate("create-lore");
             this.createScenarioTemplate = await this.getTemplate("create-scenario");
-            this.createWorldTemplate = await this.getTemplate("create-world");
+            this.createCharactersTemplate = await this.getTemplate("create-characters");
+
             this.describeWorldTemplate = await this.getTemplate("describe-world");
             this.createMetadataTemplate = await this.getTemplate("create-metadata");
 
@@ -85,8 +86,8 @@ namespace AI
 
         public createLoreTemplate: (...params: any[]) => Promise<string>;
         public createScenarioTemplate: (...params: any[]) => Promise<string>;
-        public worldSchema: Schema;
-        public createWorldTemplate: (...params: any[]) => Promise<string>;
+        public charactersSchema: Schema;
+        public createCharactersTemplate: (...params: any[]) => Promise<string>;
         public describeWorldTemplate: (...params: any[]) => Promise<string>;
         public metadataSchema: Schema;
         public createMetadataTemplate: (...params: any[]) => Promise<string>;

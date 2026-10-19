@@ -284,13 +284,23 @@ namespace Views.World
                     const lore = await AI.Client.createLore(result.text);
                     this.loreInput.value = lore;
                 }
-                this.scenarioInput.value = await AI.Client.createScenario(this.loreInput.value, result.text);
-                const { protagonist } = await AI.Client.createWorld(result.text, this.loreInput.value, this.scenarioInput.value);
+                this.scenarioInput.value = await AI.Client.createScenario(result.text, this.loreInput.value);
+                const [player, ...npcs] = await AI.Client.createCharacters(result.text, this.loreInput.value, this.scenarioInput.value);
+                const portraitPromises: Promise<void>[] = [];
+                this.playerCharacterCard.import(player);
+                portraitPromises.push(this.createPortrait(player, this.playerCharacterCard));
+                for (const npc of npcs)
+                {
+                    const characterCardElement = new CharacterCardElement();
+                    this.npcCardList.append(characterCardElement);
+                    characterCardElement.import(npc);
+                    portraitPromises.push(this.createPortrait(npc, characterCardElement));
+                }
 
                 await Promise.all([
+                    ...portraitPromises,
                     this.createCoverImage(),
                     this.createMetadata(),
-                    this.createPlayerUsingAI(protagonist),
                     this.createPrologue("Use this original draft to create a prologue:\n" + result)]);
                 App.stopThinking();
                 return true;

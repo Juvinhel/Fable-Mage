@@ -136,17 +136,15 @@ namespace AI
             return this.removeThinkingSteps(result);
         }
 
-        public async createWorld(input: string, lore: string, scenario: string): Promise<{
-            "protagonist": string;
-        }>
+        public async createCharacters(input: string, lore: string, scenario: string): Promise<Data.Character[]>
         {
-            const prompt = await this.createWorldTemplate(lore, scenario);
+            const prompt = await this.createCharactersTemplate(lore, scenario);
             const messages: Message[] = [
                 { role: "system", content: prompt },
                 { role: "user", content: input }
             ];
 
-            const result = await this.runTextRequest("createWorld", messages, 0.5, this.worldSchema);
+            const result = await this.runTextRequest("createCharacters", messages, 0.7);
             const obj = this.parseJSON(result);
             return obj;
         }
