@@ -54,7 +54,7 @@ namespace Views.World
             if (values)
                 for (const choice of values)
                 {
-                    const textArea = <auto-correct-text-area class="choice single-line" value={ choice } analyze={ (text, language) => AI.Client.analyzeLanguage(text, language) } />;
+                    const textArea = <auto-correct-text-area class="choice single-line" value={ choice } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea;
                     this.choicesListElement.append(textArea);
                 }
         }
