@@ -4,29 +4,29 @@ namespace AI
     {
         public async initialize()
         {
-            this.plotSchema = await this.getSchema("plot");
-            this.choicesSchema = await this.getSchema("choices");
-            this.charactersSchema = await this.getSchema("characters");
-            this.metadataSchema = await this.getSchema("metadata");
-            this.characterSchema = await this.getSchema("character");
+            this.plotSchema = await this.getSchema("story/plot");
+            this.choicesSchema = await this.getSchema("story/choices");
+            this.charactersSchema = await this.getSchema("world/characters");
+            this.metadataSchema = await this.getSchema("world/metadata");
+            this.characterSchema = await this.getSchema("world/character");
 
-            this.advancePlotTemplate = await this.getTemplate("advance-plot");
-            this.offerChoicesTemplate = await this.getTemplate("offer-choices");
-            this.summarizeProgressionTemplate = await this.getTemplate("summarize-progression");
-            this.writePrologueTemplate = await this.getTemplate("write-prologue");
+            this.advancePlotTemplate = await this.getTemplate("story/advance-plot");
+            this.offerChoicesTemplate = await this.getTemplate("story/offer-choices");
+            this.summarizeProgressionTemplate = await this.getTemplate("story/summarize-progression");
+            this.writePrologueTemplate = await this.getTemplate("world/write-prologue");
             this.describeSceneTemplate = await this.getTemplate("describe-scene");
             this.getImageTemplate = await this.getTemplate("get-image");
 
-            this.createLoreTemplate = await this.getTemplate("create-lore");
-            this.createScenarioTemplate = await this.getTemplate("create-scenario");
-            this.createCharactersTemplate = await this.getTemplate("create-characters");
+            this.createLoreTemplate = await this.getTemplate("world/create-lore");
+            this.createScenarioTemplate = await this.getTemplate("world/create-scenario");
+            this.createCharactersTemplate = await this.getTemplate("world/create-characters");
 
-            this.describeWorldTemplate = await this.getTemplate("describe-world");
-            this.createMetadataTemplate = await this.getTemplate("create-metadata");
+            this.describeWorldTemplate = await this.getTemplate("world/describe-world");
+            this.createMetadataTemplate = await this.getTemplate("world/create-metadata");
 
-            this.createPlayerTemplate = await this.getTemplate("create-player");
-            this.createNPCTemplate = await this.getTemplate("create-npc");
-            this.updateCharacterTemplate = await this.getTemplate("update-character");
+            this.createPlayerTemplate = await this.getTemplate("world/create-player");
+            this.createNPCTemplate = await this.getTemplate("world/create-npc");
+            this.updateCharacterTemplate = await this.getTemplate("story/update-character");
             this.describeCharacterTemplate = await this.getTemplate("describe-character");
         }
 
