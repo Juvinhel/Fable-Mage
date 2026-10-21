@@ -29,7 +29,7 @@ namespace Views.World
                     <auto-correct-text-area class="choice single-line" placeholder="Second Choice" lang="en-US" analyze={ AI.Client.analyzeLanguage } />
                     <auto-correct-text-area class="choice single-line" placeholder="Third Choice" lang="en-US" analyze={ AI.Client.analyzeLanguage } />
                 </div> as HTMLDivElement }
-                <div class="actions">
+                <div class="functions horizontal">
                     <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
                 </div>
             </>;
