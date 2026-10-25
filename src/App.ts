@@ -2,11 +2,13 @@ class App
 {
     public static async Start()
     {
-        await loadTranslations();
         await this.startServiceWorker();
 
         this.config = await Data.loadConfig();
-        await AI.Client.initialize();
+        await Promise.all([
+            Data.Localization.loadTranslations(),
+            AI.Client.initialize()
+        ]);
 
         document.body.prepend(Views.Nav());
         Views.navigate("Home");

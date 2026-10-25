@@ -101,6 +101,11 @@
     "copyResponse": "Copy response"
   },
   "settings": {
+    "language": "Language:",
+    "browserLanguage": "Use browser language",
+    "english": "English",
+    "german": "German",
+    "french": "French",
     "ai": "AI",
     "textApi": "TextAPI:",
     "imageApi": "ImageAPI:",

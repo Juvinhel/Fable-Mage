@@ -9,6 +9,7 @@ namespace Data
 
     export interface Config
     {
+        language?: string;
         nexusAccount?: NexusAccount;
         summaryInterval?: number;
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;

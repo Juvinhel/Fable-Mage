@@ -14,6 +14,7 @@ namespace Views.Settings
 
         private textAPISelect: HTMLSelectElement;
         private languageAPISelect: HTMLSelectElement;
+        private localeSelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
         private summaryIntervalInput: HTMLInputElement;
         private versionValue: HTMLSpanElement;
@@ -25,6 +26,14 @@ namespace Views.Settings
                 <tab-control>
                     <div id="ai-tab" class="data-view" tab-header={ t("settings.ai") }>
                         <div class="property-list">
+                            <label>{ t("settings.language") }</label>
+                            { this.localeSelect = <select>
+                                <option value="">{ t("settings.browserLanguage") }</option>
+                                <option value="en">{ t("settings.english") }</option>
+                                <option value="de">{ t("settings.german") }</option>
+                                <option value="fr">{ t("settings.french") }</option>
+                            </select> as HTMLSelectElement }
+
                             <label>{ t("settings.textApi") }</label>
                             <div>
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
@@ -118,6 +127,7 @@ namespace Views.Settings
 
         private load()
         {
+            this.localeSelect.value = App.config.language ?? "";
             this.summaryIntervalInput.value = App.config.summaryInterval?.toString() ?? "";
 
             for (const option of this.textAPISelect.querySelectorAll("option"))
@@ -280,12 +290,20 @@ namespace Views.Settings
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
                 App.config.languageAPI = languageAPIConfig;
+                const languageChanged = this.localeSelect.value != (App.config.language ?? "");
+                App.config.language = this.localeSelect.value || undefined;
                 App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
-                Data.saveConfig(App.config);
+                await Data.saveConfig(App.config);
 
                 AI.textAPI = textAPI;
                 AI.imageAPI = imageAPI;
                 AI.languageAPI = languageAPI;
+
+                if (languageChanged)
+                {
+                    window.location.reload();
+                    return;
+                }
 
                 UI.Dialog.message({ title: t("settings.savedTitle"), text: t("settings.savedMessage") });
             }
