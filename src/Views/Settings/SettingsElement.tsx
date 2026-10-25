@@ -76,6 +76,8 @@ namespace Views.Settings
                         <div class="actions">
                             <button title={ t("common.cancel") } onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>{ t("common.cancel") }</span></button>
                             <button title={ t("common.save") } onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>{ t("common.save") }</span></button>
+                            <button title={ t("common.export") } onclick={ () => this.onExport() }><color-icon src="img/icons/save.svg" /><span>{ t("common.export") }</span></button>
+                            <button title={ t("common.import") } onclick={ () => this.onImport() }><color-icon src="img/icons/open.svg" /><span>{ t("common.import") }</span></button>
                         </div>
                     </div>
                     { new NexusSettingsElement() }
@@ -233,14 +235,14 @@ namespace Views.Settings
             await this.save();
         }
 
-        public async save()
+        public async save(): Promise<boolean>
         {
             try
             {
                 if (!this.summaryIntervalInput.checkValidity())
                 {
                     this.summaryIntervalInput.reportValidity();
-                    return;
+                    return false;
                 }
 
                 const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
@@ -302,21 +304,57 @@ namespace Views.Settings
                 if (languageChanged)
                 {
                     window.location.reload();
-                    return;
+                    return true;
                 }
 
                 UI.Dialog.message({ title: t("settings.savedTitle"), text: t("settings.savedMessage") });
+                return true;
             }
             catch (error)
             {
                 Views.navigate("Settings");
                 UI.Dialog.error(error);
+                return false;
             }
         }
 
         private onCancel()
         {
             this.load();
+        }
+
+        private onExport()
+        {
+            const { nexusAccount, ...config } = App.config;
+            DownloadHelper.downloadData("fable-mage-config.json", config);
+        }
+
+        private async onImport()
+        {
+            try
+            {
+                const result = await UI.Dialog.upload({ multiple: false, title: t("common.import"), accept: "application/json,text/json,.json" });
+                if (!result?.length)
+                    return;
+
+                const file = result.item(0);
+                const importedConfig = JSON.parse(await file.text()) as Partial<Data.Config>;
+
+                const previousConfig = App.config;
+                const { nexusAccount, ...configToImport } = importedConfig;
+                App.config = { ...previousConfig, ...configToImport };
+                this.load();
+
+                if (!await this.save())
+                {
+                    App.config = previousConfig;
+                    this.load();
+                }
+            }
+            catch (error)
+            {
+                UI.Dialog.error(error);
+            }
         }
     }
 

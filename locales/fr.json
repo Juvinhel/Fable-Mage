@@ -22,7 +22,9 @@
     "apiKey": "Clé API :",
     "model": "Modèle :",
     "username": "Nom d'utilisateur :",
-    "password": "Mot de passe :"
+    "password": "Mot de passe:",
+    "import": "Importer",
+    "export": "Exporter"
   },
   "navigation": {
     "home": "Accueil",
