@@ -18,10 +18,10 @@ namespace Views
                 <img class="background" src="img/home-cover.png" />
 
                 <div>
-                    <button title="Create new World" onclick={ () => this.onCreateNewWorld() }><color-icon src="img/icons/ai.svg" /><span>Create new World</span></button>
-                    <button title="Load World" onclick={ () => this.onLoadWorld() }><color-icon src="img/icons/open.svg" /><span>Load World</span></button>
-                    <button title="Start Story" onclick={ () => this.onStartStory() }><color-icon src="img/icons/play.svg" /><span>Start Story</span></button>
-                    <button title="Load Story" onclick={ () => this.onLoadStory() }><color-icon src="img/icons/open.svg" /><span>Load Story</span></button>
+                    <button title={ t("home.createWorld") } onclick={ () => this.onCreateNewWorld() }><color-icon src="img/icons/ai.svg" /><span>{ t("home.createWorld") }</span></button>
+                    <button title={ t("home.loadWorld") } onclick={ () => this.onLoadWorld() }><color-icon src="img/icons/open.svg" /><span>{ t("home.loadWorld") }</span></button>
+                    <button title={ t("home.startStory") } onclick={ () => this.onStartStory() }><color-icon src="img/icons/play.svg" /><span>{ t("home.startStory") }</span></button>
+                    <button title={ t("home.loadStory") } onclick={ () => this.onLoadStory() }><color-icon src="img/icons/open.svg" /><span>{ t("home.loadStory") }</span></button>
                 </div>
             </>;
         }
@@ -40,7 +40,7 @@ namespace Views
 
         private async onStartStory()
         {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
+            const result = await UI.Dialog.upload({ multiple: false, title: t("dialogs.uploadWorld"), accept: "application/json,text/json,.json" });
             if (result?.length > 0)
             {
                 const file = result.item(0);

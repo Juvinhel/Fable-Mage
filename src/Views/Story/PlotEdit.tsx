@@ -3,7 +3,7 @@ namespace Views.Story
     export async function PlotEdit(location: string, time: string, text: string): Promise<{ location: string; time: string; text: string; }>
     {
         const plotEditDialog = buildPlotEditDialog(location, time, text) as HTMLElement;
-        await UI.Dialog.show(plotEditDialog, { title: "Plot edit", allowClose: true, mode: "fill" });
+        await UI.Dialog.show(plotEditDialog, { title: t("plot.editTitle"), allowClose: true, mode: "fill" });
 
         const ok = plotEditDialog.classList.contains("ok");
         if (ok)
@@ -19,15 +19,15 @@ namespace Views.Story
     function buildPlotEditDialog(location: string, time: string, text: string)
     {
         return <div id="plot-edit">
-            <label class="location-label">Location:</label>
-            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder="Location" value={ location } analyze={ AI.Client.analyzeLanguage } />
-            <label class="time-label">Time:</label>
-            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder="Time" value={ time } analyze={ AI.Client.analyzeLanguage } />
-            <label class="text-label">Text:</label>
-            <auto-correct-text-area lang="en-US" class="text-input" placeholder="Text" value={ text } analyze={ AI.Client.analyzeLanguage } />
+            <label class="location-label">{ t("plot.location") }</label>
+            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder={ t("plot.locationPlaceholder") } value={ location } analyze={ AI.Client.analyzeLanguage } />
+            <label class="time-label">{ t("plot.time") }</label>
+            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder={ t("plot.timePlaceholder") } value={ time } analyze={ AI.Client.analyzeLanguage } />
+            <label class="text-label">{ t("plot.text") }</label>
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ t("plot.textPlaceholder") } value={ text } analyze={ AI.Client.analyzeLanguage } />
             <div class="actions">
-                <button class="ok-button" onclick={ okClick }>OK</button>
-                <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
+                <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
+                <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>
             </div>
         </div>;
     }

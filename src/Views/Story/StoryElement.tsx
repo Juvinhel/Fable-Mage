@@ -26,7 +26,7 @@ namespace Views.Story
         {
             return <>
                 { this.tabControl = <tab-control>
-                    { this.plotTab = <div id="plot-tab" tab-header="Plot">
+                    { this.plotTab = <div id="plot-tab" tab-header={ t("story.plot") }>
                         { this.heading = <h1 class="title" /> as HTMLHeadingElement }
                         { this.plotList = <div class="plot-list" onchildrenchanged={ () => this.refreshTurnCount() } /> as HTMLDivElement }
                         <div class="input"
@@ -38,26 +38,26 @@ namespace Views.Story
                                 ontouchend={ TextEditTouch }
                                 analyze={ AI.Client.analyzeLanguage }
                                 onkeydown={ (e: KeyboardEvent) => { if (e.key == "Enter" && !e.shiftKey) { e.preventDefault(); this.onSubmit(); } } }
-                                placeholder="Write what your character should do. Use [Square Brackets] for Game Master instructions." /> as HTMLAutoCorrectTextArea }
-                            { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title="Submit"><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
-                            <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                                placeholder={ t("story.userInputPlaceholder") } /> as HTMLAutoCorrectTextArea }
+                            { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title={ t("common.submit") }><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
+                            <span class="thinking-indicator"><span>{ t("common.thinking") }</span><span class="dots">...</span></span>
                         </div>
                         <button class="fly-out-toggle icon-button" onclick={ () => this.statsFlyOut.classList.toggle("maximized") }><color-icon src="img/icons/stat.svg" /></button>
                         { this.statsFlyOut = new StatsFlyOutElement() }
                     </div> as HTMLElement }
-                    <div id="characters-tab" class="data-view" tab-header="Characters">
+                    <div id="characters-tab" class="data-view" tab-header={ t("story.characters") }>
                         { this.characterList = <div class="character-list" /> as HTMLElement }
 
                         <div class="anchor" />
 
                         <div class="actions">
-                            <button class="add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /><span>Create new npc</span></button>
-                            <button class="add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new npc using AI</span></button>
+                            <button class="add-npc-button" title={ t("story.createNpc") } onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /><span>{ t("story.createNpc") }</span></button>
+                            <button class="add-npc-using-ai-button" title={ t("story.createNpcWithAi") } onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /><span>{ t("story.createNpcWithAi") }</span></button>
                         </div>
                     </div>
-                    <div id="context-tab" class="data-view" tab-header="Context">
+                    <div id="context-tab" class="data-view" tab-header={ t("story.context") }>
                         <div class="property-list">
-                            <label>Context</label>
+                            <label>{ t("story.context") }</label>
                             { this.contextElement = <auto-correct-text-area class="large" /> as HTMLAutoCorrectTextArea }
                         </div>
 
@@ -65,9 +65,9 @@ namespace Views.Story
 
                         <div class="actions" />
                     </div>
-                    <div id="summary-tab" class="data-view" tab-header="Summary">
+                    <div id="summary-tab" class="data-view" tab-header={ t("story.summary") }>
                         <div class="property-list">
-                            <label>Summary</label>
+                            <label>{ t("story.summary") }</label>
                             { this.summaryElement = <auto-correct-text-area class="large" /> as HTMLAutoCorrectTextArea }
                         </div>
 
@@ -75,14 +75,14 @@ namespace Views.Story
 
                         <div class="actions" />
                     </div>
-                    <div id="save-load-tab" class="data-view" tab-header="Save / Load">
+                    <div id="save-load-tab" class="data-view" tab-header={ t("story.saveLoad") }>
                         <div class="property-list" />
 
                         <div class="anchor" />
 
                         <div class="actions">
-                            <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>Load Savegame</span></button>
-                            <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>Save Savegame</span></button>
+                            <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>{ t("story.loadSavegame") }</span></button>
+                            <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>{ t("story.saveSavegame") }</span></button>
                         </div>
                     </div>
                 </tab-control> as HTMLTabControl }
@@ -110,7 +110,7 @@ namespace Views.Story
 
         public async returnHere(returnalElement: PlotPointElement)
         {
-            if (!await UI.Dialog.confirm({ title: "Load from here?", text: "Do you really want to load from this point?\nAll plot-points afterwards will be lost." }))
+            if (!await UI.Dialog.confirm({ title: t("story.loadFromHereTitle"), text: t("story.loadFromHereConfirmation") }))
                 return;
 
             const nextPlotElement = returnalElement.nextElementSibling as PlotPointElement;
@@ -280,7 +280,7 @@ namespace Views.Story
         private previousCreateNPCPrompt = "";
         private async onAddNPCUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
+            const result = await Dialogs.TextEdit(t("world.descriptionOfCharacter"), this.previousCreateNPCPrompt, t("character.describeNpc"));
             if (!result) return;
             this.previousCreateNPCPrompt = result;
 
@@ -363,12 +363,12 @@ namespace Views.Story
         {
             const story = this.export();
 
-            DownloadHelper.downloadData(story.title + " - Turn: " + story.plot.length + ".json", story);
+            DownloadHelper.downloadData(story.title + t("story.turn") + story.plot.length + ".json", story);
         }
 
         public async open(): Promise<boolean>
         {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your story", accept: "application/json,text/json,.json" });
+            const result = await UI.Dialog.upload({ multiple: false, title: t("dialogs.uploadStory"), accept: "application/json,text/json,.json" });
             if (!result || !result.length) return false;
             if (result.length > 0)
             {

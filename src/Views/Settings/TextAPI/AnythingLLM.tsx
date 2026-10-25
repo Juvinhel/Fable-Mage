@@ -3,13 +3,13 @@ namespace Views.Settings.TextAPI
     export function anythingLLM(config: Partial<Data.AnythingLLMEndpoint>)
     {
         return <div id="anythingllm-api">
-            <label>URL:</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder="AnythingLLM server URL" onblur={ (e: FocusEvent) => refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
+            <label>{ t("common.url") }</label>
+            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.anythingServerUrl") } onblur={ (e: FocusEvent) => refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
 
-            <label>API Key:</label>
-            <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="AnythingLLM API key" onblur={ (e: FocusEvent) => refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
+            <label>{ t("common.apiKey") }</label>
+            <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder={ t("apiSettings.anythingApiKey") } onblur={ (e: FocusEvent) => refreshAnythingLLMModels(e.currentTarget as HTMLInputElement) } />
 
-            <label>Workspace:</label>
+            <label>{ t("apiSettings.workspace") }</label>
             <combo-select name="workspace" type="text" value={ config.workspace ?? "" } />
         </div>;
     }

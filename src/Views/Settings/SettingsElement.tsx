@@ -23,9 +23,9 @@ namespace Views.Settings
         {
             return <>
                 <tab-control>
-                    <div id="ai-tab" class="data-view" tab-header="AI">
+                    <div id="ai-tab" class="data-view" tab-header={ t("settings.ai") }>
                         <div class="property-list">
-                            <label>TextAPI:</label>
+                            <label>{ t("settings.textApi") }</label>
                             <div>
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
                                     <option value="AnythingLLM">AnythingLLM</option>
@@ -35,56 +35,56 @@ namespace Views.Settings
                                 </select> as HTMLSelectElement }
                             </div>
 
-                            <label>ImageAPI:</label>
+                            <label>{ t("settings.imageApi") }</label>
                             <div>
                                 { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
                                     <option value="AnythingLLM">AnythingLLM</option>
                                     <option value="ComfyUI">ComfyUI</option>
                                     <option value="Gemini">Gemini</option>
                                     <option value="KoboldCPP">KoboldCPP</option>
-                                    <option value="None">None</option>
+                                    <option value="None">{ t("common.none") }</option>
                                     <option value="Stable Diffusion">Stable Diffusion</option>
                                 </select> as HTMLSelectElement }
                             </div>
 
-                            <label>LanguageAPI:</label>
+                            <label>{ t("settings.languageApi") }</label>
                             <div>
                                 { this.languageAPISelect = <select onchange={ () => this.languageAPIChange() }>
                                     <option value="LanguageTool">LanguageTool</option>
-                                    <option value="None">None</option>
+                                    <option value="None">{ t("common.none") }</option>
                                 </select> as HTMLSelectElement }
                             </div>
 
                             <div class="group">
-                                <label>Summary Interval:</label>
-                                { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder="Default: 5" /> as HTMLInputElement }
-                                <p>Creates a story summary every few turns to preserve important details. Larger intervals include more turns in each summary and use more of your AI's context.</p>
+                                <label>{ t("settings.summaryInterval") }</label>
+                                { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder={ t("settings.defaultFive") } /> as HTMLInputElement }
+                                <p>{ t("settings.summaryIntervalHelp") }</p>
                             </div>
                         </div>
 
                         <div class="anchor" />
 
                         <div class="actions">
-                            <button title="Cancel" onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>Cancel</span></button>
-                            <button title="Save" onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>Save</span></button>
+                            <button title={ t("common.cancel") } onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>{ t("common.cancel") }</span></button>
+                            <button title={ t("common.save") } onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>{ t("common.save") }</span></button>
                         </div>
                     </div>
                     { new NexusSettingsElement() }
-                    <div id="info-tab" class="data-view" tab-header="Info">
+                    <div id="info-tab" class="data-view" tab-header={ t("settings.info") }>
                         <div class="property-list">
-                            <label>Version:</label>
-                            { this.versionValue = <span>Loading...</span> as HTMLSpanElement }
+                            <label>{ t("settings.version") }</label>
+                            { this.versionValue = <span>{ t("common.loading") }</span> as HTMLSpanElement }
 
-                            <label>Build time:</label>
-                            { this.buildTimeValue = <span>Loading...</span> as HTMLSpanElement }
+                            <label>{ t("settings.buildTime") }</label>
+                            { this.buildTimeValue = <span>{ t("common.loading") }</span> as HTMLSpanElement }
 
-                            <label>Developer:</label>
+                            <label>{ t("settings.developer") }</label>
                             <span>Juvinhel</span>
 
-                            <label>Repository:</label>
-                            <a href="https://github.com/Juvinhel/Fable-Mage" target="_blank" rel="noopener noreferrer">GitHub</a>
+                            <label>{ t("settings.repository") }</label>
+                            <a href="https://github.com/Juvinhel/Fable-Mage" target="_blank" rel="noopener noreferrer">{ t("settings.github") }</a>
 
-                            <p>Found a bug? Please report it on the <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">GitHub issues page</a>.</p>
+                            <p>{ t("settings.reportBug") } <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">{ t("settings.issuesPage") }</a>.</p>
                         </div>
 
                         <div class="anchor" />
@@ -104,15 +104,15 @@ namespace Views.Settings
                     throw new Error(`Unable to load app manifest (${ response.status }).`);
 
                 const manifest = await response.json() as { version?: string; "build-date"?: string; };
-                this.versionValue.textContent = manifest.version ?? "Unknown";
+                this.versionValue.textContent = manifest.version ?? t("common.unknown");
                 const buildDate = manifest["build-date"] ? new Date(manifest["build-date"]) : undefined;
-                this.buildTimeValue.textContent = buildDate && !Number.isNaN(buildDate.getTime()) ? buildDate.toLocaleString() : "Unknown";
+                this.buildTimeValue.textContent = buildDate && !Number.isNaN(buildDate.getTime()) ? buildDate.toLocaleString() : t("common.unknown");
             }
             catch (error)
             {
                 console.error(error);
-                this.versionValue.textContent = "Unavailable";
-                this.buildTimeValue.textContent = "Unavailable";
+                this.versionValue.textContent = t("common.unavailable");
+                this.buildTimeValue.textContent = t("common.unavailable");
             }
         }
 
@@ -244,7 +244,7 @@ namespace Views.Settings
                 catch (error)
                 {
                     console.error(error);
-                    throw new Error("Something went wrong with your text api config!");
+                    throw new Error(t("app.textApiConfigError"));
                 }
 
                 const imageAPIConfig: any = this.imageAPISelect.nextElementSibling ? this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement) : {};
@@ -258,7 +258,7 @@ namespace Views.Settings
                 catch (error)
                 {
                     console.error(error);
-                    throw new Error("Something went wrong with your image api config!");
+                    throw new Error(t("app.imageApiConfigError"));
                 }
 
                 const languageAPIConfig: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint = this.languageAPISelect.value == "None"
@@ -274,7 +274,7 @@ namespace Views.Settings
                 catch (error)
                 {
                     console.error(error);
-                    throw new Error("Something went wrong with your language api config!");
+                    throw new Error(t("app.languageApiConfigError"));
                 }
 
                 App.config.textAPI = textAPIConfig;
@@ -287,7 +287,7 @@ namespace Views.Settings
                 AI.imageAPI = imageAPI;
                 AI.languageAPI = languageAPI;
 
-                UI.Dialog.message({ title: "Seetings Saved!", text: "Your settings have been saved." });
+                UI.Dialog.message({ title: t("settings.savedTitle"), text: t("settings.savedMessage") });
             }
             catch (error)
             {

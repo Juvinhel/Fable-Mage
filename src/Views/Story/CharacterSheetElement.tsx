@@ -20,12 +20,12 @@ namespace Views.Story
             return <>
                 { this.portraitImg = <img class="portrait" src={ character.portrait } /> as HTMLImageElement }
                 { this.nameHeading = <h3>{ character.name }</h3> as HTMLHeadingElement }
-                <button class="icon-button delete-button" title="Delete" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
+                <button class="icon-button delete-button" title={ t("common.delete") } onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 {
                     ...Object.entries(character).filter(([key, value]) => key != "name" && key != "portrait").map(([key, value]) => [
                         <label for={ key }>{ Helper.converKebabCaseToTitleCase(key) }: </label>,
                         <span innerHTML={ Helper.FormatAIText(value) } text-attribute={ value } />,
-                        <button class="icon-button edit-button" title={ "Edit " + key } onclick={ (e: Event) => this.onEdit(e) }><color-icon src="img/icons/edit.svg" /></button>
+                        <button class="icon-button edit-button" title={ t("character.editField", { field: key }) } onclick={ (e: Event) => this.onEdit(e) }><color-icon src="img/icons/edit.svg" /></button>
                     ])
                 }
             </>;
@@ -60,7 +60,7 @@ namespace Views.Story
 
         private async onDelete()
         {
-            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this character?", title: "Delete character?" }))
+            if (await UI.Dialog.confirm({ text: t("world.deleteCharacterConfirmation"), title: t("world.deleteCharacterTitle") }))
                 this.remove();
         }
 
@@ -70,7 +70,7 @@ namespace Views.Story
             const span = button.previousElementSibling as HTMLSpanElement;
             const label = span.previousElementSibling as HTMLLabelElement;
 
-            const result = await Views.Dialogs.TextEdit("Edit " + label.htmlFor, span.getAttribute("text"));
+            const result = await Views.Dialogs.TextEdit(t("character.editField", { field: label.htmlFor }), span.getAttribute("text"));
             if (result)
             {
                 span.setAttribute("text", result);

@@ -24,32 +24,32 @@ namespace Views.Nexus
         {
             return <>
                 <details class="filters">
-                    <summary>Search</summary>
+                    <summary>{ t("nexus.search") }</summary>
                     <div class="filter-controls">
                         <div class="filter-field">
-                            <label>Title:</label>
-                            { this.titleInput = <input type="search" placeholder="Search by title" /> as HTMLInputElement }
+                            <label>{ t("nexus.title") }</label>
+                            { this.titleInput = <input type="search" placeholder={ t("nexus.searchByTitle") } /> as HTMLInputElement }
                         </div>
                         <div class="filter-field">
-                            <label>Tags:</label>
+                            <label>{ t("nexus.tags") }</label>
                             { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } /> as HTMLMultiSelect }
                         </div>
                         <div class="filter-field">
-                            <label>Mature:</label>
-                            { this.matureFilterInput = <input type="checkbox" title="Show mature and safe worlds." /> as HTMLInputElement }
+                            <label>{ t("nexus.mature") }</label>
+                            { this.matureFilterInput = <input type="checkbox" title={ t("nexus.showMature") } /> as HTMLInputElement }
                         </div>
                         <div class="filter-field">
-                            <label>Own worlds:</label>
-                            { this.ownWorldsFilterInput = <input type="checkbox" title="Show only your own worlds." /> as HTMLInputElement }
+                            <label>{ t("nexus.ownWorlds") }</label>
+                            { this.ownWorldsFilterInput = <input type="checkbox" title={ t("nexus.showOwnWorlds") } /> as HTMLInputElement }
                         </div>
-                        <button title="Search" onclick={ () => this.load() }>Search</button>
+                        <button title={ t("nexus.search") } onclick={ () => this.load() }>{ t("nexus.search") }</button>
                     </div>
                 </details>
                 { this.listElement = <div class="list" /> as HTMLDivElement }
                 <div class="pagination">
-                    { this.previousButton = <button title="Previous page" onclick={ () => this.load(this.page - 1) }>Previous</button> as HTMLButtonElement }
+                    { this.previousButton = <button title={ t("nexus.previousPage") } onclick={ () => this.load(this.page - 1) }>{ t("nexus.previous") }</button> as HTMLButtonElement }
                     { this.pageLabel = <span /> as HTMLSpanElement }
-                    { this.nextButton = <button title="Next page" onclick={ () => this.load(this.page + 1) }>Next</button> as HTMLButtonElement }
+                    { this.nextButton = <button title={ t("nexus.nextPage") } onclick={ () => this.load(this.page + 1) }>{ t("nexus.next") }</button> as HTMLButtonElement }
                 </div>
             </>;
         }
@@ -58,7 +58,7 @@ namespace Views.Nexus
         {
             const userId = App.config.nexusAccount?.email;
             this.ownWorldsFilterInput.disabled = !userId;
-            this.ownWorldsFilterInput.title = userId ? "" : "Sign in to Nexus to filter your worlds.";
+            this.ownWorldsFilterInput.title = userId ? "" : t("nexus.signInToFilter");
             this.load();
         }
 
@@ -101,7 +101,7 @@ namespace Views.Nexus
                     </div>);
                 }
 
-                this.pageLabel.textContent = "Page " + (this.page + 1);
+                this.pageLabel.textContent = t("nexus.page", { page: this.page + 1 });
                 this.previousButton.disabled = this.page <= 0;
                 this.nextButton.disabled = !result.next;
             }

@@ -23,20 +23,20 @@ namespace Views.World
             return <>
                 { this.portraitImage = <img class="portrait" onclick={ () => this.onGeneratePortrait() } /> as HTMLImageElement }
                 <div class="base-property-list property-list">
-                    <label>Name:</label>
-                    { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Name" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    <label>{ t("character.name") }</label>
+                    { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.namePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                    <label>Appearance:</label>
-                    { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list auf visual attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    <label>{ t("character.appearance") }</label>
+                    { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.appearancePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                    <label>Personality:</label>
-                    { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of personality attributes" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    <label>{ t("character.personality") }</label>
+                    { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.personalityPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                    <label for="skills">Skills:</label>
-                    { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Comma separated list of skills and competencies" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    <label for="skills">{ t("character.skills") }</label>
+                    { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.skillsPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                    <label>Background:</label>
-                    { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder="Background story of the character" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    <label>{ t("character.background") }</label>
+                    { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.backgroundPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 </div>
                 { this.additionalPropertiesList = <div class="additional-property-list property-list" /> as HTMLDivElement }
                 <div class="functions vertical">
@@ -94,7 +94,7 @@ namespace Views.World
             if (!this.previousGeneratePortraitPrompt)
                 this.previousGeneratePortraitPrompt = this.appearanceProperty.value;
 
-            const result = await Dialogs.ImageEdit(this.portraitImage.src, this.previousGeneratePortraitPrompt, "Describe the portrait of your character.");
+            const result = await Dialogs.ImageEdit(this.portraitImage.src, this.previousGeneratePortraitPrompt, t("character.describePortrait"));
             if (!result) return;
 
             this.previousGeneratePortraitPrompt = result.prompt;
@@ -103,7 +103,7 @@ namespace Views.World
 
         private async onDelete()
         {
-            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this character?", title: "Delete character?" }))
+            if (await UI.Dialog.confirm({ text: t("world.deleteCharacterConfirmation"), title: t("world.deleteCharacterTitle") }))
                 this.remove();
         }
 

@@ -12,7 +12,7 @@ namespace Views.Settings
 
             this.id = "nexus-tab";
             this.classList.add("property-list");
-            this.setAttribute("tab-header", "Nexus");
+            this.setAttribute("tab-header", t("navigation.nexus"));
             this.append(this.build());
             this.load();
         }
@@ -23,15 +23,15 @@ namespace Views.Settings
         private build()
         {
             return <>
-                <label>Login:</label>
+                <label>{ t("account.login") }</label>
                 <div>
-                    <button onclick={ () => this.loginWithGoogle() }>Login with Google</button>
-                    <button onclick={ () => this.logoutWithGoogle() }>Logout</button>
+                    <button onclick={ () => this.loginWithGoogle() }>{ t("account.loginWithGoogle") }</button>
+                    <button onclick={ () => this.logoutWithGoogle() }>{ t("account.logout") }</button>
                 </div>
-                <label>Email:</label>
+                <label>{ t("account.email") }</label>
                 { this.emailInput = <input type="email" value={ App.config.nexusAccount?.email ?? "" } readonly /> as HTMLInputElement }
 
-                <label>Username:</label>
+                <label>{ t("account.username") }</label>
                 { this.usernameInput = <input type="text" value={ App.config.nexusAccount?.username ?? "" } readonly /> as HTMLInputElement }
             </>;
         }
@@ -47,7 +47,7 @@ namespace Views.Settings
             const clientId = NexusSettingsElement.googleClientId;
             if (!clientId)
             {
-                UI.Dialog.error(new Error("A Google OAuth client ID is required."));
+                UI.Dialog.error(new Error(t("errors.googleClientIdRequired")));
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace Views.Settings
                 await Data.saveConfig(App.config);
                 this.emailInput.value = "";
                 this.usernameInput.value = "";
-                UI.Dialog.message({ title: "Logged out", text: "Your Google account has been removed from this device." });
+                UI.Dialog.message({ title: t("account.loggedOutTitle"), text: t("account.loggedOutMessage") });
             }
             catch (error)
             {
@@ -93,7 +93,7 @@ namespace Views.Settings
                 script.src = "https://accounts.google.com/gsi/client";
                 script.async = true;
                 script.onload = () => resolve();
-                script.onerror = () => reject(new Error("Unable to load Google login."));
+                script.onerror = () => reject(new Error(t("errors.unableToLoadGoogleLogin")));
                 document.head.append(script);
             });
         }
@@ -105,14 +105,14 @@ namespace Views.Settings
                 const encodedPayload = credential.split(".")[1];
                 const payload = JSON.parse(atob(encodedPayload.replace(/-/g, "+").replace(/_/g, "/")));
                 if (!payload.email)
-                    throw new Error("Google did not return an email address.");
+                    throw new Error(t("errors.googleEmailMissing"));
 
                 const username = payload.name ?? payload.email;
                 this.emailInput.value = payload.email;
                 this.usernameInput.value = username;
                 App.config.nexusAccount = { provider: "Google", email: payload.email, username };
                 await Data.saveConfig(App.config);
-                UI.Dialog.message({ title: "Login successful", text: "Logged in as " + payload.email + "." });
+                UI.Dialog.message({ title: t("account.loginSuccessfulTitle"), text: t("account.loggedInAs", { email: payload.email }) });
             }
             catch (error)
             {

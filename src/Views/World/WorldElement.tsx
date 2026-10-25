@@ -28,49 +28,49 @@ namespace Views.World
         private build()
         {
             return this.tabControl = <tab-control>
-                <div id="overview-tab" class="data-view" tab-header="Overview" >
+                <div id="overview-tab" class="data-view" tab-header={ t("world.overview") }>
                     <div class="property-list">
-                        <label>Title:</label>
-                        { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder="Title of your story" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>{ t("world.title") }</label>
+                        { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder={ t("world.titlePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                        <label>Cover:</label>
+                        <label>{ t("world.cover") }</label>
                         { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
 
-                        <label>Version:</label>
+                        <label>{ t("world.version") }</label>
                         { this.versionInput = <semantic-version-input placeholder="1.0.0" value="1.0" /> as UI.Elements.SemanticVersionInput }
 
-                        <label>Mature content:</label>
+                        <label>{ t("world.matureContent") }</label>
                         { this.matureContentInput = <input type="checkbox" /> as HTMLInputElement }
 
-                        <label>Description:</label>
-                        { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder="A short description of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>{ t("world.description") }</label>
+                        { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.descriptionPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                        <label>Tags:</label>
-                        { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder="Descriptive tags for your world" /> as HTMLMultiSelect }
+                        <label>{ t("world.tags") }</label>
+                        { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder={ t("world.tagsPlaceholder") } /> as HTMLMultiSelect }
 
                     </div>
 
                     <div class="anchor" />
 
                     <div class="actions">
-                        <button class="create-new-world" title="Create a new world using AI" onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Create new world</span></button>
-                        <button class="delete-world" title="Delete current world" onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>Delete current world</span></button>
-                        <button onclick={ () => this.startStory() }><color-icon src="img/icons/play.svg" /><span>Start Story</span></button>
-                        <button class="upload-world" title="Upload world to Nexus" onclick={ () => this.uploadToNexus() }><color-icon src="img/icons/upload-to-cloud.svg" /><span>Upload to Nexus</span></button>
-                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                        <button class="create-new-world" title={ t("world.createWithAiTitle") } onclick={ () => this.createWorldUsingAI() }><color-icon src="img/icons/ai.svg" /><span>{ t("world.create") }</span></button>
+                        <button class="delete-world" title={ t("world.deleteCurrentTitle") } onclick={ () => this.onDeleteWorld() }><color-icon src="img/icons/delete.svg" /><span>{ t("world.deleteCurrent") }</span></button>
+                        <button onclick={ () => this.startStory() }><color-icon src="img/icons/play.svg" /><span>{ t("world.startStory") }</span></button>
+                        <button class="upload-world" title={ t("world.uploadToNexusTitle") } onclick={ () => this.uploadToNexus() }><color-icon src="img/icons/upload-to-cloud.svg" /><span>{ t("world.uploadToNexus") }</span></button>
+                        <span class="thinking-indicator"><span>{ t("common.thinking") }</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div id="details-tab" class="data-view" tab-header="Details">
+                <div id="details-tab" class="data-view" tab-header={ t("world.details") }>
                     <div class="property-list">
-                        <label>Lore:</label>
-                        { this.loreInput = <auto-correct-text-area lang="en-US" class="lore-input large" value="" ontouchend={ TextEditTouch } placeholder="Detailed lore and background of your world" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>{ t("world.lore") }</label>
+                        { this.loreInput = <auto-correct-text-area lang="en-US" class="lore-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.lorePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                        <label>Scenario:</label>
-                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder="Current story setup and conflicts" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        <label>{ t("world.scenario") }</label>
+                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.scenarioPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
-                        <label>Tracked Stats:</label>
+                        <label>{ t("world.trackedStats") }</label>
                         <div class="functions horizontal">
-                            <button class="icon-button add-stat-button" title="Add new stat" onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
+                            <button class="icon-button add-stat-button" title={ t("world.addStat") } onclick={ () => this.onAddStat() }><color-icon src="img/icons/add.svg" /></button>
                         </div>
                         { this.statList = <div class="stat-list" ontoplevelchildrenchanged={ () => this.onStatsChanged() } onnamechange={ (e: Event) => this.onStatNameChanged(e) } /> as HTMLDivElement }
                     </div>
@@ -79,21 +79,21 @@ namespace Views.World
 
                     <div class="actions" />
                 </div>
-                <div id="characters-tab" class="data-view" tab-header="Characters" >
+                <div id="characters-tab" class="data-view" tab-header={ t("world.characters") }>
                     <div class="property-list">
                         <div ontoplevelchildrenchanged={ (e: Event) => this.onPlayerChanged(e) } >
-                            <label>Player:</label>
+                            <label>{ t("world.player") }</label>
                             <div class="functions horizontal">
-                                <button class="icon-button create-player-using-ai-button" title="Create player character using AI" onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                                <button class="icon-button create-player-using-ai-button" title={ t("world.createPlayerWithAi") } onclick={ () => this.onCreatePlayerUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
                             </div>
                             { this.playerCharacterCard = new CharacterCardElement() }
                         </div>
 
                         <div>
-                            <label>NPCs:</label>
+                            <label>{ t("world.npcs") }</label>
                             <div class="functions horizontal">
-                                <button class="icon-button add-npc-button" title="Create new npc" onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
-                                <button class="icon-button add-npc-using-ai-button" title="Create new npc using AI" onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
+                                <button class="icon-button add-npc-button" title={ t("world.createNpc") } onclick={ () => this.onAddNPC() }><color-icon src="img/icons/add.svg" /></button>
+                                <button class="icon-button add-npc-using-ai-button" title={ t("world.createNpcWithAi") } onclick={ () => this.onAddNPCUsingAI() }><color-icon src="img/icons/ai.svg" /></button>
                             </div>
                             { this.npcCardList = <div class="npc-list" /> as HTMLElement }
                         </div>
@@ -103,26 +103,26 @@ namespace Views.World
 
                     <div class="actions" />
                 </div>
-                <div id="prologue-tab" class="data-view" tab-header="Prologue">
+                <div id="prologue-tab" class="data-view" tab-header={ t("world.prologue") }>
                     { this.prologueContainer = <div>{ new PrologueElement() }</div> as HTMLDivElement }
 
                     <div class="anchor" />
 
                     <div class="actions">
-                        <button class="write-prologue" title="Write a prologue to your world using AI" onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>Write prologue</span></button>
-                        <span class="thinking-indicator"><span>Thinking</span><span class="dots">...</span></span>
+                        <button class="write-prologue" title={ t("world.writePrologueTitle") } onclick={ () => this.onWritePrologueUsingAI() }><color-icon src="img/icons/ai.svg" /><span>{ t("world.writePrologue") }</span></button>
+                        <span class="thinking-indicator"><span>{ t("common.thinking") }</span><span class="dots">...</span></span>
                     </div>
                 </div>
-                <div id="import-export-tab" class="data-view" tab-header="Import / Export">
+                <div id="import-export-tab" class="data-view" tab-header={ t("world.importExport") }>
                     <div />
 
                     <div class="anchor" />
 
                     <div class="actions">
-                        <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>Import JSON</span></button>
-                        <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>Export JSON</span></button>
-                        <button onclick={ () => this.openLore() }><color-icon src="img/icons/open.svg" /><span>Load Lore</span></button>
-                        <button onclick={ () => this.saveLore() }><color-icon src="img/icons/save.svg" /><span>Save Lore</span></button>
+                        <button onclick={ () => this.open() }><color-icon src="img/icons/open.svg" /><span>{ t("world.importJson") }</span></button>
+                        <button onclick={ () => this.save() }><color-icon src="img/icons/save.svg" /><span>{ t("world.exportJson") }</span></button>
+                        <button onclick={ () => this.openLore() }><color-icon src="img/icons/open.svg" /><span>{ t("world.loadLore") }</span></button>
+                        <button onclick={ () => this.saveLore() }><color-icon src="img/icons/save.svg" /><span>{ t("world.saveLore") }</span></button>
                     </div>
                 </div>
             </tab-control> as HTMLTabControl;
@@ -133,7 +133,7 @@ namespace Views.World
         {
             if (this.coverImage.classList.contains("disabled")) return;
 
-            const result = await Dialogs.ImageEdit(this.coverImage.src, this.previousGenerateCoverPrompt, "Describe the cover image of your world.");
+            const result = await Dialogs.ImageEdit(this.coverImage.src, this.previousGenerateCoverPrompt, t("dialogs.describeWorldCover"));
             if (!result) return;
 
             this.previousGenerateCoverPrompt = result.prompt;
@@ -190,7 +190,7 @@ namespace Views.World
         private previousCreatePlayerPrompt = "";
         private async onCreatePlayerUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", this.previousCreatePlayerPrompt, "Describe your player character.");
+            const result = await Dialogs.TextEdit(t("world.descriptionOfCharacter"), this.previousCreatePlayerPrompt, t("character.describePlayer"));
             if (!result) return;
             this.previousCreatePlayerPrompt = result;
 
@@ -225,7 +225,7 @@ namespace Views.World
         private previousCreateNPCPrompt = "";
         private async onAddNPCUsingAI()
         {
-            const result = await Dialogs.TextEdit("Character Description", this.previousCreateNPCPrompt, "Describe the NPC that should be added.");
+            const result = await Dialogs.TextEdit(t("world.descriptionOfCharacter"), this.previousCreateNPCPrompt, t("character.describeNpc"));
             if (!result) return;
             this.previousCreateNPCPrompt = result;
 
@@ -352,14 +352,14 @@ namespace Views.World
             if (!nexusAccount?.email)
             {
                 Views.navigate("Settings");
-                UI.Dialog.error(new Error("Please log in with Google before uploading a world to Nexus."));
+                UI.Dialog.error(new Error(t("world.loginRequired")));
                 return;
             }
 
             const cover = this.coverImage.getAttribute("src");
             if (!cover?.startsWith("data:"))
             {
-                UI.Dialog.error(new Error("A cover image is required before uploading to Nexus."));
+                UI.Dialog.error(new Error(t("world.coverRequired")));
                 return;
             }
 
@@ -384,17 +384,17 @@ namespace Views.World
                 const accountId = upload.userid.trim().toLocaleLowerCase();
                 const ownedWorld = matchingWorlds.find(x => x.userid.trim().toLocaleLowerCase() == accountId);
                 if (matchingWorlds.some(x => x.userid.trim().toLocaleLowerCase() != accountId))
-                    throw new Error("Another user has already uploaded a world with this title.");
+                    throw new Error(t("world.duplicateTitle"));
 
                 if (ownedWorld)
                 {
                     await Data.Nexus.API.updateWorld(ownedWorld.id, upload);
-                    UI.Dialog.message({ title: "Updated", text: "Sucessfully updated your world on Nexus." });
+                    UI.Dialog.message({ title: t("world.updated"), text: t("world.updatedMessage") });
                 }
                 else
                 {
                     await Data.Nexus.API.createWorld(upload);
-                    UI.Dialog.message({ title: "Uploaded", text: "Sucessfully uploaded to Nexus." });
+                    UI.Dialog.message({ title: t("world.uploadSuccess"), text: t("world.uploadedMessage") });
                 }
             }
             catch (error)
@@ -419,7 +419,7 @@ namespace Views.World
         private previousCreateProloguePrompt;
         private async onWritePrologueUsingAI()
         {
-            const result = await Dialogs.TextEdit("Prologue", this.previousCreateProloguePrompt, "Write where the story should start off.");
+            const result = await Dialogs.TextEdit(t("dialogs.prologue"), this.previousCreateProloguePrompt, t("dialogs.describePrologue"));
             if (!result) return;
             this.previousCreateProloguePrompt = result;
 
@@ -488,7 +488,7 @@ namespace Views.World
 
         public async openLore(): Promise<boolean>
         {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload lore text", accept: "text/plain,.txt,.md,.text" });
+            const result = await UI.Dialog.upload({ multiple: false, title: t("dialogs.uploadLore"), accept: "text/plain,.txt,.md,.text" });
             if (result?.length > 0)
             {
                 const file = result.item(0);
@@ -500,7 +500,7 @@ namespace Views.World
 
         public async open(): Promise<boolean>
         {
-            const result = await UI.Dialog.upload({ multiple: false, title: "Upload your world", accept: "application/json,text/json,.json" });
+            const result = await UI.Dialog.upload({ multiple: false, title: t("dialogs.uploadWorld"), accept: "application/json,text/json,.json" });
             if (result?.length > 0)
             {
                 const file = result.item(0);

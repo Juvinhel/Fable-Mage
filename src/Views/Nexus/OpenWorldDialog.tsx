@@ -13,21 +13,21 @@ namespace Views.Nexus
         const isOwnWorld = !!userId && world.userid?.trim().toLocaleLowerCase() == userId;
 
         return <div id="open-world-dialog">
-            { coverUrl ? <img class="cover" src={ coverUrl } /> : <div class="cover missing-cover">No cover</div> }
+            { coverUrl ? <img class="cover" src={ coverUrl } /> : <div class="cover missing-cover">{ t("nexus.noCover") }</div> }
             <div class="details">
                 <div class="metadata">
-                    <div class="metadata-field"><label>Author:</label><span>{ world.username || "Unknown" }</span></div>
-                    <div class="metadata-field"><label>Version:</label><span>{ world.version || "Unknown" }</span></div>
-                    <div class="metadata-field"><label>Mature content:</label><span>{ world.mature ? "Yes" : "No" }</span></div>
-                    <div class="metadata-field"><label>Tags:</label><ul class="tags">{ (world.tags ?? []).map(tag => <li>{ tag.trim() }</li>) }</ul></div>
+                    <div class="metadata-field"><label>{ t("nexus.author") }</label><span>{ world.username || t("common.unknown") }</span></div>
+                    <div class="metadata-field"><label>{ t("nexus.version") }</label><span>{ world.version || t("common.unknown") }</span></div>
+                    <div class="metadata-field"><label>{ t("nexus.matureContent") }</label><span>{ world.mature ? t("common.yes") : t("common.no") }</span></div>
+                    <div class="metadata-field"><label>{ t("nexus.tags") }</label><ul class="tags">{ (world.tags ?? []).map(tag => <li>{ tag.trim() }</li>) }</ul></div>
                 </div>
             </div>
-            <div class="description"><label>Description:</label><p>{ world.description || "No description provided." }</p></div>
+            <div class="description"><label>{ t("nexus.description") }</label><p>{ world.description || t("nexus.noDescription") }</p></div>
             <div class="actions">
-                <button class="play-button" onclick={ () => openWorld(world, "play") }><color-icon src="img/icons/play.svg" /><span>Play</span></button>
-                <button class="edit-button" onclick={ () => openWorld(world, "edit") }><color-icon src="img/icons/edit.svg" /><span>Edit</span></button>
-                { isOwnWorld ? <button class="delete-button" onclick={ () => deleteWorld(world) }><color-icon src="img/icons/delete.svg" /><span>Delete</span></button> : null }
-                <button class="download-button" onclick={ () => downloadWorld(world) }><color-icon src="img/icons/download-from-cloud.svg" /><span>Download</span></button>
+                <button class="play-button" onclick={ () => openWorld(world, "play") }><color-icon src="img/icons/play.svg" /><span>{ t("nexus.play") }</span></button>
+                <button class="edit-button" onclick={ () => openWorld(world, "edit") }><color-icon src="img/icons/edit.svg" /><span>{ t("nexus.edit") }</span></button>
+                { isOwnWorld ? <button class="delete-button" onclick={ () => deleteWorld(world) }><color-icon src="img/icons/delete.svg" /><span>{ t("nexus.delete") }</span></button> : null }
+                <button class="download-button" onclick={ () => downloadWorld(world) }><color-icon src="img/icons/download-from-cloud.svg" /><span>{ t("nexus.download") }</span></button>
             </div>
         </div>;
     }
@@ -52,7 +52,7 @@ namespace Views.Nexus
 
     async function deleteWorld(world: Data.Nexus.WorldRecord)
     {
-        if (!await UI.Dialog.confirm({ title: "Delete world?", text: `Are you sure you want to delete "${ world.title }" from Nexus? This cannot be undone.` }))
+        if (!await UI.Dialog.confirm({ title: t("nexus.deleteWorldTitle"), text: t("nexus.deleteWorldConfirmation", { title: world.title }) }))
             return;
 
         try

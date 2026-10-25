@@ -21,16 +21,16 @@ namespace Views.World
                     { this.locationElement = <span class="location" /> as HTMLSpanElement }
                     { this.timeElement = <span class="time" /> as HTMLSpanElement }
                 </div>
-                <span>Text:</span>
+                <span>{ t("prologue.text") }</span>
                 { this.textElement = <auto-correct-text-area class="plot-text large" lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
-                <span>Choices:</span>
+                <span>{ t("prologue.choices") }</span>
                 { this.choicesListElement = <div class="choices-list">
-                    <auto-correct-text-area class="choice single-line" placeholder="First Choice" lang="en-US" analyze={ AI.Client.analyzeLanguage } />
-                    <auto-correct-text-area class="choice single-line" placeholder="Second Choice" lang="en-US" analyze={ AI.Client.analyzeLanguage } />
-                    <auto-correct-text-area class="choice single-line" placeholder="Third Choice" lang="en-US" analyze={ AI.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.firstChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.secondChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.thirdChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
                 </div> as HTMLDivElement }
                 <div class="functions horizontal">
-                    <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
+                    <button class="icon-button show-internal-button" title={ t("prologue.showInternal") } onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
                 </div>
             </>;
         }
@@ -61,7 +61,7 @@ namespace Views.World
 
         private async onShowInternal()
         {
-            const result = await Views.Dialogs.TextEdit("Edit Internal Text", this.internal);
+            const result = await Views.Dialogs.TextEdit(t("plot.editInternalTitle"), this.internal);
             if (result) this.internal = result;
         }
 

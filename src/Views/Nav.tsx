@@ -16,12 +16,12 @@ namespace Views
 
         return <nav>
             <div>
-                <button title="Home" onclick={ () => navigate("Home") }><color-icon src="img/icons/castle.svg" /><span>Home</span></button>
-                <button title="Story" onclick={ () => navigate("Story") }><color-icon src="img/icons/book.svg" /><span>Story</span></button>
-                <button title="World" onclick={ () => navigate("World") }><color-icon src="img/icons/planet.svg" /><span>World</span></button>
-                <button title="Nexus" onclick={ (e) => navigate("Nexus") }><color-icon src="img/icons/portal.svg" /><span>Nexus</span></button>
-                <button title="Settings" onclick={ (e) => navigate("Settings") }><color-icon src="img/icons/gears.svg" /><span>Settings</span></button>
-                <button title="Diagnostics" onclick={ (e) => navigate("Diagnostics") }><color-icon src="img/icons/stethoscope.svg" /><span>Diagnostics</span></button>
+                <button data-target="Home" title={ t("navigation.home") } onclick={ () => navigate("Home") }><color-icon src="img/icons/castle.svg" /><span>{ t("navigation.home") }</span></button>
+                <button data-target="Story" title={ t("navigation.story") } onclick={ () => navigate("Story") }><color-icon src="img/icons/book.svg" /><span>{ t("navigation.story") }</span></button>
+                <button data-target="World" title={ t("navigation.world") } onclick={ () => navigate("World") }><color-icon src="img/icons/planet.svg" /><span>{ t("navigation.world") }</span></button>
+                <button data-target="Nexus" title={ t("navigation.nexus") } onclick={ (e) => navigate("Nexus") }><color-icon src="img/icons/portal.svg" /><span>{ t("navigation.nexus") }</span></button>
+                <button data-target="Settings" title={ t("navigation.settings") } onclick={ (e) => navigate("Settings") }><color-icon src="img/icons/gears.svg" /><span>{ t("navigation.settings") }</span></button>
+                <button data-target="Diagnostics" title={ t("navigation.diagnostics") } onclick={ (e) => navigate("Diagnostics") }><color-icon src="img/icons/stethoscope.svg" /><span>{ t("navigation.diagnostics") }</span></button>
                 <button class="drop-down-button" onclick={ (e: Event) => toggleDropDown(e) }>
                     <color-icon src="img/icons/menu.svg" />
                 </button>
@@ -47,7 +47,7 @@ namespace Views
     {
         const nav = document.querySelector("nav");
         nav.classList.remove("open");
-        let button = nav.querySelector("button[title=\"" + target + "\"]") as HTMLButtonElement;
+        let button = nav.querySelector("button[data-target=\"" + target + "\"]") as HTMLButtonElement;
         let element;
         switch (target)
         {

@@ -2,6 +2,7 @@ class App
 {
     public static async Start()
     {
+        await loadTranslations();
         await this.startServiceWorker();
 
         this.config = await Data.loadConfig();
@@ -26,7 +27,7 @@ class App
 
                 navigator.serviceWorker.addEventListener("controllerchange", () =>
                 {   // new server worker was installed and activated
-                    if (!refreshing && confirm("A new version of the app is available. Do you want to reload?\nMake sure to save your story or world to the disk first!"))
+                    if (!refreshing && confirm(t("app.reloadPrompt")))
                     {
                         window.location.reload();
                         refreshing = true;
@@ -54,7 +55,7 @@ class App
             }
             catch (error)
             {
-                throw new Error("Something went wrong with your text api config!");
+                throw new Error(t("app.textApiConfigError"));
             }
 
             let languageAPI: AI.LanguageAPI;
@@ -65,7 +66,7 @@ class App
             }
             catch (error)
             {
-                throw new Error("Something went wrong with your language api config!");
+                throw new Error(t("app.languageApiConfigError"));
             }
 
             let imageAPI: AI.ImageAPI;
@@ -76,7 +77,7 @@ class App
             }
             catch (error)
             {
-                throw new Error("Something went wrong with your image api config!");
+                throw new Error(t("app.imageApiConfigError"));
             }
 
             AI.textAPI = textAPI;

@@ -6,7 +6,7 @@ namespace Views.World
         {
             super();
 
-            this.title = "Settings";
+            this.title = t("navigation.settings");
             this.append(this.build());
         }
 
@@ -16,8 +16,8 @@ namespace Views.World
         private build()
         {
             return <>
-                { this.nameInput = <input class="stat-name" type="text" placeholder="Name" onblur={ () => this.onBlur() } /> as HTMLInputElement }
-                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder="Description, include range and impact on the character." lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                { this.nameInput = <input class="stat-name" type="text" placeholder={ t("common.name") } onblur={ () => this.onBlur() } /> as HTMLInputElement }
+                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder={ t("world.statDescriptionPlaceholder") } lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 <div class="functions">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>
@@ -46,7 +46,7 @@ namespace Views.World
 
         private async onDelete()
         {
-            if (await UI.Dialog.confirm({ text: "Are you sure you want to delete this stat?", title: "Delete stat?" }))
+            if (await UI.Dialog.confirm({ text: t("world.deleteStatConfirmation"), title: t("world.deleteStatTitle") }))
                 this.remove();
         }
     }

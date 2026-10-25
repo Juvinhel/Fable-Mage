@@ -131,6 +131,20 @@
             "hide": true,
         },
         {
+            "label": "Copy Locales",
+            "command": "Copy-Item",
+            "type": "shell",
+            "args": [
+                "-Path",
+                "locales",
+                "-Destination",
+                "dist",
+                "-Force",
+                "-Recurse",
+            ],
+            "hide": true,
+        },
+        {
             "label": "Generate Version",
             "command": "GenVersion -o dist/manifest.json -t manifest.json",
             "type": "shell",
@@ -148,6 +162,7 @@
                 "Copy Fonts",
                 "Copy Images",
                 "Copy Templates",
+                "Copy Locales",
                 "Generate Version",
             ],
             "group": {

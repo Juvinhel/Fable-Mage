@@ -18,8 +18,8 @@ namespace Views.Diagnostics
             return <>
                 <div class="header">
                     <div class="diagnostic-toolbar">
-                        { this.loggingEnabledToggleButton = <button onclick={ () => this.toggleLogging() }>{ AI.Logger.loggingEnabled ? "Stop" : "Start" }</button> as HTMLButtonElement }
-                        <button onclick={ () => this.clearLogList() }>Clear</button>
+                        { this.loggingEnabledToggleButton = <button onclick={ () => this.toggleLogging() }>{ AI.Logger.loggingEnabled ? t("common.stop") : t("common.start") }</button> as HTMLButtonElement }
+                        <button onclick={ () => this.clearLogList() }>{ t("diagnostics.clear") }</button>
                     </div>
                 </div>
 
@@ -30,7 +30,7 @@ namespace Views.Diagnostics
         private toggleLogging()
         {
             AI.Logger.loggingEnabled = !AI.Logger.loggingEnabled;
-            this.loggingEnabledToggleButton.textContent = AI.Logger.loggingEnabled ? "Stop" : "Start";
+            this.loggingEnabledToggleButton.textContent = AI.Logger.loggingEnabled ? t("common.stop") : t("common.start");
         }
 
         private clearLogList()
@@ -52,7 +52,7 @@ namespace Views.Diagnostics
                 request.appendChild(<div class={ ["chat-message", message.role] } >
                     <label>{ message.role }</label>
                     <pre>{ message.content }</pre>
-                    <button class="icon-button" title="Copy message" onclick={ () => this.copyText(message.content) }><color-icon src="img/icons/clipboard.svg" /></button>
+                    <button class="icon-button" title={ t("diagnostics.copyMessage") } onclick={ () => this.copyText(message.content) }><color-icon src="img/icons/clipboard.svg" /></button>
                 </div>);
 
             const item = <details class="log-entry" open={ false }>
@@ -63,16 +63,16 @@ namespace Views.Diagnostics
                 <div class="log-body">
                     <div class="meta"><span>{ entry.duration } ms</span></div>
                     <div class="request-body">
-                        <label>Request</label>
-                        <button class="icon-button" title="Copy full request" onclick={ () => this.copyText(entry.request.map(x => x.role + ":\n" + x.content).join("\n\n")) }><color-icon src="img/icons/clipboard.svg" /></button>
+                        <label>{ t("diagnostics.request") }</label>
+                        <button class="icon-button" title={ t("diagnostics.copyFullRequest") } onclick={ () => this.copyText(entry.request.map(x => x.role + ":\n" + x.content).join("\n\n")) }><color-icon src="img/icons/clipboard.svg" /></button>
                         { request }</div>
                     <div class="response-body">
-                        <label>Response</label>
+                        <label>{ t("diagnostics.response") }</label>
                         <div class="chat-thread" >
                             <div class={ ["chat-message", entry.type == "error" ? "error" : "response"] }>
-                                <label>{ entry.type == "error" ? "error" : "response" }</label>
-                                { imageDataUri ? <img src={ response } alt="Image response" /> : <pre>{ entry.response }</pre> }
-                                <button class="icon-button" title={ "Copy " + (entry.type == "error" ? "error" : "response") } onclick={ () => this.copyText(entry.response) }><color-icon src="img/icons/clipboard.svg" /></button>
+                                <label>{ entry.type == "error" ? t("diagnostics.error") : t("diagnostics.response") }</label>
+                                { imageDataUri ? <img src={ response } alt={ t("diagnostics.imageResponse") } /> : <pre>{ entry.response }</pre> }
+                                <button class="icon-button" title={ entry.type == "error" ? t("diagnostics.copyError") : t("diagnostics.copyResponse") } onclick={ () => this.copyText(entry.response) }><color-icon src="img/icons/clipboard.svg" /></button>
                             </div>
                         </div>
                     </div>

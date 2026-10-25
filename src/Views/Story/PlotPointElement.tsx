@@ -31,10 +31,10 @@ namespace Views.Story
                     { this.textElement = <span class="text" /> as HTMLSpanElement }
                 </div>
                 <div class="functions horizontal">
-                    <button class="icon-button return-button" title="Return here" onclick={ () => this.onReturnHere() }><color-icon src="img/icons/return.svg" /></button>
-                    <button class="icon-button edit-image-button" title="Edit image" onclick={ () => this.onEditImage() }><color-icon src="img/icons/image.svg" /></button>
-                    <button class="icon-button show-internal-button" title="Show internal content" onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
-                    <button class="icon-button edit-button" title="Edit plot point content" onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
+                    <button class="icon-button return-button" title={ t("plot.returnHere") } onclick={ () => this.onReturnHere() }><color-icon src="img/icons/return.svg" /></button>
+                    <button class="icon-button edit-image-button" title={ t("plot.editImage") } onclick={ () => this.onEditImage() }><color-icon src="img/icons/image.svg" /></button>
+                    <button class="icon-button show-internal-button" title={ t("plot.showInternal") } onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
+                    <button class="icon-button edit-button" title={ t("plot.editContent") } onclick={ () => this.onEdit() }><color-icon src="img/icons/edit.svg" /></button>
                 </div>
                 { this.choicesListElement = <div class="choices-list" /> as HTMLDivElement }
             </>;
@@ -121,13 +121,13 @@ namespace Views.Story
 
         private async onShowInternal()
         {
-            const result = await Views.Dialogs.TextEdit("Edit Internal Text", this.internal);
+            const result = await Views.Dialogs.TextEdit(t("plot.editInternalTitle"), this.internal);
             if (result) this.internal = result;
         }
 
         private async onEditImage()
         {
-            const result = await Dialogs.ImageEdit(this.image, this.scenery, "Describe the ambient image of the plot.");
+            const result = await Dialogs.ImageEdit(this.image, this.scenery, t("plot.describeImage"));
             if (!result) return;
 
             this.scenery = result.prompt;

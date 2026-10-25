@@ -3,29 +3,29 @@ namespace Views.Settings.ImageAPI
     export function comfyUI(config: Partial<Data.ComfyUIEndpoint>)
     {
         return <div id="comfyui-api">
-            <label>URL:</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder="ComfyUI server URL" />
+            <label>{ t("common.url") }</label>
+            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.comfyUiUrl") } />
 
             <div class="group">
-                <label>Workflow JSON:</label>
+                <label>{ t("apiSettings.workflowJson") }</label>
 
                 <div>
                     <input type="file" accept="application/json,.json" onchange={ (e: Event) => loadComfyUIWorkflow(e.currentTarget as HTMLInputElement) } />
                     <input name="workflow" type="hidden" value={ config.workflow ?? "" } />
-                    <span>{ config.workflow ? "Workflow loaded" : "" }</span>
+                    <span>{ config.workflow ? t("apiSettings.workflowLoaded") : "" }</span>
                 </div>
 
-                <p>Upload an API-format workflow JSON with { "{{prompt}}" } in the text input to fill with the generated prompt.</p>
+                <p>{ t("apiSettings.workflowHelp") }</p>
             </div>
 
             <div class="group">
-                <label>Username:</label>
-                <input name="username" type="text" value={ config.username ?? "" } placeholder="Optional username" />
+                <label>{ t("common.username") }</label>
+                <input name="username" type="text" value={ config.username ?? "" } placeholder={ t("apiSettings.optionalUsername") } />
 
-                <label>Password:</label>
-                <input name="password" type="password" value={ config.password ?? "" } placeholder="Optional password" />
+                <label>{ t("common.password") }</label>
+                <input name="password" type="password" value={ config.password ?? "" } placeholder={ t("apiSettings.optionalPassword") } />
 
-                <p>Only needed when the endpoint is behind a reverse proxy using Basic authentication.</p>
+                <p>{ t("apiSettings.basicAuthHelp") }</p>
             </div>
         </div>;
     }
@@ -49,7 +49,7 @@ namespace Views.Settings.ImageAPI
         catch
         {
             input.value = "";
-            UI.Dialog.error(new Error("The selected workflow file is not valid JSON."));
+            UI.Dialog.error(new Error(t("apiSettings.invalidWorkflow")));
         }
     }
 }

@@ -3,10 +3,10 @@ namespace Views.Settings.TextAPI
     export function gemini(config: Partial<Data.GeminiEndpoint>)
     {
         return <div id="gemini-api">
-            <label>API Key:</label>
-            <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder="Gemini API key" />
+            <label>{ t("common.apiKey") }</label>
+            <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder={ t("apiSettings.geminiKey") } />
 
-            <label>Model:</label>
+            <label>{ t("common.model") }</label>
             <select name="model" value={ config.model ?? "gemini-3.8-flash" }>
                 <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
                 <option value="gemini-3.7-flash">Gemini 3.7 Flash</option>

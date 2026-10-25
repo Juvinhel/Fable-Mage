@@ -3,7 +3,7 @@ namespace Views.Dialogs
     export async function ImageEdit(image: string, prompt: string, placeholder?: string): Promise<{ image: string; prompt: string; }>
     {
         const dialog = buildImageEditDialog(image, prompt, placeholder) as HTMLElement;
-        await UI.Dialog.show(dialog, { title: "Generate Image", allowClose: true, mode: "fill" });
+        await UI.Dialog.show(dialog, { title: t("dialogs.generateImage"), allowClose: true, mode: "fill" });
 
         const ok = dialog.classList.contains("ok");
         if (ok)
@@ -19,10 +19,10 @@ namespace Views.Dialogs
     {
         return <div id="image-edit">
             <img class="image" src={ image } />
-            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? "input text" } lang="en-US" value={ prompt } analyze={ AI.Client.analyzeLanguage } />
-            <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>Generate</button>
-            <button class="ok-button" onclick={ okClick }>OK</button>
-            <button class="cancel-button" onclick={ cancelClick }>Cancel</button>
+            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? t("dialogs.inputText") } lang="en-US" value={ prompt } analyze={ AI.Client.analyzeLanguage } />
+            <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>{ t("dialogs.generate") }</button>
+            <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
+            <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>
         </div>;
     }
 
