@@ -1,0 +1,82 @@
+#image-style-edit
+{
+    display: grid;
+    grid-template-rows: max-content max-content 1fr max-content 1fr max-content;
+    grid-template-columns: max-content 1fr;
+    grid-template-areas:
+        "name-label name"
+        "prefix-label prefix-label"
+        "prefix prefix"
+        "suffix-label suffix-label"
+        "suffix suffix"
+        "actions actions";
+    overflow-x: hidden;
+    overflow-y: auto;
+    gap: 1em;
+    border-radius: var(--corner-radius);
+
+    label
+    {
+        align-self: center;
+    }
+
+    > .name-label
+    {
+        grid-area: name-label;
+    }
+
+    > .name-input
+    {
+        grid-area: name;
+    }
+
+    > .prefix-label
+    {
+        grid-area: prefix-label;
+    }
+
+    > .prefix-input
+    {
+        grid-area: prefix;
+        min-height: 5em;
+    }
+
+    > .suffix-label
+    {
+        grid-area: suffix-label;
+    }
+
+    > .suffix-input
+    {
+        grid-area: suffix;
+        min-height: 5em;
+    }
+
+    > .actions
+    {
+        grid-template-columns: 1fr 1fr;
+        grid-area: actions;
+
+        > .ok-button
+        {
+            background: var(--ok-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-ok-color);
+            }
+        }
+
+        > .cancel-button
+        {
+            background: var(--cancel-color);
+            color: var(--foreground-color);
+
+            &:hover
+            {
+                background: var(--highlight-cancel-color);
+            }
+        }
+    }
+}

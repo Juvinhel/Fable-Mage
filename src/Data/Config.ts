@@ -12,6 +12,8 @@ namespace Data
         language?: string;
         nexusAccount?: NexusAccount;
         summaryInterval?: number;
+        imageStyle?: string;
+        customImageStyles: ImageStyle[];
         textAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | LMStudioEndpoint;
         imageAPI: KoboldCPPEndpoint | GeminiEndpoint | AnythingLLMEndpoint | StableDiffusionEndpoint | ComfyUIEndpoint | NoneImageEndpoint;
         languageAPI: LanguageToolEndpoint | NoneLanguageEndpoint;
@@ -96,6 +98,7 @@ namespace Data
         languageAPI: {
             name: "LanguageTool"
         },
+        customImageStyles: [],
     };
 
     export async function loadConfig(): Promise<Config>

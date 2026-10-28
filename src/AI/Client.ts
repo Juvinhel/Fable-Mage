@@ -196,7 +196,6 @@ namespace AI
             player: Data.Character,
             npcs: Data.Character[]): Promise<Data.Character>
         {
-            console.log("createNPC", world, player, npcs);
             const prompt = await this.createNPCTemplate(world, player, npcs, this.characterStats(world.stats));
             const messages: Message[] = [
                 { role: "system", content: prompt },
@@ -244,7 +243,8 @@ namespace AI
 
         public async getImage(description: string): Promise<string>
         {
-            const prompt = await this.getImageTemplate(description);
+            const imageStyle = this.getImageStyle();
+            const prompt = await this.getImageTemplate(description, imageStyle?.prefix?.trim() ?? "", imageStyle?.suffix?.trim() ?? "");
             return await this.runImageRequest("getImage", prompt);
         }
 

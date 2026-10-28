@@ -9,22 +9,23 @@ namespace Views.Settings
             this.append(this.build());
 
             this.load();
-            this.loadInfo();
         }
 
         private textAPISelect: HTMLSelectElement;
         private languageAPISelect: HTMLSelectElement;
         private localeSelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
+        private imageStyleSelect: HTMLSelectElement;
+        private imageStyleCloneButton: HTMLButtonElement;
+        private imageStyleEditButton: HTMLButtonElement;
+        private imageStyleDeleteButton: HTMLButtonElement;
         private summaryIntervalInput: HTMLInputElement;
-        private versionValue: HTMLSpanElement;
-        private buildTimeValue: HTMLSpanElement;
 
         private build()
         {
             return <>
                 <tab-control>
-                    <div id="ai-tab" class="data-view" tab-header={ t("settings.ai") }>
+                    <div id="common-tab" class="data-view" tab-header={ t("settings.common") }>
                         <div class="property-list">
                             <label>{ t("settings.language") }</label>
                             { this.localeSelect = <select>
@@ -34,6 +35,33 @@ namespace Views.Settings
                                 <option value="fr">{ t("settings.french") }</option>
                             </select> as HTMLSelectElement }
 
+                            <label>{ t("settings.imageStyle") }</label>
+                            <div>
+                                { this.imageStyleSelect = <select onchange={ () => this.imageStyleChange() } /> as HTMLSelectElement }
+                                <div class="actions">
+                                    <button onclick={ () => this.createImageStyle() }>{ t("settings.createImageStyle") }</button>
+                                    { this.imageStyleCloneButton = <button onclick={ () => this.cloneImageStyle() }>{ t("settings.cloneImageStyle") }</button> as HTMLButtonElement }
+                                    { this.imageStyleEditButton = <button onclick={ () => this.editImageStyle() }>{ t("settings.editImageStyle") }</button> as HTMLButtonElement }
+                                    { this.imageStyleDeleteButton = <button onclick={ () => this.deleteImageStyle() }>{ t("settings.deleteImageStyle") }</button> as HTMLButtonElement }
+                                </div>
+                            </div>
+
+                            <label>{ t("settings.summaryInterval") }</label>
+                            { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder={ t("settings.defaultFive") } /> as HTMLInputElement }
+                            <p>{ t("settings.summaryIntervalHelp") }</p>
+                        </div>
+
+                        <div class="anchor" />
+
+                        <div class="actions">
+                            <button title={ t("common.cancel") } onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>{ t("common.cancel") }</span></button>
+                            <button title={ t("common.save") } onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>{ t("common.save") }</span></button>
+                            <button title={ t("common.export") } onclick={ () => this.onExport() }><color-icon src="img/icons/save.svg" /><span>{ t("common.export") }</span></button>
+                            <button title={ t("common.import") } onclick={ () => this.onImport() }><color-icon src="img/icons/open.svg" /><span>{ t("common.import") }</span></button>
+                        </div>
+                    </div>
+                    <div id="ai-tab" class="data-view" tab-header={ t("settings.ai") }>
+                        <div class="property-list">
                             <label>{ t("settings.textApi") }</label>
                             <div>
                                 { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
@@ -63,12 +91,6 @@ namespace Views.Settings
                                     <option value="None">{ t("common.none") }</option>
                                 </select> as HTMLSelectElement }
                             </div>
-
-                            <div class="group">
-                                <label>{ t("settings.summaryInterval") }</label>
-                                { this.summaryIntervalInput = <input type="number" min="5" step="1" placeholder={ t("settings.defaultFive") } /> as HTMLInputElement }
-                                <p>{ t("settings.summaryIntervalHelp") }</p>
-                            </div>
                         </div>
 
                         <div class="anchor" />
@@ -81,56 +103,16 @@ namespace Views.Settings
                         </div>
                     </div>
                     { new NexusSettingsElement() }
-                    <div id="info-tab" class="data-view" tab-header={ t("settings.info") }>
-                        <div class="property-list">
-                            <label>{ t("settings.version") }</label>
-                            { this.versionValue = <span>{ t("common.loading") }</span> as HTMLSpanElement }
-
-                            <label>{ t("settings.buildTime") }</label>
-                            { this.buildTimeValue = <span>{ t("common.loading") }</span> as HTMLSpanElement }
-
-                            <label>{ t("settings.developer") }</label>
-                            <span>Juvinhel</span>
-
-                            <label>{ t("settings.repository") }</label>
-                            <a href="https://github.com/Juvinhel/Fable-Mage" target="_blank" rel="noopener noreferrer">{ t("settings.github") }</a>
-
-                            <p>{ t("settings.reportBug") } <a href="https://github.com/Juvinhel/Fable-Mage/issues" target="_blank" rel="noopener noreferrer">{ t("settings.issuesPage") }</a>.</p>
-                        </div>
-
-                        <div class="anchor" />
-
-                        <div />
-                    </div>
+                    { new InfoElement() }
                 </tab-control>
             </>;
-        }
-
-        private async loadInfo()
-        {
-            try
-            {
-                const response = await fetch("manifest.json");
-                if (!response.ok)
-                    throw new Error(`Unable to load app manifest (${ response.status }).`);
-
-                const manifest = await response.json() as { version?: string; "build-date"?: string; };
-                this.versionValue.textContent = manifest.version ?? t("common.unknown");
-                const buildDate = manifest["build-date"] ? new Date(manifest["build-date"]) : undefined;
-                this.buildTimeValue.textContent = buildDate && !Number.isNaN(buildDate.getTime()) ? buildDate.toLocaleString() : t("common.unknown");
-            }
-            catch (error)
-            {
-                console.error(error);
-                this.versionValue.textContent = t("common.unavailable");
-                this.buildTimeValue.textContent = t("common.unavailable");
-            }
         }
 
         private load()
         {
             this.localeSelect.value = App.config.language ?? "";
             this.summaryIntervalInput.value = App.config.summaryInterval?.toString() ?? "";
+            this.loadImageStyles();
 
             for (const option of this.textAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.textAPI.name;
@@ -143,6 +125,126 @@ namespace Views.Settings
             for (const option of this.languageAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.languageAPI.name;
             this.languageAPIChange();
+        }
+
+        private loadImageStyles()
+        {
+            this.imageStyleSelect.clearChildren();
+
+            this.imageStyleSelect.append(<option value="" >{ t("common.none") }</option>);
+
+            for (const style of Data.BuiltInImageStyles)
+                this.imageStyleSelect.append(<option value={ style.name }>{ style.name }</option>);
+
+            for (const style of App.config.customImageStyles)
+                this.imageStyleSelect.append(<option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>);
+
+            this.imageStyleSelect.value = App.config.imageStyle ?? "";
+            this.imageStyleChange();
+        }
+
+        private imageStyleChange()
+        {
+            this.imageStyleCloneButton.disabled = !this.selectedImageStyle;
+            const isCustomStyleSelected = this.imageStyleSelect.selectedOptions[0]?.getAttribute("data-prefix") != null;
+            this.imageStyleEditButton.disabled = !isCustomStyleSelected;
+            this.imageStyleDeleteButton.disabled = !isCustomStyleSelected;
+        }
+
+        private get customImageStyleNames(): string[]
+        {
+            return this.imageStyleSelect.options.filter(option => option.getAttribute("data-prefix") != null).map(option => option.value);
+        }
+
+        private get customImageStyles(): Data.ImageStyle[]
+        {
+            const ret: Data.ImageStyle[] = [];
+            for (const option of this.imageStyleSelect.options)
+                if (option.getAttribute("data-prefix") != null)
+                {
+                    ret.push({
+                        name: option.value,
+                        prefix: option.getAttribute("data-prefix"),
+                        suffix: option.getAttribute("data-suffix")
+                    });
+                }
+            return ret;
+        }
+
+        private get selectedImageStyle(): Data.ImageStyle | undefined
+        {
+            const selectedOption = this.imageStyleSelect.selectedOptions[0];
+            if (!selectedOption.value) return undefined;
+
+            const builtInStyle = Data.BuiltInImageStyles.first(x => x.name == selectedOption.value);
+            if (builtInStyle) return builtInStyle;
+
+            const customStyle: Data.ImageStyle = {
+                name: selectedOption.value,
+                prefix: selectedOption.getAttribute("data-prefix"),
+                suffix: selectedOption.getAttribute("data-suffix")
+            };
+            return customStyle;
+        }
+
+        private async createImageStyle()
+        {
+            const imageStyle = await ImageStyleEdit(
+                { name: "", prefix: "", suffix: "" },
+                this.customImageStyleNames,
+                t("settings.createImageStyleTitle")
+            );
+            if (!imageStyle) return;
+
+            const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
+            this.imageStyleSelect.append(option);
+        }
+
+        private async cloneImageStyle()
+        {
+            const selectedStyle = this.selectedImageStyle;
+            if (!selectedStyle) return;
+
+            const copySuffix = t("settings.imageStyleCopySuffix");
+            const name = `${ selectedStyle.name } (${ copySuffix })`;
+
+            const imageStyle = await ImageStyleEdit(
+                { ...selectedStyle, name },
+                this.customImageStyleNames,
+                t("settings.cloneImageStyleTitle")
+            );
+            if (!imageStyle) return;
+
+            const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
+            this.imageStyleSelect.append(option);
+        }
+
+        private async editImageStyle()
+        {
+            const selectedOption = this.imageStyleSelect.selectedOptions[0];
+            const selectedImageStyle = this.selectedImageStyle;
+            if (!selectedImageStyle || typeof selectedImageStyle == "string") return;
+
+            const imageStyle = await ImageStyleEdit(
+                selectedImageStyle,
+                this.customImageStyleNames);
+            if (!imageStyle) return;
+
+            const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
+            selectedOption.replaceWith(option);
+        }
+
+        private async deleteImageStyle()
+        {
+            const selectedOption = this.imageStyleSelect.selectedOptions[0];
+            if (!selectedOption) return;
+
+            if (!await UI.Dialog.confirm({
+                title: t("settings.deleteImageStyleTitle"),
+                text: t("settings.deleteImageStyleConfirmation", { name: selectedOption.value })
+            })) return;
+
+            selectedOption.remove();
         }
 
         private textAPIChange()
@@ -289,12 +391,16 @@ namespace Views.Settings
                     throw new Error(t("app.languageApiConfigError"));
                 }
 
+                const languageChanged = this.localeSelect.value != (App.config.language ?? "");
+                App.config.language = this.localeSelect.value || undefined;
+                App.config.imageStyle = this.imageStyleSelect.value || undefined;
+                App.config.customImageStyles = this.customImageStyles;
+                App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
+
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
                 App.config.languageAPI = languageAPIConfig;
-                const languageChanged = this.localeSelect.value != (App.config.language ?? "");
-                App.config.language = this.localeSelect.value || undefined;
-                App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
+
                 await Data.saveConfig(App.config);
 
                 AI.textAPI = textAPI;

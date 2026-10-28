@@ -11,7 +11,7 @@ namespace Views.Settings
             super();
 
             this.id = "nexus-tab";
-            this.classList.add("property-list");
+            this.className = "data-view";
             this.setAttribute("tab-header", t("navigation.nexus"));
             this.append(this.build());
             this.load();
@@ -23,16 +23,22 @@ namespace Views.Settings
         private build()
         {
             return <>
-                <label>{ t("account.login") }</label>
-                <div>
-                    <button onclick={ () => this.loginWithGoogle() }>{ t("account.loginWithGoogle") }</button>
-                    <button onclick={ () => this.logoutWithGoogle() }>{ t("account.logout") }</button>
-                </div>
-                <label>{ t("account.email") }</label>
-                { this.emailInput = <input type="email" value={ App.config.nexusAccount?.email ?? "" } readonly /> as HTMLInputElement }
+                <div class="property-list">
+                    <label>{ t("account.login") }</label>
+                    <div>
+                        <button onclick={ () => this.loginWithGoogle() }>{ t("account.loginWithGoogle") }</button>
+                        <button onclick={ () => this.logoutWithGoogle() }>{ t("account.logout") }</button>
+                    </div>
+                    <label>{ t("account.email") }</label>
+                    { this.emailInput = <input type="email" value={ App.config.nexusAccount?.email ?? "" } readonly /> as HTMLInputElement }
 
-                <label>{ t("account.username") }</label>
-                { this.usernameInput = <input type="text" value={ App.config.nexusAccount?.username ?? "" } readonly /> as HTMLInputElement }
+                    <label>{ t("account.username") }</label>
+                    { this.usernameInput = <input type="text" value={ App.config.nexusAccount?.username ?? "" } readonly /> as HTMLInputElement }
+                </div>
+
+                <div class="anchor" />
+
+                <div />
             </>;
         }
 
@@ -121,5 +127,5 @@ namespace Views.Settings
         }
     }
 
-    customElements.define("nexus-settings", NexusSettingsElement);
+    customElements.define("my-nexus-settings", NexusSettingsElement);
 }

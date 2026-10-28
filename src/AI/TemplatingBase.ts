@@ -84,6 +84,17 @@ namespace AI
 
         public getImageTemplate: (...params: any[]) => Promise<string>;
 
+        public getImageStyle(): Data.ImageStyle | undefined
+        {
+            const selectedStyle = App.config.imageStyle;
+            if (!selectedStyle) return undefined;
+
+            const builtInStyle = Data.BuiltInImageStyles[selectedStyle];
+            if (builtInStyle) return builtInStyle;
+
+            return App.config.customImageStyles?.find(style => style.name == selectedStyle);
+        }
+
         public createLoreTemplate: (...params: any[]) => Promise<string>;
         public createScenarioTemplate: (...params: any[]) => Promise<string>;
         public charactersSchema: Schema;
