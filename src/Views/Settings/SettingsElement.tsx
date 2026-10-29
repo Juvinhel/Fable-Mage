@@ -40,22 +40,23 @@ namespace Views.Settings
 
                             <label>{ t("settings.imageStyle") }</label>
                             <div>
-                                { this.imageStyleSelect = <select onchange={ () => this.imageStyleChange() }>
-                                    <option value="" >{ t("common.none") }</option>
-                                    <optgroup label={ t("common.built-in") } >
-                                        { Data.BuiltInImageStyles.sortBy(x => x.name).map(style => <option value={ style.name }>{ style.name }</option>) }
-                                    </optgroup>
-                                    { this.customImageStylesGroup = <optgroup label={ t("common.custom") }>
-                                        { App.config.customImageStyles.map(style => <option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>) }
-                                    </optgroup> as HTMLOptGroupElement }
-                                </select> as HTMLSelectElement }
-                                <p>Preview: { this.imageStylePreviewSpan = <span class="inactive" /> as HTMLSpanElement }</p>
-                                <div class="actions">
-                                    <button onclick={ () => this.createImageStyle() }>{ t("settings.createImageStyle") }</button>
-                                    { this.imageStyleCloneButton = <button onclick={ () => this.cloneImageStyle() }>{ t("settings.cloneImageStyle") }</button> as HTMLButtonElement }
-                                    { this.imageStyleEditButton = <button onclick={ () => this.editImageStyle() }>{ t("settings.editImageStyle") }</button> as HTMLButtonElement }
-                                    { this.imageStyleDeleteButton = <button onclick={ () => this.deleteImageStyle() }>{ t("settings.deleteImageStyle") }</button> as HTMLButtonElement }
+                                <div class="function-stack">
+                                    { this.imageStyleSelect = <select onchange={ () => this.imageStyleChange() }>
+                                        <option value="" >{ t("common.none") }</option>
+                                        <optgroup label={ t("common.built-in") } >
+                                            { Data.BuiltInImageStyles.sortBy(x => x.name).map(style => <option value={ style.name }>{ style.name }</option>) }
+                                        </optgroup>
+                                        { this.customImageStylesGroup = <optgroup label={ t("common.custom") }>
+                                            { App.config.customImageStyles.map(style => <option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>) }
+                                        </optgroup> as HTMLOptGroupElement }
+                                    </select> as HTMLSelectElement }
+                                    <button class="icon-button" title={ t("settings.createImageStyle") } onclick={ () => this.createImageStyle() }><color-icon src="img/icons/add.svg" /></button>
+                                    { this.imageStyleCloneButton = <button class="icon-button" title={ t("settings.cloneImageStyle") } onclick={ () => this.cloneImageStyle() }><color-icon src="img/icons/clone.svg" /></button> as HTMLButtonElement }
+                                    { this.imageStyleEditButton = <button class="icon-button" title={ t("settings.editImageStyle") } onclick={ () => this.editImageStyle() }><color-icon src="img/icons/edit.svg" /></button> as HTMLButtonElement }
+                                    { this.imageStyleDeleteButton = <button class="icon-button" title={ t("settings.deleteImageStyle") } onclick={ () => this.deleteImageStyle() }><color-icon src="img/icons/delete.svg" /></button> as HTMLButtonElement }
                                 </div>
+                                <p>Preview: { this.imageStylePreviewSpan = <span class="inactive" /> as HTMLSpanElement }</p>
+
                             </div>
 
                             <label>{ t("settings.summaryInterval") }</label>
