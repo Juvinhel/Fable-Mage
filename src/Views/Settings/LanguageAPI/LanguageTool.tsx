@@ -4,7 +4,7 @@ namespace Views.Settings.LanguageAPI
     {
         return <div id="languagetool-api">
             <label>{ t("apiSettings.languageToolUrlLabel") }</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.languageToolUrl") } />
+            <input name="url" type="text" value={ config.url ?? "http://localhost:8010" } placeholder={ t("apiSettings.languageToolUrl") } />
 
             <label>{ t("common.apiKey") }</label>
             <input name="api_key" type="password" value={ config.api_key ?? "" } placeholder={ t("apiSettings.languageToolKey") } />

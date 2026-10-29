@@ -1,6 +1,6 @@
-namespace AI.LMStudio
+namespace Services.LMStudio
 {
-    export class API implements AI.TextAPI
+    export class API implements Services.TextAPI
     {
         constructor (config: Data.LMStudioEndpoint)
         {
@@ -31,7 +31,7 @@ namespace AI.LMStudio
                 await this.parseOutput(response);
 
             let result = "";
-            await AI.readServerSentEvents(response, data =>
+            await Services.readServerSentEvents(response, data =>
             {
                 if (data == "[DONE]") return;
 
@@ -78,7 +78,7 @@ namespace AI.LMStudio
             return fetch(url,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", ...this.headers },
                     body: JSON.stringify(body)
                 });
         }
@@ -110,13 +110,20 @@ namespace AI.LMStudio
         public async getModels(): Promise<string[]>
         {
             const url = this.config.url.replace(/\/+$/, "") + "/models";
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: this.headers });
             const output = await this.parseOutput(response);
             if (!Array.isArray(output.data))
                 return [];
             return output.data
                 .map((model: any) => model.id)
                 .filter((id: any): id is string => typeof id == "string");
+        }
+
+        private get headers(): Record<string, string>
+        {
+            if (this.config.username && this.config.password)
+                return { authorization: "Basic " + btoa(this.config.username + ":" + this.config.password) };
+            return {};
         }
     }
 }

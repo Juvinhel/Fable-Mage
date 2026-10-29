@@ -6,7 +6,7 @@ namespace Views.Diagnostics
         {
             super();
 
-            AI.Logger.onRequestLogged = this.addEntry.bind(this);
+            Services.Logger.onRequestLogged = this.addEntry.bind(this);
             this.append(this.build());
         }
 
@@ -18,7 +18,7 @@ namespace Views.Diagnostics
             return <>
                 <div class="header">
                     <div class="diagnostic-toolbar">
-                        { this.loggingEnabledToggleButton = <button onclick={ () => this.toggleLogging() }>{ AI.Logger.loggingEnabled ? t("common.stop") : t("common.start") }</button> as HTMLButtonElement }
+                        { this.loggingEnabledToggleButton = <button onclick={ () => this.toggleLogging() }>{ Services.Logger.loggingEnabled ? t("common.stop") : t("common.start") }</button> as HTMLButtonElement }
                         <button onclick={ () => this.clearLogList() }>{ t("diagnostics.clear") }</button>
                     </div>
                 </div>
@@ -29,8 +29,8 @@ namespace Views.Diagnostics
 
         private toggleLogging()
         {
-            AI.Logger.loggingEnabled = !AI.Logger.loggingEnabled;
-            this.loggingEnabledToggleButton.textContent = AI.Logger.loggingEnabled ? t("common.stop") : t("common.start");
+            Services.Logger.loggingEnabled = !Services.Logger.loggingEnabled;
+            this.loggingEnabledToggleButton.textContent = Services.Logger.loggingEnabled ? t("common.stop") : t("common.start");
         }
 
         private clearLogList()
@@ -43,7 +43,7 @@ namespace Views.Diagnostics
             await navigator.clipboard.writeText(text);
         }
 
-        private addEntry(entry: AI.RequestLogEntry)
+        private addEntry(entry: Services.RequestLogEntry)
         {
             const response = entry.response.trim();
             const imageDataUri = entry.type != "error" && /^data:image\/[a-z0-9.+-]+(?:;[^,]*)?,/i.test(response);

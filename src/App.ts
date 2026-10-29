@@ -7,13 +7,13 @@ class App
         this.config = await Data.loadConfig();
         await Promise.all([
             Data.Localization.loadTranslations(),
-            AI.Client.initialize()
+            Services.Client.initialize()
         ]);
 
         document.body.prepend(Views.Nav());
         Views.navigate("Home");
 
-        await this.initAI();
+        await this.initServices();
 
         this.thinkingObserver.observe(document.querySelector("main"), { childList: true, subtree: true });
     }
@@ -45,14 +45,14 @@ class App
 
     public static extractor;
 
-    public static async initAI()
+    public static async initServices()
     {
         try
         {
-            let textAPI: AI.TextAPI;
+            let textAPI: Services.TextAPI;
             try
             {
-                textAPI = AI.createTextAPI(this.config.textAPI);
+                textAPI = Services.createTextAPI(this.config.textAPI);
                 await textAPI.check();
             }
             catch (error)
@@ -60,10 +60,10 @@ class App
                 throw new Error(t("app.textApiConfigError"));
             }
 
-            let languageAPI: AI.LanguageAPI;
+            let languageAPI: Services.LanguageAPI;
             try
             {
-                languageAPI = AI.createLanguageAPI(this.config.languageAPI);
+                languageAPI = Services.createLanguageAPI(this.config.languageAPI);
                 await languageAPI.check();
             }
             catch (error)
@@ -71,10 +71,21 @@ class App
                 throw new Error(t("app.languageApiConfigError"));
             }
 
-            let imageAPI: AI.ImageAPI;
+            let translationAPI: Services.TranslationAPI;
             try
             {
-                imageAPI = AI.createImageAPI(this.config.imageAPI);
+                translationAPI = Services.createTranslationAPI(this.config.translationAPI);
+                await translationAPI.check();
+            }
+            catch (error)
+            {
+                throw new Error(t("app.translationApiConfigError"));
+            }
+
+            let imageAPI: Services.ImageAPI;
+            try
+            {
+                imageAPI = Services.createImageAPI(this.config.imageAPI);
                 await imageAPI.check();
             }
             catch (error)
@@ -82,9 +93,10 @@ class App
                 throw new Error(t("app.imageApiConfigError"));
             }
 
-            AI.textAPI = textAPI;
-            AI.languageAPI = languageAPI;
-            AI.imageAPI = imageAPI;
+            Services.textAPI = textAPI;
+            Services.languageAPI = languageAPI;
+            Services.translationAPI = translationAPI;
+            Services.imageAPI = imageAPI;
         }
         catch (error)
         {

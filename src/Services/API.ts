@@ -4,45 +4,57 @@
 /// <reference path="LMStudio/API.ts" />
 /// <reference path="LanguageAPI.ts" />
 /// <reference path="LanguageTool/API.ts" />
+/// <reference path="TranslationAPI.ts" />
+/// <reference path="LibreTranslate/API.ts" />
 /// <reference path="StableDiffusion/API.ts" />
 /// <reference path="ComfyUI/API.ts" />
 
-namespace AI
+namespace Services
 {
     export let textAPI: TextAPI;
     export let languageAPI: LanguageAPI;
+    export let translationAPI: TranslationAPI;
     export declare let imageAPI: ImageAPI;
 
-    export function createTextAPI(config: any): TextAPI
+    export function createTextAPI(config: Data.APIEndpoint): TextAPI
     {
         switch (config.name)
         {
-            case "KoboldCPP": return new AI.KoboldCPP.API(config);
-            case "Gemini": return new AI.Gemini.API(config);
-            case "AnythingLLM": return new AI.AnythingLLM.API(config);
-            case "LMStudio": return new AI.LMStudio.API(config);
+            case "KoboldCPP": return new Services.KoboldCPP.API(config as any);
+            case "Gemini": return new Services.Gemini.API(config as any);
+            case "AnythingLLM": return new Services.AnythingLLM.API(config as any);
+            case "LMStudio": return new Services.LMStudio.API(config as any);
         }
     }
 
-    export function createImageAPI(config: any): ImageAPI
+    export function createImageAPI(config: Data.APIEndpoint): ImageAPI
     {
         switch (config.name)
         {
-            case "KoboldCPP": return new AI.KoboldCPP.API(config);
-            case "Gemini": return new AI.Gemini.API(config);
-            case "AnythingLLM": return new AI.AnythingLLM.API(config);
-            case "Stable Diffusion": return new AI.StableDiffusion.API(config);
-            case "ComfyUI": return new AI.ComfyUI.API(config);
+            case "KoboldCPP": return new Services.KoboldCPP.API(config as any);
+            case "Gemini": return new Services.Gemini.API(config as any);
+            case "AnythingLLM": return new Services.AnythingLLM.API(config as any);
+            case "Stable Diffusion": return new Services.StableDiffusion.API(config as any);
+            case "ComfyUI": return new Services.ComfyUI.API(config as any);
             case "None": return new NoneImageAPI();
         }
     }
 
-    export function createLanguageAPI(config: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint): LanguageAPI
+    export function createLanguageAPI(config: Data.APIEndpoint): LanguageAPI
     {
         switch (config.name)
         {
-            case "LanguageTool": return new AI.LanguageTool.API(config);
+            case "LanguageTool": return new Services.LanguageTool.API(config as any);
             case "None": return new NoneLanguageAPI();
+        }
+    }
+
+    export function createTranslationAPI(config: Data.APIEndpoint): TranslationAPI
+    {
+        switch (config.name)
+        {
+            case "LibreTranslate": return new Services.LibreTranslate.API(config as any);
+            case "None": return new NoneTranslationAPI();
         }
     }
 
@@ -93,15 +105,15 @@ namespace AI
     }
 }
 
-Object.defineProperty(AI, "imageAPI", {
-    get(): AI.ImageAPI
+Object.defineProperty(Services, "imageAPI", {
+    get(): Services.ImageAPI
     {
-        return AI["internal_imageAPI"];
+        return Services["internal_imageAPI"];
     },
-    set(value: AI.ImageAPI)
+    set(value: Services.ImageAPI)
     {
-        AI["internal_imageAPI"] = value;
-        document.body.classList.toggle("no-image-api", value instanceof AI.NoneImageAPI);
+        Services["internal_imageAPI"] = value;
+        document.body.classList.toggle("no-image-api", value instanceof Services.NoneImageAPI);
     },
     enumerable: true,
     configurable: true,

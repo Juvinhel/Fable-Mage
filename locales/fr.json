@@ -12,6 +12,7 @@
     },
     "apiSettings": {
         "anythingApiKey": "Clé API AnythingLLM",
+        "anythingBasicAuthHelp": "Si elle est configurée, l'authentification Basic remplace l'en-tête Authorization de la clé API.",
         "anythingServerUrl": "URL du serveur AnythingLLM",
         "basicAuthHelp": "Nécessaire uniquement si le point de terminaison se trouve derrière un proxy inverse utilisant l'authentification Basic.",
         "comfyUiUrl": "URL du serveur ComfyUI",
@@ -22,8 +23,11 @@
         "languageToolUrl": "URL de l'API LanguageTool. Laissez vide pour utiliser l'URL publique par défaut.",
         "languageToolUrlLabel": "URL :",
         "leaveBlankForAutomatic": "Laissez vide pour un calcul automatique.",
+        "libreTranslateUrl": "URL du serveur LibreTranslate. Laissez vide pour utiliser le serveur public.",
+        "libreTranslateUrlLabel": "URL :",
         "lmStudioUrl": "URL de l'API LM Studio (par ex. http://localhost:1234/v1)",
         "maxLength": "Longueur maximale :",
+        "optionalApiKey": "Clé API facultative",
         "optionalPassword": "Mot de passe facultatif",
         "optionalUsername": "Nom d'utilisateur facultatif",
         "stableDiffusionUrl": "URL du serveur Stable Diffusion",
@@ -36,7 +40,8 @@
         "imageApiConfigError": "Une erreur est survenue dans la configuration de votre API d'image !",
         "languageApiConfigError": "Une erreur est survenue dans la configuration de votre API linguistique !",
         "reloadPrompt": "Une nouvelle version de l'application est disponible. Voulez-vous la recharger ?\nVeillez d'abord à enregistrer votre histoire ou votre monde sur votre appareil !",
-        "textApiConfigError": "Une erreur est survenue dans la configuration de votre API de texte !"
+        "textApiConfigError": "Une erreur est survenue dans la configuration de votre API de texte !",
+        "translationApiConfigError": "Une erreur est survenue dans la configuration de votre API de traduction !"
     },
     "character": {
         "appearance": "Apparence :",
@@ -196,7 +201,6 @@
         "title": "Description du monde"
     },
     "settings": {
-        "ai": "IA",
         "browserLanguage": "Utiliser la langue du navigateur",
         "buildTime": "Date de compilation :",
         "cloneImageStyle": "Cloner",
@@ -227,10 +231,12 @@
         "issuesPage": "page des problèmes GitHub",
         "language": "Langue :",
         "languageApi": "API linguistique :",
+        "translationApi": "API de traduction :",
         "reportBug": "Vous avez trouvé un bug ? Signalez-le sur la",
         "repository": "Dépôt :",
         "savedMessage": "Vos paramètres ont été enregistrés.",
         "savedTitle": "Paramètres enregistrés !",
+        "services": "Services",
         "summaryInterval": "Intervalle des résumés :",
         "summaryIntervalHelp": "Crée un résumé de l'histoire tous les quelques tours afin d'en préserver les détails importants. Des intervalles plus longs incluent davantage de tours dans chaque résumé et utilisent plus de contexte de votre IA.",
         "textApi": "API de texte :",

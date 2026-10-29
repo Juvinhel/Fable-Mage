@@ -1,7 +1,7 @@
 ///<reference path="TemplatingBase.ts" />
 ///<reference path="Logger.ts" />
 
-namespace AI
+namespace Services
 {
     export const Client = new class extends TemplatingBase
     {
@@ -250,7 +250,7 @@ namespace AI
 
         public analyzeLanguage(text: string, language?: string): Promise<SuggestedCorrection[]>
         {
-            return AI.languageAPI.analyze(text, language);
+            return Services.languageAPI.analyze(text, language);
         }
 
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>

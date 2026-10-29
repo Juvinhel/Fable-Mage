@@ -4,7 +4,7 @@ namespace Views.Settings.ImageAPI
     {
         return <div id="koboldcpp-api">
             <label>{ t("common.url") }</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.koboldServerUrl") } />
+            <input name="url" type="text" value={ config.url ?? "http://localhost:5001" } placeholder={ t("apiSettings.koboldServerUrl") } />
 
             <div class="group">
                 <label>{ t("common.username") }</label>

@@ -1,4 +1,4 @@
-namespace AI
+namespace Services
 {
     export type Schema = {
         "$schema": "https://json-schema.org/draft-07/schema";

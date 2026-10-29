@@ -12,6 +12,7 @@
     },
     "apiSettings": {
         "anythingApiKey": "AnythingLLM-API-Schlüssel",
+        "anythingBasicAuthHelp": "Wenn aktiviert, ersetzt die einfache Authentifizierung den Authorization-Header des API-Schlüssels.",
         "anythingServerUrl": "AnythingLLM-Server-URL",
         "basicAuthHelp": "Nur erforderlich, wenn sich der Endpunkt hinter einem Reverse-Proxy mit einfacher Authentifizierung befindet.",
         "comfyUiUrl": "ComfyUI-Server-URL",
@@ -22,8 +23,11 @@
         "languageToolUrl": "LanguageTool-API-URL. Für die standardmäßige öffentliche URL leer lassen.",
         "languageToolUrlLabel": "URL:",
         "leaveBlankForAutomatic": "Für automatische Berechnung leer lassen.",
+        "libreTranslateUrl": "LibreTranslate-Server-URL. Für den öffentlichen Server leer lassen.",
+        "libreTranslateUrlLabel": "URL:",
         "lmStudioUrl": "LM Studio API-URL (z. B. http://localhost:1234/v1)",
         "maxLength": "Maximale Länge:",
+        "optionalApiKey": "Optionaler API-Schlüssel",
         "optionalPassword": "Optionales Passwort",
         "optionalUsername": "Optionaler Benutzername",
         "stableDiffusionUrl": "Stable-Diffusion-Server-URL",
@@ -36,7 +40,8 @@
         "imageApiConfigError": "Mit deiner Bild-API-Konfiguration ist ein Fehler aufgetreten!",
         "languageApiConfigError": "Mit deiner Sprach-API-Konfiguration ist ein Fehler aufgetreten!",
         "reloadPrompt": "Eine neue Version der App ist verfügbar. Möchtest du sie neu laden?\nSpeichere zuerst deine Geschichte oder Welt auf dem Gerät!",
-        "textApiConfigError": "Mit deiner Text-API-Konfiguration ist ein Fehler aufgetreten!"
+        "textApiConfigError": "Mit deiner Text-API-Konfiguration ist ein Fehler aufgetreten!",
+        "translationApiConfigError": "Mit deiner Übersetzungs-API-Konfiguration ist ein Fehler aufgetreten!"
     },
     "character": {
         "appearance": "Aussehen:",
@@ -196,7 +201,6 @@
         "title": "Weltbeschreibung"
     },
     "settings": {
-        "ai": "KI",
         "browserLanguage": "Browsersprache verwenden",
         "buildTime": "Erstellungszeit:",
         "cloneImageStyle": "Klonen",
@@ -227,10 +231,12 @@
         "issuesPage": "GitHub-Issue-Seite",
         "language": "Sprache:",
         "languageApi": "Sprach-API:",
+        "translationApi": "Übersetzungs-API:",
         "reportBug": "Einen Fehler gefunden? Bitte melde ihn auf der",
         "repository": "Repository:",
         "savedMessage": "Deine Einstellungen wurden gespeichert.",
         "savedTitle": "Einstellungen gespeichert!",
+        "services": "Dienste",
         "summaryInterval": "Zusammenfassungsintervall:",
         "summaryIntervalHelp": "Erstellt alle paar Züge eine Zusammenfassung der Geschichte, um wichtige Details zu bewahren. Größere Intervalle umfassen mehr Züge pro Zusammenfassung und beanspruchen mehr Kontext deiner KI.",
         "textApi": "Text-API:",

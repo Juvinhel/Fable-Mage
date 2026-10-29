@@ -25,10 +25,10 @@ namespace Views.World
                         <button class="icon-button load-lore-button" title={ t("scenario.loadLore") } onclick={ loadLoreClick }><color-icon src="img/icons/open.svg" /></button>
                     </div>
                 </summary>
-                <auto-correct-text-area lang="en-US" class="lore-input large" placeholder={ t("scenario.describeLore") } analyze={ AI.Client.analyzeLanguage } />
+                <auto-correct-text-area lang="en-US" class="lore-input large" placeholder={ t("scenario.describeLore") } analyze={ Services.Client.analyzeLanguage } />
             </details>
             <label class="text-label">{ t("scenario.text") }</label>
-            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ t("scenario.describe") } value={ text } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ t("scenario.describe") } value={ text } analyze={ Services.Client.analyzeLanguage } />
             <div class="actions">
                 <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
                 <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>

@@ -4,7 +4,7 @@ namespace Views.Settings.ImageAPI
     {
         return <div id="comfyui-api">
             <label>{ t("common.url") }</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.comfyUiUrl") } />
+            <input name="url" type="text" value={ config.url ?? "http://localhost:8188" } placeholder={ t("apiSettings.comfyUiUrl") } />
 
             <div class="group">
                 <label>{ t("apiSettings.workflowJson") }</label>

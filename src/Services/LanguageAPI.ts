@@ -1,4 +1,4 @@
-namespace AI
+namespace Services
 {
     export interface LanguageAPI
     {

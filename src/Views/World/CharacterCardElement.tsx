@@ -24,19 +24,19 @@ namespace Views.World
                 { this.portraitImage = <img class="portrait" onclick={ () => this.onGeneratePortrait() } /> as HTMLImageElement }
                 <div class="base-property-list property-list">
                     <label>{ t("character.name") }</label>
-                    { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.namePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    { this.nameProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.namePlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                     <label>{ t("character.appearance") }</label>
-                    { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.appearancePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    { this.appearanceProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.appearancePlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                     <label>{ t("character.personality") }</label>
-                    { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.personalityPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    { this.personalityProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.personalityPlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                     <label for="skills">{ t("character.skills") }</label>
-                    { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.skillsPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    { this.skillsProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.skillsPlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                     <label>{ t("character.background") }</label>
-                    { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.backgroundPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                    { this.backgroundProperty = <auto-correct-text-area class="single-line" ontouchend={ TextEditTouch } lang="en-US" placeholder={ t("character.backgroundPlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 </div>
                 { this.additionalPropertiesList = <div class="additional-property-list property-list" /> as HTMLDivElement }
                 <div class="functions vertical">
@@ -80,7 +80,7 @@ namespace Views.World
             {
                 this.additionalPropertiesList.append(
                     <label for={ property }>{ Helper.converKebabCaseToTitleCase(property) }:</label>,
-                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } analyze={ AI.Client.analyzeLanguage } />);
+                    <auto-correct-text-area lang="en-US" class="single-line" ontouchend={ TextEditTouch } placeholder={ property } analyze={ Services.Client.analyzeLanguage } />);
             }
 
             this.import(data);

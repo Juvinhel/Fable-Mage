@@ -14,6 +14,7 @@ namespace Views.Settings
         private textAPISelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
         private languageAPISelect: HTMLSelectElement;
+        private translationAPISelect: HTMLSelectElement;
 
         private localeSelect: HTMLSelectElement;
         private imageStyleSelect: HTMLSelectElement;
@@ -73,7 +74,7 @@ namespace Views.Settings
                             <button title={ t("common.import") } onclick={ () => this.onImport() }><color-icon src="img/icons/open.svg" /><span>{ t("common.import") }</span></button>
                         </div>
                     </div>
-                    <div id="ai-tab" class="data-view" tab-header={ t("settings.ai") }>
+                    <div id="ai-tab" class="data-view" tab-header={ t("settings.services") }>
                         <div class="property-list">
                             <label>{ t("settings.textApi") }</label>
                             <div>
@@ -101,6 +102,14 @@ namespace Views.Settings
                             <div>
                                 { this.languageAPISelect = <select onchange={ () => this.languageAPIChange() }>
                                     <option value="LanguageTool">LanguageTool</option>
+                                    <option value="None">{ t("common.none") }</option>
+                                </select> as HTMLSelectElement }
+                            </div>
+
+                            <label>{ t("settings.translationApi") }</label>
+                            <div>
+                                { this.translationAPISelect = <select onchange={ () => this.translationAPIChange() }>
+                                    <option value="LibreTranslate">LibreTranslate</option>
                                     <option value="None">{ t("common.none") }</option>
                                 </select> as HTMLSelectElement }
                             </div>
@@ -139,6 +148,10 @@ namespace Views.Settings
             for (const option of this.languageAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.languageAPI.name;
             this.languageAPIChange();
+
+            for (const option of this.translationAPISelect.querySelectorAll("option"))
+                option.selected = option.value == App.config.translationAPI.name;
+            this.translationAPIChange();
         }
 
         private imageStyleChange()
@@ -273,6 +286,19 @@ namespace Views.Settings
             }
         }
 
+        private translationAPIChange()
+        {
+            this.translationAPISelect.nextElementSibling?.remove();
+            switch (this.translationAPISelect.value)
+            {
+                case "LibreTranslate":
+                    this.translationAPISelect.after(Views.Settings.TranslationAPI.libreTranslate(App.config.translationAPI as Partial<Data.LibreTranslateEndpoint>));
+                    break;
+                case "None":
+                    break;
+            }
+        }
+
         private imageAPIChange()
         {
             const apiName = this.imageAPISelect.value;
@@ -352,11 +378,11 @@ namespace Views.Settings
                 }
 
                 const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
-                let textAPI: AI.TextAPI;
+                let textAPI: Services.TextAPI;
                 try
                 {
                     textAPIConfig.name = this.textAPISelect.value;
-                    textAPI = AI.createTextAPI(textAPIConfig);
+                    textAPI = Services.createTextAPI(textAPIConfig);
                     await textAPI.check();
                 }
                 catch (error)
@@ -366,11 +392,11 @@ namespace Views.Settings
                 }
 
                 const imageAPIConfig: any = this.imageAPISelect.nextElementSibling ? this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement) : {};
-                let imageAPI: AI.ImageAPI;
+                let imageAPI: Services.ImageAPI;
                 try
                 {
                     imageAPIConfig.name = this.imageAPISelect.value;
-                    imageAPI = AI.createImageAPI(imageAPIConfig);
+                    imageAPI = Services.createImageAPI(imageAPIConfig);
                     await imageAPI.check();
                 }
                 catch (error)
@@ -382,17 +408,33 @@ namespace Views.Settings
                 const languageAPIConfig: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint = this.languageAPISelect.value == "None"
                     ? { name: "None" }
                     : this.getConfig(this.languageAPISelect.nextElementSibling as HTMLElement);
-                let languageAPI: AI.LanguageAPI;
+                let languageAPI: Services.LanguageAPI;
                 try
                 {
                     languageAPIConfig.name = this.languageAPISelect.value as "LanguageTool" | "None";
-                    languageAPI = AI.createLanguageAPI(languageAPIConfig);
+                    languageAPI = Services.createLanguageAPI(languageAPIConfig);
                     await languageAPI.check();
                 }
                 catch (error)
                 {
                     console.error(error);
                     throw new Error(t("app.languageApiConfigError"));
+                }
+
+                const translationAPIConfig: Data.LibreTranslateEndpoint | Data.NoneTranslateEndpoint = this.translationAPISelect.value == "None"
+                    ? { name: "None" }
+                    : this.getConfig(this.translationAPISelect.nextElementSibling as HTMLElement);
+                let translationAPI: Services.TranslationAPI;
+                try
+                {
+                    translationAPIConfig.name = this.translationAPISelect.value as "LibreTranslate" | "None";
+                    translationAPI = Services.createTranslationAPI(translationAPIConfig);
+                    await translationAPI.check();
+                }
+                catch (error)
+                {
+                    console.error(error);
+                    throw new Error(t("app.translationApiConfigError"));
                 }
 
                 const languageChanged = this.localeSelect.value != (App.config.language ?? "");
@@ -404,12 +446,14 @@ namespace Views.Settings
                 App.config.textAPI = textAPIConfig;
                 App.config.imageAPI = imageAPIConfig;
                 App.config.languageAPI = languageAPIConfig;
+                App.config.translationAPI = translationAPIConfig;
 
                 await Data.saveConfig(App.config);
 
-                AI.textAPI = textAPI;
-                AI.imageAPI = imageAPI;
-                AI.languageAPI = languageAPI;
+                Services.textAPI = textAPI;
+                Services.imageAPI = imageAPI;
+                Services.languageAPI = languageAPI;
+                Services.translationAPI = translationAPI;
 
                 if (languageChanged)
                 {

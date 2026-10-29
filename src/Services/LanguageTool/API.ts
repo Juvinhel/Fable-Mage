@@ -1,6 +1,6 @@
-namespace AI.LanguageTool
+namespace Services.LanguageTool
 {
-    export class API implements AI.LanguageAPI
+    export class API implements Services.LanguageAPI
     {
         constructor (config: Data.LanguageToolEndpoint)
         {

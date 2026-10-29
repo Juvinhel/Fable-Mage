@@ -4,7 +4,7 @@ namespace Views.Settings.TextAPI
     {
         return <div id="koboldcpp-api">
             <label>{ t("common.url") }</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.koboldServerUrl") } />
+            <input name="url" type="text" value={ config.url ?? "http://localhost:5001" } placeholder={ t("apiSettings.koboldServerUrl") } />
 
             <label>{ t("apiSettings.maxLength") }</label>
             <input name="max_length" type="number" min="0" value={ config.max_length ?? "" } placeholder={ t("apiSettings.leaveBlankForAutomatic") } />

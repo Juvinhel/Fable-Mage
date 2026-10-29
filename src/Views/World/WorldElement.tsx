@@ -31,7 +31,7 @@ namespace Views.World
                 <div id="overview-tab" class="data-view" tab-header={ t("world.overview") }>
                     <div class="property-list">
                         <label>{ t("world.title") }</label>
-                        { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder={ t("world.titlePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        { this.titleInput = <auto-correct-text-area lang="en-US" class="title-input single-line" value="" placeholder={ t("world.titlePlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                         <label>{ t("world.cover") }</label>
                         { this.coverImage = <img class="cover-image" onclick={ () => this.onGenerateCover() } /> as HTMLImageElement }
@@ -43,7 +43,7 @@ namespace Views.World
                         { this.matureContentInput = <input type="checkbox" /> as HTMLInputElement }
 
                         <label>{ t("world.description") }</label>
-                        { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.descriptionPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        { this.descriptionInput = <auto-correct-text-area lang="en-US" class="description-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.descriptionPlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                         <label>{ t("world.tags") }</label>
                         { this.tagsInput = <multi-select options={ Data.knownTags.map(x => ({ title: x.value, value: x.value })) } placeholder={ t("world.tagsPlaceholder") } /> as HTMLMultiSelect }
@@ -63,10 +63,10 @@ namespace Views.World
                 <div id="details-tab" class="data-view" tab-header={ t("world.details") }>
                     <div class="property-list">
                         <label>{ t("world.lore") }</label>
-                        { this.loreInput = <auto-correct-text-area lang="en-US" class="lore-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.lorePlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        { this.loreInput = <auto-correct-text-area lang="en-US" class="lore-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.lorePlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                         <label>{ t("world.scenario") }</label>
-                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.scenarioPlaceholder") } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                        { this.scenarioInput = <auto-correct-text-area lang="en-US" class="scenario-input large" value="" ontouchend={ TextEditTouch } placeholder={ t("world.scenarioPlaceholder") } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
 
                         <label>{ t("world.trackedStats") }</label>
                         <div class="functions horizontal">
@@ -206,7 +206,7 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const player = await AI.Client.createPlayer(prompt, world, world.npcs);
+                const player = await Services.Client.createPlayer(prompt, world, world.npcs);
                 this.playerCharacterCard.import(player);
                 await this.createPortrait(player, this.playerCharacterCard);
             }
@@ -234,7 +234,7 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const npc = await AI.Client.createNPC(result, world, world.player, world.npcs);
+                const npc = await Services.Client.createNPC(result, world, world.player, world.npcs);
 
                 const npccard = new CharacterCardElement();
                 npccard.import(npc);
@@ -254,9 +254,9 @@ namespace Views.World
         {
             try
             {
-                const prompt = await AI.Client.describeCharacter(character);
+                const prompt = await Services.Client.describeCharacter(character);
                 characterCardElement.previousGeneratePortraitPrompt = prompt;
-                const image = await AI.Client.getImage(prompt);
+                const image = await Services.Client.getImage(prompt);
                 characterCardElement.portrait = image;
             }
             catch (error)
@@ -281,11 +281,11 @@ namespace Views.World
                     this.loreInput.value = result.lore;
                 else
                 {
-                    const lore = await AI.Client.createLore(result.text);
+                    const lore = await Services.Client.createLore(result.text);
                     this.loreInput.value = lore;
                 }
-                this.scenarioInput.value = await AI.Client.createScenario(result.text, this.loreInput.value);
-                const [player, ...npcs] = await AI.Client.createCharacters(result.text, this.loreInput.value, this.scenarioInput.value);
+                this.scenarioInput.value = await Services.Client.createScenario(result.text, this.loreInput.value);
+                const [player, ...npcs] = await Services.Client.createCharacters(result.text, this.loreInput.value, this.scenarioInput.value);
                 const portraitPromises: Promise<void>[] = [];
                 this.playerCharacterCard.import(player);
                 portraitPromises.push(this.createPortrait(player, this.playerCharacterCard));
@@ -318,9 +318,9 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const prompt = await AI.Client.describeWorld(world);
+                const prompt = await Services.Client.describeWorld(world);
                 this.previousGenerateCoverPrompt = prompt;
-                const image = await AI.Client.getImage(prompt);
+                const image = await Services.Client.getImage(prompt);
                 this.coverImage.setAttribute("src", image);
             }
             catch (error)
@@ -334,7 +334,7 @@ namespace Views.World
             try
             {
                 const world = this.export();
-                const result = await AI.Client.createMetadata(Data.knownTags.map(x => x.value), world);
+                const result = await Services.Client.createMetadata(Data.knownTags.map(x => x.value), world);
                 this.titleInput.value = result.title;
                 this.descriptionInput.value = result.description;
                 this.matureContentInput.checked = !!result.mature;
@@ -434,7 +434,7 @@ namespace Views.World
             {
                 this.prologueContainer.clearChildren();
                 const world = this.export();
-                const prologue = await AI.Client.writePrologue(prompt, world);
+                const prologue = await Services.Client.writePrologue(prompt, world);
 
                 const prologueElement = new PrologueElement();
                 prologueElement.classList.add("prologue");
@@ -446,7 +446,7 @@ namespace Views.World
 
                 //TODO: better typings
                 const plot = [{ text: prologue.plot, location: location, time: prologue.time, internal: prologue.internal }] as unknown as Data.Plot;
-                const choices = await AI.Client.offerChoices(plot, "", world as unknown as Data.Story, world.player);
+                const choices = await Services.Client.offerChoices(plot, "", world as unknown as Data.Story, world.player);
                 prologueElement.choices = choices;
             }
             catch (error)

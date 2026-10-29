@@ -12,6 +12,7 @@
     },
     "apiSettings": {
         "anythingApiKey": "AnythingLLM API key",
+        "anythingBasicAuthHelp": "When set, Basic authentication replaces the API key Authorization header.",
         "anythingServerUrl": "AnythingLLM server URL",
         "basicAuthHelp": "Only needed when the endpoint is behind a reverse proxy using Basic authentication.",
         "comfyUiUrl": "ComfyUI server URL",
@@ -22,8 +23,11 @@
         "languageToolUrl": "LanguageTool API url. Leave blank for default public url.",
         "languageToolUrlLabel": "Url:",
         "leaveBlankForAutomatic": "Leave blank for automatic calculation.",
+        "libreTranslateUrl": "LibreTranslate server URL. Leave blank for the public server.",
+        "libreTranslateUrlLabel": "URL:",
         "lmStudioUrl": "LM Studio API URL (e.g. http://localhost:1234/v1)",
         "maxLength": "Max Length:",
+        "optionalApiKey": "Optional API key",
         "optionalPassword": "Optional password",
         "optionalUsername": "Optional username",
         "stableDiffusionUrl": "Stable Diffusion server URL",
@@ -36,7 +40,8 @@
         "imageApiConfigError": "Something went wrong with your image api config!",
         "languageApiConfigError": "Something went wrong with your language api config!",
         "reloadPrompt": "A new version of the app is available. Do you want to reload?\nMake sure to save your story or world to the disk first!",
-        "textApiConfigError": "Something went wrong with your text api config!"
+        "textApiConfigError": "Something went wrong with your text api config!",
+        "translationApiConfigError": "Something went wrong with your translation api config!"
     },
     "character": {
         "appearance": "Appearance:",
@@ -196,7 +201,6 @@
         "title": "World description"
     },
     "settings": {
-        "ai": "AI",
         "browserLanguage": "Use browser language",
         "buildTime": "Build time:",
         "cloneImageStyle": "Clone",
@@ -227,10 +231,12 @@
         "issuesPage": "GitHub issues page",
         "language": "Language:",
         "languageApi": "LanguageAPI:",
+        "translationApi": "Translation API:",
         "reportBug": "Found a bug? Please report it on the",
         "repository": "Repository:",
         "savedMessage": "Your settings have been saved.",
         "savedTitle": "Settings Saved!",
+        "services": "Services",
         "summaryInterval": "Summary Interval:",
         "summaryIntervalHelp": "Creates a story summary every few turns to preserve important details. Larger intervals include more turns in each summary and use more of your AI's context.",
         "textApi": "TextAPI:",

@@ -1,6 +1,6 @@
-namespace AI.StableDiffusion
+namespace Services.StableDiffusion
 {
-    export class API implements AI.ImageAPI
+    export class API implements Services.ImageAPI
     {
         constructor (config: Data.StableDiffusionEndpoint)
         {
@@ -15,7 +15,7 @@ namespace AI.StableDiffusion
             const p = prompt.trim();
 
             const authorization = this.config.username && this.config.password ? btoa(this.config.username + ":" + this.config.password) : null;
-            const body: AI.KoboldCPP.TXT2ImgInput = {
+            const body: Services.KoboldCPP.TXT2ImgInput = {
                 prompt: p,
                 width: 1024,
                 height: 1024,
@@ -36,7 +36,7 @@ namespace AI.StableDiffusion
             {
                 case "text/json":
                 case "application/json":
-                    const output: AI.KoboldCPP.TXT2ImgOutput = await response.json();
+                    const output: Services.KoboldCPP.TXT2ImgOutput = await response.json();
                     dataURI = "data:image/png;base64," + output.images[0];
                     break;
                 case "application/octet-stream":

@@ -19,7 +19,7 @@ namespace Views.Dialogs
     {
         return <div id="image-edit">
             <img class="image" src={ image } />
-            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? t("dialogs.inputText") } lang="en-US" value={ prompt } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area class="text-input" placeholder={ placeholder ?? t("dialogs.inputText") } lang="en-US" value={ prompt } analyze={ Services.Client.analyzeLanguage } />
             <button class="generate-button" onclick={ (e: Event) => onGenerateImage(e) }>{ t("dialogs.generate") }</button>
             <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
             <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>
@@ -37,7 +37,7 @@ namespace Views.Dialogs
 
         try
         {
-            const uri = await AI.Client.getImage(textInput.value);
+            const uri = await Services.Client.getImage(textInput.value);
             image.src = uri;
         }
         catch (error)

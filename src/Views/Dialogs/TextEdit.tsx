@@ -17,7 +17,7 @@ namespace Views.Dialogs
     function buildTextEditDialog(text: string, placeholder?: string)
     {
         return <div id="text-edit">
-            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ placeholder ?? t("dialogs.inputText") } value={ text } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ placeholder ?? t("dialogs.inputText") } value={ text } analyze={ Services.Client.analyzeLanguage } />
             <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
             <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>
         </div>;

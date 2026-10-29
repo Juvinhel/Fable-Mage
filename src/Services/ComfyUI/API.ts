@@ -1,6 +1,6 @@
-namespace AI.ComfyUI
+namespace Services.ComfyUI
 {
-    export class API implements AI.ImageAPI
+    export class API implements Services.ImageAPI
     {
         constructor (config: Data.ComfyUIEndpoint)
         {

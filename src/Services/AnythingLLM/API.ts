@@ -1,6 +1,6 @@
-namespace AI.AnythingLLM
+namespace Services.AnythingLLM
 {
-    export class API implements AI.TextAPI, AI.ImageAPI
+    export class API implements Services.TextAPI, Services.ImageAPI
     {
         constructor (config: Data.AnythingLLMEndpoint)
         {
@@ -30,10 +30,7 @@ namespace AI.AnythingLLM
             const response = await fetch(url,
                 {
                     method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + this.config.api_key,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { ...this.headers, "Content-Type": "application/json" },
                     body: JSON.stringify({
                         model: this.config.workspace,
                         prompt: prompt.trim(),
@@ -55,7 +52,7 @@ namespace AI.AnythingLLM
             if (!response.ok) await this.parseOutput(response);
 
             let result = "";
-            await AI.readServerSentEvents(response, data =>
+            await Services.readServerSentEvents(response, data =>
             {
                 if (data == "[DONE]") return;
                 let event: any;
@@ -105,10 +102,7 @@ namespace AI.AnythingLLM
             return fetch(url,
                 {
                     method: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + this.config.api_key,
-                        "Content-Type": "application/json"
-                    },
+                    headers: { ...this.headers, "Content-Type": "application/json" },
                     body: JSON.stringify({ model: this.config.workspace, messages, temperature, stream })
                 });
         }
@@ -143,13 +137,20 @@ namespace AI.AnythingLLM
             const response = await fetch(url,
                 {
                     method: "GET",
-                    headers: { "Authorization": "Bearer " + this.config.api_key }
+                    headers: this.headers
                 });
             const output = await this.parseOutput(response);
             if (!Array.isArray(output.data)) return [];
             return output.data
                 .map((model: any) => model.id)
                 .filter((id: any): id is string => typeof id == "string");
+        }
+
+        private get headers(): Record<string, string>
+        {
+            if (this.config.username && this.config.password)
+                return { Authorization: "Basic " + btoa(this.config.username + ":" + this.config.password) };
+            return { Authorization: "Bearer " + this.config.api_key };
         }
     }
 }

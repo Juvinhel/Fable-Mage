@@ -4,7 +4,7 @@ namespace Views.Settings.ImageAPI
     {
         return <div id="stable-diffusion-api">
             <label>{ t("common.url") }</label>
-            <input name="url" type="text" value={ config.url ?? "" } placeholder={ t("apiSettings.stableDiffusionUrl") } />
+            <input name="url" type="text" value={ config.url ?? "http://localhost:7860" } placeholder={ t("apiSettings.stableDiffusionUrl") } />
 
             <div class="group">
                 <label>{ t("common.username") }</label>

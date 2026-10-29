@@ -36,7 +36,7 @@ namespace Views.Story
                                 class="user-input"
                                 lang="en-US"
                                 ontouchend={ TextEditTouch }
-                                analyze={ AI.Client.analyzeLanguage }
+                                analyze={ Services.Client.analyzeLanguage }
                                 onkeydown={ (e: KeyboardEvent) => { if (e.key == "Enter" && !e.shiftKey) { e.preventDefault(); this.onSubmit(); } } }
                                 placeholder={ t("story.userInputPlaceholder") } /> as HTMLAutoCorrectTextArea }
                             { this.submitButton = <button class="submit-button" onclick={ () => this.onSubmit() } title={ t("common.submit") }><color-icon src="img/icons/send.svg" /></button> as HTMLButtonElement }
@@ -154,7 +154,7 @@ namespace Views.Story
                 const previousSummaryElement = plotPointElements[lastSummaryIndex];
                 const plotPointElementsToSummarize = plotPointElements.slice(lastSummaryIndex + 1, lastSummaryIndex + 1 + summaryInterval);
 
-                const summary = await AI.Client.summarizeProgression(previousSummaryElement?.summary ?? "", plotPointElementsToSummarize.map(x => x.export()), this.player);
+                const summary = await Services.Client.summarizeProgression(previousSummaryElement?.summary ?? "", plotPointElementsToSummarize.map(x => x.export()), this.player);
                 plotPointElementsToSummarize.last().summary = summary;
             }
         }
@@ -177,7 +177,7 @@ namespace Views.Story
                 const summary = summaryElement?.summary;
                 const plot = plotElements.map(x => x.export());
 
-                const result = await AI.Client.advancePlot(
+                const result = await Services.Client.advancePlot(
                     input,
                     this.contextElement.value.trim(),
                     summary,
@@ -218,9 +218,9 @@ namespace Views.Story
         {
             try
             {
-                const prompt = await AI.Client.describeScene(scene, this.player, this.npcs);
+                const prompt = await Services.Client.describeScene(scene, this.player, this.npcs);
                 plotPointElement.scenery = prompt;
-                const image = await AI.Client.getImage(prompt);
+                const image = await Services.Client.getImage(prompt);
                 plotPointElement.image = image;
             }
             catch (error)
@@ -233,7 +233,7 @@ namespace Views.Story
         {
             try
             {
-                const choices = await AI.Client.offerChoices(
+                const choices = await Services.Client.offerChoices(
                     plotPoints,
                     this.contextElement.value.trim(),
                     story,
@@ -252,7 +252,7 @@ namespace Views.Story
 
             {   // update player
                 const player = this.player;
-                const characterUpdate = await AI.Client.updateCharacter(player, story, true, [plotPointElement.export()]);
+                const characterUpdate = await Services.Client.updateCharacter(player, story, true, [plotPointElement.export()]);
 
                 for (const [key, value] of Object.entries(characterUpdate))
                     player[key] = value;
@@ -288,9 +288,9 @@ namespace Views.Story
 
             try
             {
-                const npc = await AI.Client.createNPC(result, this.world, this.player, this.npcs);
-                const prompt = await AI.Client.describeCharacter(npc);
-                const image = await AI.Client.getImage(prompt);
+                const npc = await Services.Client.createNPC(result, this.world, this.player, this.npcs);
+                const prompt = await Services.Client.describeCharacter(npc);
+                const image = await Services.Client.getImage(prompt);
                 npc.portrait = image;
                 this.characters = [...this.characters, npc];
             }

@@ -17,7 +17,7 @@ namespace Views.World
         {
             return <>
                 { this.nameInput = <input class="stat-name" type="text" placeholder={ t("common.name") } onblur={ () => this.onBlur() } /> as HTMLInputElement }
-                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder={ t("world.statDescriptionPlaceholder") } lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                { this.descriptionInput = <auto-correct-text-area class="stat-description single-line" type="text" placeholder={ t("world.statDescriptionPlaceholder") } lang="en-US" analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 <div class="functions">
                     <button class="icon-button delete-button" onclick={ () => this.onDelete() }><color-icon src="img/icons/delete.svg" /></button>
                 </div>

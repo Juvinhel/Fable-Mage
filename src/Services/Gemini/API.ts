@@ -1,6 +1,6 @@
-namespace AI.Gemini
+namespace Services.Gemini
 {
-    export class API implements AI.TextAPI, AI.ImageAPI
+    export class API implements Services.TextAPI, Services.ImageAPI
     {
         constructor (config: Data.GeminiEndpoint)
         {
@@ -151,7 +151,7 @@ namespace AI.Gemini
             }
 
             let result = "";
-            await AI.readServerSentEvents(response, data =>
+            await Services.readServerSentEvents(response, data =>
             {
                 if (data == "[DONE]") return;
                 let event: any;

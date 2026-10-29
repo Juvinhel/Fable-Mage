@@ -1,6 +1,6 @@
-namespace AI.KoboldCPP
+namespace Services.KoboldCPP
 {
-    export class API implements AI.TextAPI, AI.ImageAPI
+    export class API implements Services.TextAPI, Services.ImageAPI
     {
         constructor (config: Data.KoboldCPPEndpoint)
         {
@@ -26,12 +26,12 @@ namespace AI.KoboldCPP
         {
             const grammar = schema ? await this.generateGrammar(schema) : null;
             const safeMaxLength = await this.getMaxLength(prompt);
-            const body: AI.KoboldCPP.GenerationInput = { prompt: prompt, temperature, max_length: safeMaxLength };
+            const body: Services.KoboldCPP.GenerationInput = { prompt: prompt, temperature, max_length: safeMaxLength };
             if (grammar) body.grammar = grammar;
 
             const response = await this.fetch("/api/v1/generate", body);
 
-            const output: AI.KoboldCPP.GenerationOutput = await this.parseOutput(response);
+            const output: Services.KoboldCPP.GenerationOutput = await this.parseOutput(response);
             if (!output.results?.length || typeof output.results[0].text != "string")
                 throw new Error("KoboldCPP returned an invalid generation response.");
 
@@ -52,7 +52,7 @@ namespace AI.KoboldCPP
 
             const response = await this.fetch("/v1/chat/completions", body);
 
-            const output: AI.KoboldCPP.ChatCompletionOutput = await this.parseOutput(response);
+            const output: Services.KoboldCPP.ChatCompletionOutput = await this.parseOutput(response);
             if (!output.choices?.length || typeof output.choices[0].message?.content != "string")
                 throw new Error("KoboldCPP returned an invalid chat response.");
 
@@ -76,7 +76,7 @@ namespace AI.KoboldCPP
 
             let result = "";
             let finishReason: string | null = null;
-            await AI.readServerSentEvents(response, data =>
+            await Services.readServerSentEvents(response, data =>
             {
                 if (data == "[DONE]") return;
                 let output: any;
@@ -110,7 +110,7 @@ namespace AI.KoboldCPP
 
         public async generateImage(prompt: string): Promise<string>
         {
-            const body: AI.KoboldCPP.TXT2ImgInput = {
+            const body: Services.KoboldCPP.TXT2ImgInput = {
                 prompt: prompt.trim(),
                 negative_prompt: "",
                 steps: 20,
@@ -123,14 +123,14 @@ namespace AI.KoboldCPP
 
             const response = await this.fetch("/sdapi/v1/txt2img", body);
 
-            const output: AI.KoboldCPP.TXT2ImgOutput = await this.parseOutput(response);
+            const output: Services.KoboldCPP.TXT2ImgOutput = await this.parseOutput(response);
             if (!output.images?.length || typeof output.images[0] != "string")
                 throw new Error("KoboldCPP returned an invalid image response.");
 
             return "data:image/png;base64," + output.images[0];
         }
 
-        private async parseOutput<T extends AI.KoboldCPP.APIErrorResponse>(response: Response): Promise<T>
+        private async parseOutput<T extends Services.KoboldCPP.APIErrorResponse>(response: Response): Promise<T>
         {
             let output: T;
             try

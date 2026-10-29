@@ -22,12 +22,12 @@ namespace Views.World
                     { this.timeElement = <span class="time" /> as HTMLSpanElement }
                 </div>
                 <span>{ t("prologue.text") }</span>
-                { this.textElement = <auto-correct-text-area class="plot-text large" lang="en-US" analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
+                { this.textElement = <auto-correct-text-area class="plot-text large" lang="en-US" analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea }
                 <span>{ t("prologue.choices") }</span>
                 { this.choicesListElement = <div class="choices-list">
-                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.firstChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
-                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.secondChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
-                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.thirdChoice") } lang="en-US" analyze={ AI.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.firstChoice") } lang="en-US" analyze={ Services.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.secondChoice") } lang="en-US" analyze={ Services.Client.analyzeLanguage } />
+                    <auto-correct-text-area class="choice single-line" placeholder={ t("prologue.thirdChoice") } lang="en-US" analyze={ Services.Client.analyzeLanguage } />
                 </div> as HTMLDivElement }
                 <div class="functions horizontal">
                     <button class="icon-button show-internal-button" title={ t("prologue.showInternal") } onclick={ () => this.onShowInternal() }><color-icon src="img/icons/show.svg" /></button>
@@ -54,7 +54,7 @@ namespace Views.World
             if (values)
                 for (const choice of values)
                 {
-                    const textArea = <auto-correct-text-area class="choice single-line" value={ choice } analyze={ AI.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea;
+                    const textArea = <auto-correct-text-area class="choice single-line" value={ choice } analyze={ Services.Client.analyzeLanguage } /> as HTMLAutoCorrectTextArea;
                     this.choicesListElement.append(textArea);
                 }
         }

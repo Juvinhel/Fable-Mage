@@ -20,11 +20,11 @@ namespace Views.Story
     {
         return <div id="plot-edit">
             <label class="location-label">{ t("plot.location") }</label>
-            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder={ t("plot.locationPlaceholder") } value={ location } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area lang="en-US" class="location-input single-line" placeholder={ t("plot.locationPlaceholder") } value={ location } analyze={ Services.Client.analyzeLanguage } />
             <label class="time-label">{ t("plot.time") }</label>
-            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder={ t("plot.timePlaceholder") } value={ time } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area lang="en-US" class="time-input single-line" placeholder={ t("plot.timePlaceholder") } value={ time } analyze={ Services.Client.analyzeLanguage } />
             <label class="text-label">{ t("plot.text") }</label>
-            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ t("plot.textPlaceholder") } value={ text } analyze={ AI.Client.analyzeLanguage } />
+            <auto-correct-text-area lang="en-US" class="text-input" placeholder={ t("plot.textPlaceholder") } value={ text } analyze={ Services.Client.analyzeLanguage } />
             <div class="actions">
                 <button class="ok-button" onclick={ okClick }>{ t("common.ok") }</button>
                 <button class="cancel-button" onclick={ cancelClick }>{ t("common.cancel") }</button>
