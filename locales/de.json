@@ -56,7 +56,9 @@
     },
     "common": {
         "apiKey": "API-Schlüssel:",
+        "built-in": "Built-in",
         "cancel": "Abbrechen",
+        "custom": "Eigene",
         "delete": "Löschen",
         "description": "Beschreibung:",
         "edit": "Bearbeiten",

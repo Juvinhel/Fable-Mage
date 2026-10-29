@@ -12,13 +12,16 @@ namespace Views.Settings
         }
 
         private textAPISelect: HTMLSelectElement;
-        private languageAPISelect: HTMLSelectElement;
-        private localeSelect: HTMLSelectElement;
         private imageAPISelect: HTMLSelectElement;
+        private languageAPISelect: HTMLSelectElement;
+
+        private localeSelect: HTMLSelectElement;
         private imageStyleSelect: HTMLSelectElement;
+        private customImageStylesGroup: HTMLOptGroupElement;
         private imageStyleCloneButton: HTMLButtonElement;
         private imageStyleEditButton: HTMLButtonElement;
         private imageStyleDeleteButton: HTMLButtonElement;
+        private imageStylePreviewSpan: HTMLSpanElement;
         private summaryIntervalInput: HTMLInputElement;
 
         private build()
@@ -37,7 +40,16 @@ namespace Views.Settings
 
                             <label>{ t("settings.imageStyle") }</label>
                             <div>
-                                { this.imageStyleSelect = <select onchange={ () => this.imageStyleChange() } /> as HTMLSelectElement }
+                                { this.imageStyleSelect = <select onchange={ () => this.imageStyleChange() }>
+                                    <option value="" >{ t("common.none") }</option>
+                                    <optgroup label={ t("common.built-in") } >
+                                        { Data.BuiltInImageStyles.sortBy(x => x.name).map(style => <option value={ style.name }>{ style.name }</option>) }
+                                    </optgroup>
+                                    { this.customImageStylesGroup = <optgroup label={ t("common.custom") }>
+                                        { App.config.customImageStyles.map(style => <option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>) }
+                                    </optgroup> as HTMLOptGroupElement }
+                                </select> as HTMLSelectElement }
+                                <p>Preview: { this.imageStylePreviewSpan = <span class="inactive" /> as HTMLSpanElement }</p>
                                 <div class="actions">
                                     <button onclick={ () => this.createImageStyle() }>{ t("settings.createImageStyle") }</button>
                                     { this.imageStyleCloneButton = <button onclick={ () => this.cloneImageStyle() }>{ t("settings.cloneImageStyle") }</button> as HTMLButtonElement }
@@ -112,7 +124,8 @@ namespace Views.Settings
         {
             this.localeSelect.value = App.config.language ?? "";
             this.summaryIntervalInput.value = App.config.summaryInterval?.toString() ?? "";
-            this.loadImageStyles();
+            this.imageStyleSelect.value = App.config.imageStyle ?? "";
+            this.imageStyleChange();
 
             for (const option of this.textAPISelect.querySelectorAll("option"))
                 option.selected = option.value == App.config.textAPI.name;
@@ -127,28 +140,13 @@ namespace Views.Settings
             this.languageAPIChange();
         }
 
-        private loadImageStyles()
-        {
-            this.imageStyleSelect.clearChildren();
-
-            this.imageStyleSelect.append(<option value="" >{ t("common.none") }</option>);
-
-            for (const style of Data.BuiltInImageStyles)
-                this.imageStyleSelect.append(<option value={ style.name }>{ style.name }</option>);
-
-            for (const style of App.config.customImageStyles)
-                this.imageStyleSelect.append(<option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>);
-
-            this.imageStyleSelect.value = App.config.imageStyle ?? "";
-            this.imageStyleChange();
-        }
-
         private imageStyleChange()
         {
             this.imageStyleCloneButton.disabled = !this.selectedImageStyle;
             const isCustomStyleSelected = this.imageStyleSelect.selectedOptions[0]?.getAttribute("data-prefix") != null;
             this.imageStyleEditButton.disabled = !isCustomStyleSelected;
             this.imageStyleDeleteButton.disabled = !isCustomStyleSelected;
+            this.imageStylePreviewSpan.textContent = this.selectedImageStyle?.prefix;
         }
 
         private get customImageStyleNames(): string[]
@@ -197,7 +195,8 @@ namespace Views.Settings
             if (!imageStyle) return;
 
             const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
-            this.imageStyleSelect.append(option);
+            this.customImageStylesGroup.append(option);
+            this.imageStyleChange();
         }
 
         private async cloneImageStyle()
@@ -216,7 +215,8 @@ namespace Views.Settings
             if (!imageStyle) return;
 
             const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
-            this.imageStyleSelect.append(option);
+            this.customImageStylesGroup.append(option);
+            this.imageStyleChange();
         }
 
         private async editImageStyle()
@@ -232,6 +232,7 @@ namespace Views.Settings
 
             const option = <option selected value={ imageStyle.name } data-prefix={ imageStyle.prefix } data-suffix={ imageStyle.suffix }>{ imageStyle.name }</option>;
             selectedOption.replaceWith(option);
+            this.imageStyleChange();
         }
 
         private async deleteImageStyle()
@@ -245,6 +246,8 @@ namespace Views.Settings
             })) return;
 
             selectedOption.remove();
+            this.imageStyleSelect.selectedIndex = 0;
+            this.imageStyleChange();
         }
 
         private textAPIChange()
