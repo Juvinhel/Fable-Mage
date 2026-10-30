@@ -1,5 +1,5 @@
 namespace Helper
-{
+{  
     export function FormatAIText(text: string): string
     {
         if (!text) return "";

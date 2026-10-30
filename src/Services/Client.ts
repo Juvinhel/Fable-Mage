@@ -253,6 +253,11 @@ namespace Services
             return Services.languageAPI.analyze(text, language);
         }
 
+        public translate(text: string, sourceLanguage: string, targetLanguage: string)
+        {
+            return Services.translationAPI.translate(text, sourceLanguage, targetLanguage);
+        }
+
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
         {
             const startedAt = Date.now();

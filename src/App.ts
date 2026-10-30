@@ -5,6 +5,8 @@ class App
         await this.startServiceWorker();
 
         this.config = await Data.loadConfig();
+        this.language = App.config.language || navigator.language || "en";
+
         await Promise.all([
             Data.Localization.loadTranslations(),
             Services.Client.initialize()
@@ -42,6 +44,7 @@ class App
     }
 
     public static config: Data.Config;
+    public static language: string;
 
     public static extractor;
 

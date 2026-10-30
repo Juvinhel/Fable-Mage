@@ -7,7 +7,7 @@ namespace Data
 
         public async loadTranslations(): Promise<void>
         {
-            const languageTag = (App.config.language || navigator.language).toLowerCase();
+            const languageTag = App.language.toLowerCase();
             const subtags = languageTag.split("-");
             const candidates = [languageTag];
             const regionIndex = subtags.findIndex((part, index) =>
