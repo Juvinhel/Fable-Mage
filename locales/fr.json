@@ -75,7 +75,7 @@
         "no": "Non",
         "none": "Aucun",
         "ok": "OK",
-        "password": "Mot de passe:",
+        "password": "Mot de passe :",
         "save": "Enregistrer",
         "search": "Rechercher",
         "start": "Démarrer",
@@ -203,9 +203,12 @@
     "settings": {
         "browserLanguage": "Utiliser la langue du navigateur",
         "buildTime": "Date de compilation :",
+        "checkedServicesMessage": "Tous les services testés avec succès !",
+        "checkedServicesTitle": "Test réussi !",
         "cloneImageStyle": "Cloner",
         "cloneImageStyleTitle": "Cloner le style d'image",
         "common": "Commun",
+        "connection-test": "Test de connexion",
         "createImageStyle": "Créer",
         "createImageStyleTitle": "Créer un style d'image",
         "defaultFive": "Par défaut : 5",
@@ -231,7 +234,6 @@
         "issuesPage": "page des problèmes GitHub",
         "language": "Langue :",
         "languageApi": "API linguistique :",
-        "translationApi": "API de traduction :",
         "reportBug": "Vous avez trouvé un bug ? Signalez-le sur la",
         "repository": "Dépôt :",
         "savedMessage": "Vos paramètres ont été enregistrés.",
@@ -240,6 +242,7 @@
         "summaryInterval": "Intervalle des résumés :",
         "summaryIntervalHelp": "Crée un résumé de l'histoire tous les quelques tours afin d'en préserver les détails importants. Des intervalles plus longs incluent davantage de tours dans chaque résumé et utilisent plus de contexte de votre IA.",
         "textApi": "API de texte :",
+        "translationApi": "API de traduction :",
         "version": "Version :"
     },
     "story": {

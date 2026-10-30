@@ -63,33 +63,33 @@ class App
                 throw new Error(t("app.textApiConfigError"));
             }
 
-            let languageAPI: Services.LanguageAPI;
+            let languageAPI: Services.LanguageAPI | undefined;
             try
             {
                 languageAPI = Services.createLanguageAPI(this.config.languageAPI);
-                await languageAPI.check();
+                await languageAPI?.check();
             }
             catch (error)
             {
                 throw new Error(t("app.languageApiConfigError"));
             }
 
-            let translationAPI: Services.TranslationAPI;
+            let translationAPI: Services.TranslationAPI | undefined;
             try
             {
                 translationAPI = Services.createTranslationAPI(this.config.translationAPI);
-                await translationAPI.check();
+                await translationAPI?.check();
             }
             catch (error)
             {
                 throw new Error(t("app.translationApiConfigError"));
             }
 
-            let imageAPI: Services.ImageAPI;
+            let imageAPI: Services.ImageAPI | undefined;
             try
             {
                 imageAPI = Services.createImageAPI(this.config.imageAPI);
-                await imageAPI.check();
+                await imageAPI?.check();
             }
             catch (error)
             {

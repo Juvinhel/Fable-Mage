@@ -250,12 +250,12 @@ namespace Services
 
         public analyzeLanguage(text: string, language?: string): Promise<SuggestedCorrection[]>
         {
-            return Services.languageAPI.analyze(text, language);
+            return Services.languageAPI?.analyze(text, language) ?? Promise.resolve([]);
         }
 
-        public translate(text: string, sourceLanguage: string, targetLanguage: string)
+        public translate(text: string, sourceLanguage: string, targetLanguage: string): Promise<string>
         {
-            return Services.translationAPI.translate(text, sourceLanguage, targetLanguage);
+            return Services.translationAPI?.translate(text, sourceLanguage, targetLanguage) ?? Promise.resolve(text);
         }
 
         private async runTextRequest(methodName: string, messages: Message[], temperature: number, schema?: Schema): Promise<string>
@@ -294,6 +294,8 @@ namespace Services
 
         private async runImageRequest(methodName: string, prompt: string): Promise<string>
         {
+            if (!imageAPI) return "";
+
             const startedAt = Date.now();
             try
             {

@@ -11,10 +11,10 @@ namespace Views.Settings
             this.load();
         }
 
-        private textAPISelect: HTMLSelectElement;
-        private imageAPISelect: HTMLSelectElement;
-        private languageAPISelect: HTMLSelectElement;
-        private translationAPISelect: HTMLSelectElement;
+        private textAPISelect: APISelectElement;
+        private imageAPISelect: APISelectElement;
+        private languageAPISelect: APISelectElement;
+        private translationAPISelect: APISelectElement;
 
         private localeSelect: HTMLSelectElement;
         private imageStyleSelect: HTMLSelectElement;
@@ -48,7 +48,7 @@ namespace Views.Settings
                                             { Data.BuiltInImageStyles.sortBy(x => x.name).map(style => <option value={ style.name }>{ style.name }</option>) }
                                         </optgroup>
                                         { this.customImageStylesGroup = <optgroup label={ t("common.custom") }>
-                                            { App.config.customImageStyles.map(style => <option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>) }
+                                            { App.config.customImageStyles?.map(style => <option value={ style.name } data-prefix={ style.prefix } data-suffix={ style.suffix }>{ style.name }</option>) }
                                         </optgroup> as HTMLOptGroupElement }
                                     </select> as HTMLSelectElement }
                                     <button class="icon-button" title={ t("settings.createImageStyle") } onclick={ () => this.createImageStyle() }><color-icon src="img/icons/add.svg" /></button>
@@ -74,50 +74,52 @@ namespace Views.Settings
                             <button title={ t("common.import") } onclick={ () => this.onImport() }><color-icon src="img/icons/open.svg" /><span>{ t("common.import") }</span></button>
                         </div>
                     </div>
-                    <div id="ai-tab" class="data-view" tab-header={ t("settings.services") }>
+                    <div id="services-tab" class="data-view" tab-header={ t("settings.services") }>
                         <div class="property-list">
                             <label>{ t("settings.textApi") }</label>
                             <div>
-                                { this.textAPISelect = <select onchange={ () => this.textAPIChange() }>
-                                    <option value="AnythingLLM">AnythingLLM</option>
-                                    <option value="Gemini">Gemini</option>
-                                    <option value="KoboldCPP">KoboldCPP</option>
-                                    <option value="LMStudio">LM Studio</option>
-                                </select> as HTMLSelectElement }
+                                { this.textAPISelect = <select is="api-select">
+                                    <option value="AnythingLLM" render={ Views.Settings.TextAPI.anythingLLM }>AnythingLLM</option>
+                                    <option value="Gemini" render={ Views.Settings.TextAPI.gemini }>Gemini</option>
+                                    <option value="KoboldCPP" render={ Views.Settings.TextAPI.koboldCPP }>KoboldCPP</option>
+                                    <option value="LMStudio" render={ Views.Settings.TextAPI.lmStudio }>LM Studio</option>
+                                </select> as APISelectElement }
                             </div>
 
                             <label>{ t("settings.imageApi") }</label>
                             <div>
-                                { this.imageAPISelect = <select onchange={ () => this.imageAPIChange() }>
-                                    <option value="AnythingLLM">AnythingLLM</option>
-                                    <option value="ComfyUI">ComfyUI</option>
-                                    <option value="Gemini">Gemini</option>
-                                    <option value="KoboldCPP">KoboldCPP</option>
+                                { this.imageAPISelect = <select is="api-select">
                                     <option value="None">{ t("common.none") }</option>
-                                    <option value="Stable Diffusion">Stable Diffusion</option>
-                                </select> as HTMLSelectElement }
+                                    <option value="AnythingLLM" render={ Views.Settings.ImageAPI.anythingLLM }>AnythingLLM</option>
+                                    <option value="ComfyUI" render={ Views.Settings.ImageAPI.comfyUI }>ComfyUI</option>
+                                    <option value="Gemini" render={ Views.Settings.ImageAPI.gemini }>Gemini</option>
+                                    <option value="KoboldCPP" render={ Views.Settings.ImageAPI.koboldCPP }>KoboldCPP</option>
+                                    <option value="Stable Diffusion" render={ Views.Settings.ImageAPI.stableDiffusion }>Stable Diffusion</option>
+                                </select> as APISelectElement }
                             </div>
 
                             <label>{ t("settings.languageApi") }</label>
                             <div>
-                                { this.languageAPISelect = <select onchange={ () => this.languageAPIChange() }>
-                                    <option value="LanguageTool">LanguageTool</option>
+                                { this.languageAPISelect = <select is="api-select">
                                     <option value="None">{ t("common.none") }</option>
-                                </select> as HTMLSelectElement }
+                                    <option value="LanguageTool" render={ Views.Settings.LanguageAPI.languageTool }>LanguageTool</option>
+                                </select> as APISelectElement }
                             </div>
 
                             <label>{ t("settings.translationApi") }</label>
                             <div>
-                                { this.translationAPISelect = <select onchange={ () => this.translationAPIChange() }>
-                                    <option value="LibreTranslate">LibreTranslate</option>
+                                { this.translationAPISelect = <select is="api-select">
                                     <option value="None">{ t("common.none") }</option>
-                                </select> as HTMLSelectElement }
+                                    <option value="LibreTranslate" render={ Views.Settings.TranslationAPI.libreTranslate }>LibreTranslate</option>
+                                </select> as APISelectElement }
                             </div>
                         </div>
 
                         <div class="anchor" />
 
                         <div class="actions">
+                            <button title={ t("settings.connection-test") } onclick={ () => this.onCheck() }><color-icon src="img/icons/connection-test.svg" /><span>{ t("settings.connection-test") }</span></button>
+                            <span />
                             <button title={ t("common.cancel") } onclick={ () => this.onCancel() }><color-icon src="img/icons/cancel.svg" /><span>{ t("common.cancel") }</span></button>
                             <button title={ t("common.save") } onclick={ () => this.onSave() }><color-icon src="img/icons/save.svg" /><span>{ t("common.save") }</span></button>
                             <button title={ t("common.export") } onclick={ () => this.onExport() }><color-icon src="img/icons/save.svg" /><span>{ t("common.export") }</span></button>
@@ -137,21 +139,10 @@ namespace Views.Settings
             this.imageStyleSelect.value = App.config.imageStyle ?? "";
             this.imageStyleChange();
 
-            for (const option of this.textAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.textAPI.name;
-            this.textAPIChange();
-
-            for (const option of this.imageAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.imageAPI.name;
-            this.imageAPIChange();
-
-            for (const option of this.languageAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.languageAPI.name;
-            this.languageAPIChange();
-
-            for (const option of this.translationAPISelect.querySelectorAll("option"))
-                option.selected = option.value == App.config.translationAPI.name;
-            this.translationAPIChange();
+            this.textAPISelect.load(App.config.textAPI);
+            this.imageAPISelect.load(App.config.imageAPI);
+            this.languageAPISelect.load(App.config.languageAPI);
+            this.translationAPISelect.load(App.config.translationAPI);
         }
 
         private imageStyleChange()
@@ -264,104 +255,6 @@ namespace Views.Settings
             this.imageStyleChange();
         }
 
-        private textAPIChange()
-        {
-            const apiName = this.textAPISelect.value;
-
-            this.textAPISelect.nextElementSibling?.remove();
-            switch (apiName)
-            {
-                case "KoboldCPP":
-                    this.textAPISelect.after(Views.Settings.TextAPI.koboldCPP(App.config.textAPI as Partial<Data.KoboldCPPEndpoint>));
-                    break;
-                case "Gemini":
-                    this.textAPISelect.after(Views.Settings.TextAPI.gemini(App.config.textAPI as Partial<Data.GeminiEndpoint>));
-                    break;
-                case "AnythingLLM":
-                    this.textAPISelect.after(Views.Settings.TextAPI.anythingLLM(App.config.textAPI as Partial<Data.AnythingLLMEndpoint>));
-                    break;
-                case "LMStudio":
-                    this.textAPISelect.after(Views.Settings.TextAPI.lmStudio(App.config.textAPI as Partial<Data.LMStudioEndpoint>));
-                    break;
-            }
-        }
-
-        private translationAPIChange()
-        {
-            this.translationAPISelect.nextElementSibling?.remove();
-            switch (this.translationAPISelect.value)
-            {
-                case "LibreTranslate":
-                    this.translationAPISelect.after(Views.Settings.TranslationAPI.libreTranslate(App.config.translationAPI as Partial<Data.LibreTranslateEndpoint>));
-                    break;
-                case "None":
-                    break;
-            }
-        }
-
-        private imageAPIChange()
-        {
-            const apiName = this.imageAPISelect.value;
-
-            this.imageAPISelect.nextElementSibling?.remove();
-            switch (apiName)
-            {
-                case "KoboldCPP":
-                    this.imageAPISelect.after(Views.Settings.ImageAPI.koboldCPP(App.config.imageAPI as Partial<Data.KoboldCPPEndpoint>));
-                    break;
-                case "Gemini":
-                    this.imageAPISelect.after(Views.Settings.ImageAPI.gemini(App.config.imageAPI as Partial<Data.GeminiEndpoint>));
-                    break;
-                case "AnythingLLM":
-                    this.imageAPISelect.after(Views.Settings.ImageAPI.anythingLLM(App.config.imageAPI as Partial<Data.AnythingLLMEndpoint>));
-                    break;
-                case "ComfyUI":
-                    this.imageAPISelect.after(Views.Settings.ImageAPI.comfyUI(App.config.imageAPI as Partial<Data.ComfyUIEndpoint>));
-                    break;
-                case "None":
-                    break;
-                case "Stable Diffusion":
-                    this.imageAPISelect.after(Views.Settings.ImageAPI.stableDiffusion(App.config.imageAPI as Partial<Data.StableDiffusionEndpoint>));
-                    break;
-            }
-        }
-
-        private languageAPIChange()
-        {
-            const apiName = this.languageAPISelect.value;
-
-            this.languageAPISelect.nextElementSibling?.remove();
-            switch (apiName)
-            {
-                case "LanguageTool":
-                    this.languageAPISelect.after(Views.Settings.LanguageAPI.languageTool(App.config.languageAPI as Partial<Data.LanguageToolEndpoint>));
-                    break;
-                case "None":
-                    break;
-            }
-        }
-
-        private getConfig(apiElement: HTMLElement): any
-        {
-            const ret: { [key: string]: string; } = {};
-
-            for (const element of apiElement.querySelectorAll<HTMLElement>("input[name], select[name], combo-select[name]"))
-            {
-                const input = element as HTMLInputElement;
-                const name = element.getAttribute("name");
-
-                let value: any;
-                if (input.type == "number")
-                    value = input.value == "" ? undefined : parseFloat(input.value);
-                else if (input.type == "checkbox" || input.type == "radio")
-                    value = input.checked;
-                else
-                    value = input.value;
-                ret[name] = value;
-            }
-            return ret;
-        }
-
         private async onSave()
         {
             await this.save();
@@ -377,70 +270,22 @@ namespace Views.Settings
                     return false;
                 }
 
-                const textAPIConfig = this.getConfig(this.textAPISelect.nextElementSibling as HTMLElement);
-                let textAPI: Services.TextAPI;
-                try
-                {
-                    textAPIConfig.name = this.textAPISelect.value;
-                    textAPI = Services.createTextAPI(textAPIConfig);
-                    await textAPI.check();
-                }
-                catch (error)
-                {
-                    console.error(error);
-                    throw new Error(t("app.textApiConfigError"));
-                }
+                const textAPIConfig = this.textAPISelect.save();
+                const textAPI = Services.createTextAPI(textAPIConfig);
 
-                const imageAPIConfig: any = this.imageAPISelect.nextElementSibling ? this.getConfig(this.imageAPISelect.nextElementSibling as HTMLElement) : {};
-                let imageAPI: Services.ImageAPI;
-                try
-                {
-                    imageAPIConfig.name = this.imageAPISelect.value;
-                    imageAPI = Services.createImageAPI(imageAPIConfig);
-                    await imageAPI.check();
-                }
-                catch (error)
-                {
-                    console.error(error);
-                    throw new Error(t("app.imageApiConfigError"));
-                }
+                const imageAPIConfig = this.imageAPISelect.save();
+                const imageAPI = imageAPIConfig ? Services.createImageAPI(imageAPIConfig) : null;
 
-                const languageAPIConfig: Data.LanguageToolEndpoint | Data.NoneLanguageEndpoint = this.languageAPISelect.value == "None"
-                    ? { name: "None" }
-                    : this.getConfig(this.languageAPISelect.nextElementSibling as HTMLElement);
-                let languageAPI: Services.LanguageAPI;
-                try
-                {
-                    languageAPIConfig.name = this.languageAPISelect.value as "LanguageTool" | "None";
-                    languageAPI = Services.createLanguageAPI(languageAPIConfig);
-                    await languageAPI.check();
-                }
-                catch (error)
-                {
-                    console.error(error);
-                    throw new Error(t("app.languageApiConfigError"));
-                }
+                const languageAPIConfig = this.languageAPISelect.save();
+                const languageAPI = languageAPIConfig ? Services.createLanguageAPI(languageAPIConfig) : null;
 
-                const translationAPIConfig: Data.LibreTranslateEndpoint | Data.NoneTranslateEndpoint = this.translationAPISelect.value == "None"
-                    ? { name: "None" }
-                    : this.getConfig(this.translationAPISelect.nextElementSibling as HTMLElement);
-                let translationAPI: Services.TranslationAPI;
-                try
-                {
-                    translationAPIConfig.name = this.translationAPISelect.value as "LibreTranslate" | "None";
-                    translationAPI = Services.createTranslationAPI(translationAPIConfig);
-                    await translationAPI.check();
-                }
-                catch (error)
-                {
-                    console.error(error);
-                    throw new Error(t("app.translationApiConfigError"));
-                }
+                const translationAPIConfig = this.translationAPISelect.save();
+                const translationAPI = translationAPIConfig ? Services.createTranslationAPI(translationAPIConfig) : null;
 
                 const languageChanged = this.localeSelect.value != (App.config.language ?? "");
                 App.config.language = this.localeSelect.value || undefined;
                 App.config.imageStyle = this.imageStyleSelect.value || undefined;
-                App.config.customImageStyles = this.customImageStyles;
+                App.config.customImageStyles = this.customImageStyles.length == 0 ? undefined : this.customImageStyles;
                 App.config.summaryInterval = this.summaryIntervalInput.value === "" ? undefined : this.summaryIntervalInput.valueAsNumber;
 
                 App.config.textAPI = textAPIConfig;
@@ -470,6 +315,76 @@ namespace Views.Settings
                 UI.Dialog.error(error);
                 return false;
             }
+        }
+
+        private async onCheck()
+        {
+            const textAPIConfig = this.textAPISelect.save();
+            let textAPI: Services.TextAPI;
+            try
+            {
+                textAPIConfig.name = this.textAPISelect.value;
+                textAPI = Services.createTextAPI(textAPIConfig);
+                await textAPI.check();
+            }
+            catch (error)
+            {
+                console.error(error);
+                throw new Error(t("app.textApiConfigError"));
+            }
+
+            const imageAPIConfig = this.imageAPISelect.save();
+            let imageAPI: Services.ImageAPI | undefined;
+            try
+            {
+                if (imageAPIConfig)
+                {
+                    imageAPIConfig.name = this.imageAPISelect.value;
+                    imageAPI = Services.createImageAPI(imageAPIConfig);
+                    await imageAPI?.check();
+                }
+            }
+            catch (error)
+            {
+                console.error(error);
+                throw new Error(t("app.imageApiConfigError"));
+            }
+
+            const languageAPIConfig = this.languageAPISelect.save();
+            let languageAPI: Services.LanguageAPI | undefined;
+            try
+            {
+                if (languageAPIConfig)
+                {
+                    languageAPIConfig.name = this.languageAPISelect.value as "LanguageTool";
+                    languageAPI = Services.createLanguageAPI(languageAPIConfig);
+                    await languageAPI?.check();
+                }
+            }
+            catch (error)
+            {
+                console.error(error);
+                throw new Error(t("app.languageApiConfigError"));
+            }
+
+            const translationAPIConfig = this.translationAPISelect.save();
+            let translationAPI: Services.TranslationAPI | undefined;
+            try
+            {
+                if (translationAPIConfig)
+                {
+                    translationAPIConfig.name = this.translationAPISelect.value as "LibreTranslate";
+                    translationAPI = Services.createTranslationAPI(translationAPIConfig);
+                    await translationAPI?.check();
+                }
+            }
+            catch (error)
+            {
+                console.error(error);
+                throw new Error(t("app.translationApiConfigError"));
+            }
+
+            UI.Dialog.message({ title: t("settings.checkedServicesTitle"), text: t("settings.checkedServicesMessage") });
         }
 
         private onCancel()

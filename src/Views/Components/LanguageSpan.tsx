@@ -18,7 +18,7 @@ namespace Views.Components
             this.internal_text = text;
             console.log("t", text);
 
-            if (Services.translationAPI && App.config.translationAPI.name != "None" && !App.language.startsWith("en"))
+            if (Services.translationAPI && !App.language.startsWith("en"))
                 Services.Client.translate(text, "en", App.language.splitFirst("-")[0]).then(translatedText => this.innerHTML = Helper.FormatAIText(translatedText));
             else
                 this.textContent = text;

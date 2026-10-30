@@ -13,16 +13,18 @@ namespace Data
         nexusAccount?: NexusAccount;
         summaryInterval?: number;
         imageStyle?: string;
-        customImageStyles: ImageStyle[];
+        customImageStyles?: ImageStyle[];
+
         textAPI: APIEndpoint;
-        imageAPI: APIEndpoint;
-        languageAPI: APIEndpoint;
-        translationAPI: APIEndpoint;
+        imageAPI?: APIEndpoint;
+        languageAPI?: APIEndpoint;
+        translationAPI?: APIEndpoint;
     }
 
     export interface APIEndpoint
     {
         name: string;
+        [key: string]: string | number | boolean;
     }
 
     export interface LanguageToolEndpoint extends APIEndpoint
@@ -34,11 +36,6 @@ namespace Data
         password?: string;
     }
 
-    export interface NoneLanguageEndpoint extends APIEndpoint
-    {
-        name: "None";
-    }
-
     export interface LibreTranslateEndpoint extends APIEndpoint
     {
         name: "LibreTranslate";
@@ -46,11 +43,6 @@ namespace Data
         api_key?: string;
         username?: string;
         password?: string;
-    }
-
-    export interface NoneTranslateEndpoint extends APIEndpoint
-    {
-        name: "None";
     }
 
     export interface KoboldCPPEndpoint extends APIEndpoint
@@ -105,11 +97,6 @@ namespace Data
         workflow: string;
     }
 
-    export interface NoneImageEndpoint extends APIEndpoint
-    {
-        name: "None";
-    }
-
     const defaultConfig: Config = {
         textAPI: {
             name: "KoboldCPP",
@@ -118,24 +105,21 @@ namespace Data
         imageAPI: {
             name: "Stable Diffusion",
             url: "http://localhost:7860"
-        } as StableDiffusionEndpoint,
-        languageAPI: {
-            name: "None"
-        } as NoneLanguageEndpoint,
-        translationAPI: {
-            name: "None"
-        } as NoneTranslateEndpoint,
-        customImageStyles: [],
+        } as StableDiffusionEndpoint
     };
 
     export async function loadConfig(): Promise<Config>
     {
         let ret: Partial<Config> = localStorage.get("config");
-        if (!ret) return defaultConfig;
+        if (!ret) return { ...defaultConfig };
 
         for (const entry of Object.entries(defaultConfig))
-            if (!(entry[0] in ret))
+            if (!(entry[0] in ret) && entry[0] != "imageAPI")
                 (ret as any)[entry[0]] = entry[1];
+
+        for (const key of ["imageAPI", "languageAPI", "translationAPI"] as const)
+            if (ret[key]?.name == "None")
+                delete ret[key];
 
         return ret as Config;
     }

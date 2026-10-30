@@ -203,9 +203,12 @@
     "settings": {
         "browserLanguage": "Use browser language",
         "buildTime": "Build time:",
+        "checkedServicesMessage": "Checked all services successfully!",
+        "checkedServicesTitle": "Check succesfull!",
         "cloneImageStyle": "Clone",
         "cloneImageStyleTitle": "Clone image style",
         "common": "Common",
+        "connection-test": "Connection test",
         "createImageStyle": "Create",
         "createImageStyleTitle": "Create image style",
         "defaultFive": "Default: 5",
@@ -231,7 +234,6 @@
         "issuesPage": "GitHub issues page",
         "language": "Language:",
         "languageApi": "LanguageAPI:",
-        "translationApi": "Translation API:",
         "reportBug": "Found a bug? Please report it on the",
         "repository": "Repository:",
         "savedMessage": "Your settings have been saved.",
@@ -240,6 +242,7 @@
         "summaryInterval": "Summary Interval:",
         "summaryIntervalHelp": "Creates a story summary every few turns to preserve important details. Larger intervals include more turns in each summary and use more of your AI's context.",
         "textApi": "TextAPI:",
+        "translationApi": "Translation API:",
         "version": "Version:"
     },
     "story": {

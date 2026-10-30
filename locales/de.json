@@ -203,9 +203,12 @@
     "settings": {
         "browserLanguage": "Browsersprache verwenden",
         "buildTime": "Erstellungszeit:",
+        "checkedServicesMessage": "Alle Services erfolgreich getestet!",
+        "checkedServicesTitle": "Test erfolgreich!",
         "cloneImageStyle": "Klonen",
         "cloneImageStyleTitle": "Bildstil klonen",
         "common": "Allgemein",
+        "connection-test": "Verbindungstest",
         "createImageStyle": "Erstellen",
         "createImageStyleTitle": "Bildstil erstellen",
         "defaultFive": "Standard: 5",
@@ -231,7 +234,6 @@
         "issuesPage": "GitHub-Issue-Seite",
         "language": "Sprache:",
         "languageApi": "Sprach-API:",
-        "translationApi": "Übersetzungs-API:",
         "reportBug": "Einen Fehler gefunden? Bitte melde ihn auf der",
         "repository": "Repository:",
         "savedMessage": "Deine Einstellungen wurden gespeichert.",
@@ -240,6 +242,7 @@
         "summaryInterval": "Zusammenfassungsintervall:",
         "summaryIntervalHelp": "Erstellt alle paar Züge eine Zusammenfassung der Geschichte, um wichtige Details zu bewahren. Größere Intervalle umfassen mehr Züge pro Zusammenfassung und beanspruchen mehr Kontext deiner KI.",
         "textApi": "Text-API:",
+        "translationApi": "Übersetzungs-API:",
         "version": "Version:"
     },
     "story": {
